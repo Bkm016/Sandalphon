@@ -1,0 +1,10 @@
+name: Sandalphon
+main: ink.ptms.sandalphon.Sandalphon
+api-version: 1.13
+author: 坏黑
+
+softdepend:
+  - Zaphkiel
+  - Cronus
+
+version: ${version}
