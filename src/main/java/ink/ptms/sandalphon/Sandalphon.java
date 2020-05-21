@@ -2,7 +2,7 @@ package ink.ptms.sandalphon;
 
 import io.izzel.taboolib.loader.Plugin;
 
-@Plugin.Version(5.17)
+@Plugin.Version(5.28)
 public final class Sandalphon extends Plugin {
 
     @Override

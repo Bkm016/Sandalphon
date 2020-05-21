@@ -2,8 +2,7 @@ package ink.ptms.sandalphon.module.impl
 
 import com.google.common.collect.Lists
 import ink.ptms.sandalphon.Sandalphon
-import ink.ptms.sandalphon.module.IModule
-import io.izzel.taboolib.TabooLib
+import ink.ptms.sandalphon.module.Helper
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.inject.TInject
@@ -23,7 +22,7 @@ import org.bukkit.util.NumberConversions
  * @Author sky
  * @Since 2020-02-15 17:32
  */
-object CommandBlockControl : IModule() {
+object CommandBlockControl : Helper {
 
     val map = HashMap<Location, Long>()
     val mapIndex = HashMap<Location, Data>()
@@ -34,11 +33,11 @@ object CommandBlockControl : IModule() {
             .permission("*")
             .execute { sender, args ->
                 if (args.size < 2) {
-                    notify(sender, "/cbc [period] [command]")
+                    sender.info("/cbc [period] [command]")
                     return@execute
                 }
                 if (sender !is BlockCommandSender) {
-                    notify(sender, "This command only allows the use of BlockCommand.")
+                    sender.info("This command only allows the use of BlockCommand.")
                     return@execute
                 }
                 if (System.currentTimeMillis() < map[sender.block.location] ?: 0L) {
