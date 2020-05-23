@@ -1,16 +1,19 @@
 package ink.ptms.sandalphon.module.impl.scriptblock
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockData
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.command.base.*
+import io.izzel.taboolib.module.db.local.Local
 import io.izzel.taboolib.util.item.ItemBuilder
 import org.bukkit.Bukkit
 import org.bukkit.FluidCollisionMode
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import java.io.File
 
 /**
  * @Author sky
@@ -116,5 +119,12 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
         block.display()
         sender.info("使用§f链接魔杖§7右键方块创建连接, 左键方块移除连接.")
         CronusUtils.addItem(sender, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f链接魔杖").lore("§7${Utils.fromLocation(blockData.block)}").shiny().build())
+    }
+
+    @SubCommand(priority = 0.5, description = "重载脚本")
+    fun import(sender: CommandSender, args: Array<String>) {
+        ScriptBlock.data.load(File(Sandalphon.getPlugin().dataFolder, "module/scriptblock.yml"))
+        ScriptBlock.import()
+        sender.info("操作成功.")
     }
 }
