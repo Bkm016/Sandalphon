@@ -93,23 +93,27 @@ class ScriptBlockEvents : Listener, Helper {
         if (!e.player.isOp) {
             return
         }
-        if (e.previousBookMeta.displayName.contains("编辑动作")) {
-            val blockData = ScriptBlock.getBlock(Utils.toLocation(e.previousBookMeta.lore!![0].unColored()).block)
+        if (e.previousBookMeta.displayName.contains("编辑动作") && e.previousBookMeta.lore!![0].unColored() == "ScriptBlock") {
+            val blockData = ScriptBlock.getBlock(Utils.toLocation(e.previousBookMeta.lore!![1].unColored()).block)
             if (blockData == null) {
                 e.player.error("该脚本已失效. (${e.newBookMeta.author})")
             } else {
                 blockData.blockAction.clear()
-                blockData.blockAction.addAll(e.newBookMeta.pages.map { it.replace("§0", "") })
+                if (e.newBookMeta.pages[0].unColored() != "clear") {
+                    blockData.blockAction.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
+                }
                 blockData.init()
                 blockData.openEdit(e.player)
             }
-        } else if (e.previousBookMeta.displayName.contains("编辑条件")) {
-            val blockData = ScriptBlock.getBlock(Utils.toLocation(e.previousBookMeta.lore!![0].unColored()).block)
+        } else if (e.previousBookMeta.displayName.contains("编辑条件") && e.previousBookMeta.lore!![0].unColored() == "ScriptBlock") {
+            val blockData = ScriptBlock.getBlock(Utils.toLocation(e.previousBookMeta.lore!![1].unColored()).block)
             if (blockData == null) {
                 e.player.error("该脚本已失效. (${e.newBookMeta.author})")
             } else {
                 blockData.blockCondition.clear()
-                blockData.blockCondition.addAll(e.newBookMeta.pages.map { it.replace("§0", "") })
+                if (e.newBookMeta.pages[0].unColored() != "clear") {
+                    blockData.blockCondition.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
+                }
                 blockData.init()
                 blockData.openEdit(e.player)
             }

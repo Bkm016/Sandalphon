@@ -29,7 +29,7 @@ repositories {
 dependencies {
     compile 'ink.ptms.cronus:Cronus:1'
     compile 'org.spigotmc:spigot:1.14.4-R0.1-20191211.040645-13'
-    compile 'io.izzel.taboolib:TabooLib:5.17:all'
+    compile 'io.izzel.taboolib:TabooLib:5.28:all'
     compile 'io.izzel.taboolib:TabooLibLoader:1.8:all'
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.41"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41"

@@ -9,6 +9,7 @@ import io.izzel.taboolib.module.db.local.LocalFile
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TSchedule
 import org.bukkit.Bukkit
+import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
@@ -37,7 +38,6 @@ object ScriptBlock {
 
     @TFunction.Cancel
     fun export() {
-        data.loadFromString("")
         blocks.forEach { block ->
             val location = Utils.fromLocation(block.block).replace(".", "__")
             data.set("$location.link", block.link.map { Utils.fromLocation(it) })
@@ -45,6 +45,10 @@ object ScriptBlock {
             data.set("$location.action", block.blockAction)
             data.set("$location.condition", block.blockCondition)
         }
+    }
+
+    fun delete(location: String) {
+        data.set(location.replace(".", "__"), null)
     }
 
     fun getBlock(block: Block): BlockData? {

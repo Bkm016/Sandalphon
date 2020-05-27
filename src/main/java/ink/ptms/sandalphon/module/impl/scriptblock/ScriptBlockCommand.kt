@@ -75,6 +75,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
         block.display()
         sender.info("脚本方块已移除.")
         ScriptBlock.blocks.remove(blockData)
+        ScriptBlock.delete(Utils.fromLocation(blockData.block))
         ScriptBlock.export()
     }
 

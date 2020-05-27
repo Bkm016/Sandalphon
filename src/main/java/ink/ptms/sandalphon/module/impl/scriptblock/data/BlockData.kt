@@ -16,7 +16,7 @@ import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-data class BlockData(val block: Location, var blockType: BlockType = BlockType.INTERACT, var blockAction: MutableList<String> = ArrayList(), var blockCondition: MutableList<String> = ArrayList()) {
+class BlockData(val block: Location, var blockType: BlockType = BlockType.INTERACT, var blockAction: MutableList<String> = ArrayList(), var blockCondition: MutableList<String> = ArrayList()) {
 
     val link = ArrayList<Location>()
     lateinit var action: QuestEffect
@@ -64,11 +64,11 @@ data class BlockData(val block: Location, var blockType: BlockType = BlockType.I
                         }
                         13 -> {
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(blockAction).build()).name("§f§f§f编辑动作").lore("§7${Utils.fromLocation(block)}").build())
+                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(blockAction.joinToString("\n")).build()).name("§f§f§f编辑动作").lore("§7ScriptBlock", "§7${Utils.fromLocation(block)}").build())
                         }
                         15 -> {
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(blockAction).build()).name("§f§f§f编辑条件").lore("§7${Utils.fromLocation(block)}").build())
+                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(blockAction.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7ScriptBlock", "§7${Utils.fromLocation(block)}").build())
                         }
                     }
                 }.close {
