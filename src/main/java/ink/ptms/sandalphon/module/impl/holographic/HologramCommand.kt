@@ -1,8 +1,8 @@
-package ink.ptms.sandalphon.module.impl.hologram
+package ink.ptms.sandalphon.module.impl.holographic
 
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
-import ink.ptms.sandalphon.module.impl.hologram.data.HologramData
+import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit

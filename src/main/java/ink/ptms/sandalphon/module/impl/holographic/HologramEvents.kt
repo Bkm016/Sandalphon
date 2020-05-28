@@ -1,4 +1,4 @@
-package ink.ptms.sandalphon.module.impl.hologram
+package ink.ptms.sandalphon.module.impl.holographic
 
 import ink.ptms.sandalphon.module.Helper
 import io.izzel.taboolib.module.inject.TListener

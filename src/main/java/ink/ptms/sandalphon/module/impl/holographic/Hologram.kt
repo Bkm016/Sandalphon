@@ -1,6 +1,6 @@
-package ink.ptms.sandalphon.module.impl.hologram
+package ink.ptms.sandalphon.module.impl.holographic
 
-import ink.ptms.sandalphon.module.impl.hologram.data.HologramData
+import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.module.db.local.LocalFile
 import io.izzel.taboolib.module.inject.TFunction

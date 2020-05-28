@@ -44,7 +44,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ink.ptms.sandalphon.Sandalphon.main" />
     <orderEntry type="library" name="Gradle: ink.ptms.cronus:Cronus:1" level="project" />
-    <orderEntry type="library" name="Gradle: org.spigotmc:spigot:1.14.4-R0.1-20191211.040645-13" level="project" />
+    <orderEntry type="library" name="Gradle: ink.ptms.core:v11500:all:11500" level="project" />
     <orderEntry type="library" name="Gradle: io.izzel.taboolib:TabooLib:all:5.28" level="project" />
     <orderEntry type="library" name="Gradle: io.izzel.taboolib:TabooLibLoader:all:1.8" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41" level="project" />

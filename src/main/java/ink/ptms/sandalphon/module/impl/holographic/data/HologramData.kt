@@ -1,11 +1,10 @@
-package ink.ptms.sandalphon.module.impl.hologram.data
+package ink.ptms.sandalphon.module.impl.holographic.data
 
 import com.google.common.collect.Lists
 import ink.ptms.cronus.internal.condition.Condition
 import ink.ptms.cronus.internal.condition.ConditionParser
 import ink.ptms.cronus.internal.program.NoneProgram
 import ink.ptms.cronus.uranus.function.FunctionParser
-import ink.ptms.sandalphon.module.impl.scriptblock.ScriptBlock
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.hologram.Hologram
 import io.izzel.taboolib.module.hologram.THologram
@@ -46,7 +45,6 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
 
     fun cancel() {
         holograms.forEach { it.value.forEach { holo -> holo.delete() } }
-        holograms.clear()
     }
 
     fun cancel(player: Player) {
@@ -122,7 +120,7 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
                         }
                     }
                 }.close {
-                    ink.ptms.sandalphon.module.impl.hologram.Hologram.export()
+                    ink.ptms.sandalphon.module.impl.holographic.Hologram.export()
                     init()
                 }.open(player)
     }
