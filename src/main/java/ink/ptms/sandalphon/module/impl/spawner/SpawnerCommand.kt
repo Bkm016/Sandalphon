@@ -21,7 +21,7 @@ import java.io.File
  * @Author sky
  * @Since 2020-05-20 17:51
  */
-@BaseCommand(name = "spawner", permission = "admin")
+@BaseCommand(name = "spawner", aliases = ["ss"], permission = "admin")
 class SpawnerCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.0, description = "新建刷怪箱", arguments = ["生物"], type = CommandType.PLAYER)
@@ -119,7 +119,7 @@ class SpawnerCommand : BaseMainCommand(), Helper {
             return
         }
         block.display()
-        sender.info("使用§f链接魔杖§7右键方块创建拷贝, 左键方块移除拷贝.")
+        sender.info("使用§f拷贝魔杖§7右键方块创建拷贝, 左键方块移除拷贝.")
         CronusUtils.addItem(sender, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f拷贝魔杖").lore("§7Spawner", "§7${Utils.fromLocation(spawnerData.block)}").shiny().build())
     }
 
