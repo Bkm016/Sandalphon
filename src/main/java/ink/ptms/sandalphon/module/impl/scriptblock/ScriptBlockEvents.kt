@@ -26,7 +26,7 @@ class ScriptBlockEvents : Listener, Helper {
 
     @EventHandler
     fun e(e: BlockBreakEvent) {
-        if (e.player.isOp && Items.hasName(e.player.inventory.itemInMainHand, "链接魔杖")) {
+        if (e.player.isOp && Items.hasName(e.player.inventory.itemInMainHand, "链接魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "ScriptBlock")) {
             e.isCancelled = true
             val location = Utils.toLocation(e.player.inventory.itemInMainHand.itemMeta!!.lore!![0].unColored())
             val blockData = ScriptBlock.getBlock(location.block)
@@ -51,7 +51,7 @@ class ScriptBlockEvents : Listener, Helper {
         if (e.hand != EquipmentSlot.HAND) {
             return
         }
-        if (e.player.isOp && e.action == Action.RIGHT_CLICK_BLOCK && Items.hasName(e.player.inventory.itemInMainHand, "链接魔杖")) {
+        if (e.player.isOp && e.action == Action.RIGHT_CLICK_BLOCK && Items.hasName(e.player.inventory.itemInMainHand, "链接魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "ScriptBlock")) {
             e.isCancelled = true
             val location = Utils.toLocation(e.player.inventory.itemInMainHand.itemMeta!!.lore!![0].unColored())
             val blockData = ScriptBlock.getBlock(location.block)

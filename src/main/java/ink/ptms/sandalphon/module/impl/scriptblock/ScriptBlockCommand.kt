@@ -2,12 +2,14 @@ package ink.ptms.sandalphon.module.impl.scriptblock
 
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
+import ink.ptms.sandalphon.module.impl.holographic.Hologram
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockData
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.module.db.local.Local
 import io.izzel.taboolib.util.item.ItemBuilder
+import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.FluidCollisionMode
 import org.bukkit.Material
@@ -119,7 +121,19 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
         }
         block.display()
         sender.info("使用§f链接魔杖§7右键方块创建连接, 左键方块移除连接.")
-        CronusUtils.addItem(sender, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f链接魔杖").lore("§7${Utils.fromLocation(blockData.block)}").shiny().build())
+        CronusUtils.addItem(sender, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f链接魔杖").lore("§7ScriptBlock", "§7${Utils.fromLocation(blockData.block)}").shiny().build())
+    }
+
+    @SubCommand(priority = 0.41, description = "附近脚本", type = CommandType.PLAYER)
+    fun near(sender: CommandSender, args: Array<String>) {
+        sender.info("附近脚本:")
+        ScriptBlock.blocks.forEach {
+            if (it.block.world?.name == (sender as Player).world.name && it.block.distance(sender.location) < 50) {
+                it.block.block.display()
+                it.link.forEach { link -> link.block.display() }
+                sender.info("§8 - §f${Utils.fromLocation(it.block)} §7(${Numbers.format(it.block.distance(sender.location))}m)")
+            }
+        }
     }
 
     @SubCommand(priority = 0.5, description = "重载脚本")

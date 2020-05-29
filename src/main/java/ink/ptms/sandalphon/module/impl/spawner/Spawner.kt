@@ -46,7 +46,7 @@ object Spawner {
         spawners.clear()
         data.getKeys(false).forEach {
             spawners.add(SpawnerData(Utils.toLocation(it.replace("__", ".")), MythicMobs.inst().mobManager.getMythicMob(data.getString("$it.mob"))).run {
-                this.time.putAll(data.getConfigurationSection("$it.time")?.getValues(false)?.map { Utils.toLocation(it.key) to it.value as Long }?.toMap() ?: emptyMap())
+                this.time.putAll(data.getConfigurationSection("$it.time")?.getValues(false)?.map { Utils.toLocation(it.key.replace("__", ".")) to it.value as Long }?.toMap() ?: emptyMap())
                 this.copy.addAll(data.getStringList("$it.link").map { link -> Utils.toLocation(link) })
                 this.activationrange = data.getInt("$it.activationrange")
                 this.leashrange = data.getInt("$it.leashrange")
@@ -60,7 +60,7 @@ object Spawner {
     fun export() {
         spawners.forEach { spawner ->
             val location = Utils.fromLocation(spawner.block).replace(".", "__")
-            data.set("$location.time", spawner.time.map { Utils.fromLocation(it.key) to it.value }.toMap())
+            data.set("$location.time", spawner.time.map { Utils.fromLocation(it.key).replace(".", "__") to it.value }.toMap())
             data.set("$location.copy", spawner.copy.map { Utils.fromLocation(it) })
             data.set("$location.mob", spawner.mob.internalName)
             data.set("$location.activationrange", spawner.activationrange)
