@@ -40,7 +40,6 @@ class HologramEvents : Listener, Helper {
                     hologramData.holoContent.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
                 }
                 hologramData.init()
-                hologramData.openEdit(e.player)
             }
         } else if (e.previousBookMeta.displayName.contains("编辑条件") && e.previousBookMeta.lore!![0].unColored() == "Hologram") {
             val hologramData = Hologram.getHologram(e.previousBookMeta.lore!![1].unColored())
@@ -52,7 +51,6 @@ class HologramEvents : Listener, Helper {
                     hologramData.holoCondition.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
                 }
                 hologramData.init()
-                hologramData.openEdit(e.player)
             }
         }
     }

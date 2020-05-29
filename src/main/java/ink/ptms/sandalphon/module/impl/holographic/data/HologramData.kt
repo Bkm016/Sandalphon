@@ -45,6 +45,7 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
 
     fun cancel() {
         holograms.forEach { it.value.forEach { holo -> holo.delete() } }
+        holograms.clear()
     }
 
     fun cancel(player: Player) {
@@ -57,13 +58,11 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
         }
         val list = Lists.newArrayList<Hologram>()
         holoContent.forEachIndexed { index, content ->
-            if (content.isNotEmpty()) {
-                val hologram = THologram.create(location.clone().add(0.0, (((holoContent.size - 1) - index) * 0.3), 0.0), content.toFunction(player))
-                if (check(player)) {
-                    hologram.addViewer(player)
-                }
-                list.add(hologram)
+            val hologram = THologram.create(location.clone().add(0.0, (((holoContent.size - 1) - index) * 0.3), 0.0), content.toFunction(player))
+            if (check(player) && content.isNotEmpty()) {
+                hologram.addViewer(player)
             }
+            list.add(hologram)
         }
         holograms[player.name] = list
     }
@@ -72,17 +71,15 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
         if (holograms.containsKey(player.name)) {
             val list = holograms[player.name]!!
             holoContent.forEachIndexed { index, content ->
-                if (content.isNotEmpty()) {
-                    val hologram = list[index]
-                    if (check(player)) {
-                        hologram.addViewer(player)
-                        val text = content.toFunction(player)
-                        if (hologram.text != text) {
-                            hologram.flash(text)
-                        }
-                    } else {
-                        hologram.removeViewer(player)
+                val hologram = list.getOrNull(index) ?: return@forEachIndexed
+                if (check(player) && content.isNotEmpty()) {
+                    hologram.addViewer(player)
+                    val text = content.toFunction(player)
+                    if (hologram.text != text) {
+                        hologram.flash(text)
                     }
+                } else {
+                    hologram.removeViewer(player)
                 }
             }
         } else {

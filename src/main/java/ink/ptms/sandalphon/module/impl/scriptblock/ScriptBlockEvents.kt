@@ -103,7 +103,6 @@ class ScriptBlockEvents : Listener, Helper {
                     blockData.blockAction.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
                 }
                 blockData.init()
-                blockData.openEdit(e.player)
             }
         } else if (e.previousBookMeta.displayName.contains("编辑条件") && e.previousBookMeta.lore!![0].unColored() == "ScriptBlock") {
             val blockData = ScriptBlock.getBlock(Utils.toLocation(e.previousBookMeta.lore!![1].unColored()).block)
@@ -115,7 +114,6 @@ class ScriptBlockEvents : Listener, Helper {
                     blockData.blockCondition.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
                 }
                 blockData.init()
-                blockData.openEdit(e.player)
             }
         }
     }
