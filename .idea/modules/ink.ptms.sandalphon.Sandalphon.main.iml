@@ -54,7 +54,7 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../libs/Zaphkiel-1.0-SNAPSHOT-all.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../libs/Zaphkiel.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
