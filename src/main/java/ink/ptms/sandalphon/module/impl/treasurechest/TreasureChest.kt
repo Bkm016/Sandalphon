@@ -1,5 +1,6 @@
 package ink.ptms.sandalphon.module.impl.treasurechest
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.scriptblock.ScriptBlock
 import ink.ptms.sandalphon.module.impl.treasurechest.data.ChestData
 import ink.ptms.sandalphon.module.impl.treasurechest.data.ChestInventory
@@ -11,6 +12,7 @@ import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.util.item.Items
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.type.Chest
@@ -72,8 +74,11 @@ object TreasureChest {
             val inventory = player.openInventory.topInventory
             if (inventory.holder is ChestInventory) {
                 val chest = (inventory.holder as ChestInventory).chestData
-                inventory.filter { item -> Items.nonNull(item) }.forEach { item ->
-                    CronusUtils.addItem(player as Player, item)
+                inventory.filter { item -> Items.nonNull(item) }.forEachIndexed { index, item ->
+                    Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
+                        CronusUtils.addItem(player as Player, item)
+                        player.playSound(player.location, Sound.ENTITY_ITEM_PICKUP, 1f, 2f)
+                    }, index.toLong())
                 }
                 inventory.clear()
                 chest.globalInventory = null

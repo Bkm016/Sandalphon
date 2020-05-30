@@ -205,6 +205,7 @@ class ChestData(val block: Location) {
                                 player.playSound(player.location, Sound.ENTITY_ITEM_PICKUP, 1f, 2f)
                             }, index.toLong())
                         }
+                        it.inventory.clear()
                         data.set("Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}", System.currentTimeMillis() + update)
                         tick(player, true)
                         open.remove(player.name)
