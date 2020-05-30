@@ -71,7 +71,8 @@ class TreasureChestEvents : Listener, Helper {
             chest.globalInventory = null
             chest.globalTime = System.currentTimeMillis() + chest.update
             chest.tick(e.player as Player, true)
-            if (chest.replace == Material.CHEST) {
+            // closed animation
+            if (chest.replace == Material.CHEST || chest.replace == Material.TRAPPED_CHEST) {
                 e.player.world.players.forEach { p ->
                     ink.ptms.sandalphon.module.api.NMS.HANDLE.sendBlockAction(p, chest.block.block, 1, 0)
                 }

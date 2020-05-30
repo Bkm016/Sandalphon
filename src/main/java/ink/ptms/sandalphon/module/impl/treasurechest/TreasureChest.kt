@@ -10,8 +10,11 @@ import io.izzel.taboolib.module.db.local.LocalFile
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.util.item.Items
+import io.izzel.taboolib.util.lite.Numbers
+import net.minecraft.server.v1_15_R1.PacketPlayOutAnimation
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.block.DoubleChest
@@ -84,6 +87,10 @@ object TreasureChest {
                 chest.globalInventory = null
                 chest.globalTime = System.currentTimeMillis() + chest.update
                 player.closeInventory()
+                // closed animation
+                if (chest.replace == Material.CHEST || chest.replace == Material.TRAPPED_CHEST) {
+                    ink.ptms.sandalphon.module.api.NMS.HANDLE.sendBlockAction(player, chest.block.block, 1, 0)
+                }
             }
         }
         export()

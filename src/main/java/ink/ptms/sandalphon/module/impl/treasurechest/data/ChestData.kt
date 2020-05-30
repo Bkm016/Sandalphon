@@ -56,7 +56,7 @@ class ChestData(val block: Location) {
     var globalTime = 0L
     var globalInventory: Inventory? = null
 
-    var replace = Material.CHEST
+    var replace = block.block.type
 
     val condition = ArrayList<Condition>()
     val conditionText = ArrayList<String>()
@@ -174,7 +174,7 @@ class ChestData(val block: Location) {
         }
         if (global) {
             if (globalTime > System.currentTimeMillis()) {
-                if (replace == Material.CHEST) {
+                if (replace == Material.CHEST || replace == Material.TRAPPED_CHEST) {
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                 }
                 return
@@ -187,7 +187,7 @@ class ChestData(val block: Location) {
             val data = LocalPlayer.get(player)
             val time = data.getLong("Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}")
             if (time > System.currentTimeMillis() || (update == -1L && time > 0)) {
-                if (replace == Material.CHEST) {
+                if (replace == Material.CHEST || replace == Material.TRAPPED_CHEST) {
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                 }
                 return
@@ -209,7 +209,8 @@ class ChestData(val block: Location) {
                         data.set("Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}", System.currentTimeMillis() + update)
                         tick(player, true)
                         open.remove(player.name)
-                        if (open.isEmpty() && replace == Material.CHEST) {
+                        // closed animation
+                        if (open.isEmpty() && (replace == Material.CHEST || replace == Material.TRAPPED_CHEST)) {
                             player.world.players.forEach { p ->
                                 NMS.HANDLE.sendBlockAction(p, block.block, 1, 0)
                             }
