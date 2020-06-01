@@ -10,6 +10,8 @@ import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.NMS
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
+import io.izzel.taboolib.module.packet.TPacketHandler
+import io.izzel.taboolib.module.packet.TPacketListener
 import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
@@ -32,21 +34,25 @@ import org.bukkit.event.player.PlayerJoinEvent
 @TListener(depend = ["Zaphkiel"])
 class TreasureChestEvents : Listener, Helper {
 
-    @TPacket(type = TPacket.Type.RECEIVE)
-    fun e(player: Player, packet: Packet): Boolean {
-        if (packet.`is`("PacketPlayInUseItem")) {
-            val a = packet.read("a")
-            val pos = NMS.handle().fromBlockPosition(SimpleReflection.getFieldValueChecked(a.javaClass, a, "c", true))
-            val loc = Location(player.world, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
-            val chest = TreasureChest.getChest(loc.block) ?: return true
-            if (packet.read("b").toString() == "MAIN_HAND") {
-                Bukkit.getScheduler().runTask(Sandalphon.getPlugin(), Runnable {
-                    chest.open(player)
-                })
+    init {
+        TPacketHandler.addListener(Sandalphon.getPlugin(), object : TPacketListener() {
+
+            override fun onReceive(player: Player, packet: Packet): Boolean {
+                if (packet.`is`("PacketPlayInUseItem")) {
+                    val a = packet.read("a")
+                    val pos = NMS.handle().fromBlockPosition(SimpleReflection.getFieldValueChecked(a.javaClass, a, "c", true))
+                    val loc = Location(player.world, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
+                    val chest = TreasureChest.getChest(loc.block) ?: return true
+                    if (packet.read("b").toString() == "MAIN_HAND") {
+                        Bukkit.getScheduler().runTask(Sandalphon.getPlugin(), Runnable {
+                            chest.open(player)
+                        })
+                    }
+                    return false
+                }
+                return true
             }
-            return false
-        }
-        return true
+        })
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)

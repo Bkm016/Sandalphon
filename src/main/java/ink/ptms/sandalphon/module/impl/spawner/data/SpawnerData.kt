@@ -5,6 +5,7 @@ import ink.ptms.sandalphon.module.impl.spawner.Spawner
 import ink.ptms.sandalphon.module.impl.spawner.ai.FollowAi
 import ink.ptms.sandalphon.module.impl.spawner.event.EntityReleaseEvent
 import ink.ptms.sandalphon.module.impl.spawner.event.EntityRespawnEvent
+import ink.ptms.sandalphon.module.impl.spawner.event.SpawnerTickEvent
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.ai.SimpleAiSelector
@@ -60,6 +61,9 @@ class SpawnerData(val block: Location, val mob: MythicMob) {
     }
 
     fun tick(loc: Location) {
+        if (SpawnerTickEvent(this).call().isCancelled) {
+            return
+        }
         val pos = loc.clone().add(0.5, 1.5, 0.5)
         if (loc.world!!.players.all { it.location.distance(loc) > activationrange }) {
             val entity = mobs.remove(loc) ?: return

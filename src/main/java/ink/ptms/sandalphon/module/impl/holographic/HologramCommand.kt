@@ -37,7 +37,7 @@ class HologramCommand : BaseMainCommand(), Helper {
         Hologram.export()
     }
 
-    @SubCommand(priority = 0.1, description = "移除脚本", type = CommandType.PLAYER)
+    @SubCommand(priority = 0.1, description = "移除全息", type = CommandType.PLAYER)
     val remove = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {

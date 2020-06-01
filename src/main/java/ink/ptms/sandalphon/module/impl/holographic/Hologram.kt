@@ -40,10 +40,6 @@ object Hologram {
         }
     }
 
-    fun delete(id: String) {
-        data.set(id, null)
-    }
-
     @TFunction.Cancel
     fun cancel() {
         holograms.forEach { it.cancel() }
@@ -56,6 +52,10 @@ object Hologram {
                 it.refresh(player)
             }
         }
+    }
+
+    fun delete(id: String) {
+        data.set(id, null)
     }
 
     fun getHologram(id: String): HologramData? {

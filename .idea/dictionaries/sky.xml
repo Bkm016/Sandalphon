@@ -2,6 +2,7 @@
   <dictionary name="sky">
     <words>
       <w>activationrange</w>
+      <w>blockmine</w>
       <w>cooldown</w>
       <w>leashrange</w>
       <w>maxmobs</w>
