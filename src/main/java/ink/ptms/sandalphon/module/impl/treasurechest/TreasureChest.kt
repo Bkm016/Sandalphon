@@ -54,7 +54,7 @@ object TreasureChest {
         }
     }
 
-    @TSchedule(period = 20 * 60)
+    @TSchedule(period = 20 * 60, async = true)
     fun export() {
         chests.forEach { chest ->
             val location = Utils.fromLocation(chest.block).replace(".", "__")

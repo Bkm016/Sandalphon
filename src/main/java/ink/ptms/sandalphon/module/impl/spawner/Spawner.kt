@@ -57,6 +57,7 @@ object Spawner {
     }
 
     @TFunction.Cancel
+    @TSchedule(period = 20 * 60, async = true)
     fun export() {
         spawners.forEach { spawner ->
             val location = Utils.fromLocation(spawner.block).replace(".", "__")

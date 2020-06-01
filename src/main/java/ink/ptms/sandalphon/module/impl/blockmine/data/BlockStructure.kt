@@ -15,11 +15,11 @@ class BlockStructure(
         @Expose
         var origin: Material,
         @Expose
-        val replace: Material,
+        var replace: Material,
         @Expose
         var offset: Vector,
         @Expose
-        var tool: String?,
+        var tool: String? = null,
         @Expose
-        val drop: MutableList<BlockDrop>
+        val drop: MutableList<BlockDrop> = ArrayList()
 )

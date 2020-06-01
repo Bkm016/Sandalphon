@@ -56,6 +56,7 @@ object BlockMine {
     }
 
     @TFunction.Cancel
+    @TSchedule(period = 20 * 60, async = true)
     fun export() {
         blocks.forEach { block ->
             data.set(block.id, Utils.format(Utils.serializer.toJsonTree(block)))
@@ -64,14 +65,14 @@ object BlockMine {
 
     fun cached() {
         blocksCache.clear()
-        blocksCache.addAll(blocks.flatMap { b -> b.progress.flatMap { p -> p.structures.map { it.origin } } })
+        blocksCache.addAll(blocks.flatMap { b -> b.progress.flatMap { p -> p.structures.flatMap { listOf(it.origin, it.replace) } } })
     }
 
     fun delete(id: String) {
         data.set(id, null)
     }
 
-    fun find(block: Location): Pair<BlockData, Location>? {
+    fun find(block: Location): Pair<BlockData, Pair<BlockState, BlockStructure>>? {
         if (block.block.type !in blocksCache) {
             return null
         }

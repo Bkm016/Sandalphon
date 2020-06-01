@@ -1,13 +1,18 @@
 package ink.ptms.sandalphon.module.impl.blockmine
 
+import ink.ptms.cronus.builder.element.BuilderStageList
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockData
 import ink.ptms.sandalphon.module.impl.holographic.Hologram
 import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
+import ink.ptms.sandalphon.util.Utils
+import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.command.base.*
+import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
+import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
@@ -39,7 +44,7 @@ class BlockCommand : BaseMainCommand(), Helper {
         BlockMine.export()
     }
 
-    @SubCommand(priority = 0.1, description = "移除开采结构", type = CommandType.PLAYER)
+    @SubCommand(priority = 0.1, description = "移除开采结构", arguments = ["序号"], type = CommandType.PLAYER)
     val remove = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
@@ -63,7 +68,7 @@ class BlockCommand : BaseMainCommand(), Helper {
         }
     }
 
-    @SubCommand(priority = 0.2, description = "修改开采结构", type = CommandType.PLAYER)
+    @SubCommand(priority = 0.2, description = "修改开采结构", arguments = ["序号"], type = CommandType.PLAYER)
     val edit = object : BaseSubCommand() {
 
         override fun getArguments(): Array<Argument> {
@@ -85,13 +90,35 @@ class BlockCommand : BaseMainCommand(), Helper {
         }
     }
 
+    @SubCommand(priority = 0.21, description = "布置开采结构", arguments = ["序号"], type = CommandType.PLAYER)
+    val into = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+                sender.error("该功能依赖 Zaphkiel 插件.")
+                return
+            }
+            val blockData = BlockMine.getBlock(args[0])
+            if (blockData == null) {
+                sender.error("该开采结构不存在.")
+                return
+            }
+            sender.info("使用§f场景魔杖§7右键方块创建实例, 左键方块移除实例.")
+            CronusUtils.addItem(sender as Player, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f场景魔杖").lore("§7BlockMine", "§7${blockData.id}").shiny().build())
+        }
+    }
+
     @SubCommand(priority = 0.5, description = "附近开采结构", type = CommandType.PLAYER)
     fun near(sender: CommandSender, args: Array<String>) {
         sender.info("附近开采结构:")
         BlockMine.blocks.forEach {
-            it.blocks.forEach { (k, _) ->
-                if (k.world?.name == (sender as Player).world.name && k.distance(sender.location) < 50) {
-                    sender.info("§8 - §f${it.id} §7(${Numbers.format(k.distance(sender.location))}m)")
+            it.blocks.forEach { state ->
+                if (state.location.world?.name == (sender as Player).world.name && state.location.distance(sender.location) < 50) {
+                    sender.info("§8 - §f${it.id} §7(${Numbers.format(state.location.distance(sender.location))}m)")
                 }
             }
         }

@@ -102,7 +102,7 @@ class ChestData(val block: Location) {
             val item = ZaphkielAPI.getItem(k, player) ?: return@forEach
             val event = ItemGenerateEvent(player, this, item, v).call()
             if (event.nonCancelled()) {
-                inventory.setItem(content.removeAt(Numbers.getRandom().nextInt(content.size)), event.item.rebuild(player).run {
+                inventory.setItem(content.removeAt(Numbers.getRandom().nextInt(content.size)), event.item.save().run {
                     this.amount = event.amount
                     this
                 })
@@ -270,11 +270,13 @@ class ChestData(val block: Location) {
                         14 -> {
                             global = !global
                             it.currentItem = ItemBuilder(Material.BEACON).name("§f全局").lore(if (global) "§a启用" else "§c禁用").build()
+                            it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                         }
                         15 -> {
                             if (player.inventory.itemInMainHand.type.isBlock || player.inventory.itemInMainHand.type == Material.AIR) {
                                 replace = player.inventory.itemInMainHand.type
                                 it.inventory.setItem(15, ItemBuilder(Material.GLASS).name("§f替换").lore("§7${Items.getName(ItemStack(replace))}").build())
+                                it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                             } else {
                                 player.sendMessage("§c[Sandalphon] §7手持物品非方块.")
                             }
@@ -297,7 +299,7 @@ class ChestData(val block: Location) {
                 .build {
                     item.forEach { (k, v) ->
                         val itemStream = ZaphkielAPI.getItem(k, player) ?: return@forEach
-                        it.addItem(itemStream.rebuild(player).run {
+                        it.addItem(itemStream.save().run {
                             this.amount = v
                             this
                         })
