@@ -107,8 +107,30 @@ class BlockCommand : BaseMainCommand(), Helper {
                 sender.error("该开采结构不存在.")
                 return
             }
-            sender.info("使用§f场景魔杖§7右键方块创建实例, 左键方块移除实例.")
+            sender.info("使用§f场景魔杖§7左键方块创建实例, 右键方块移除实例.")
             CronusUtils.addItem(sender as Player, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f场景魔杖").lore("§7BlockMine", "§7${blockData.id}").shiny().build())
+        }
+    }
+
+    @SubCommand(priority = 0.22, description = "调试开采结构", arguments = ["序号"], type = CommandType.PLAYER)
+    val debug = object : BaseSubCommand() {
+
+        override fun getArguments(): Array<Argument> {
+            return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
+        }
+
+        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+                sender.error("该功能依赖 Zaphkiel 插件.")
+                return
+            }
+            val blockData = BlockMine.getBlock(args[0])
+            if (blockData == null) {
+                sender.error("该开采结构不存在.")
+                return
+            }
+            sender.info("使用§f调试魔杖§7左键方块重建实例, 右键方块切换阶段.")
+            CronusUtils.addItem(sender as Player, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f调试魔杖").lore("§7BlockMine", "§7${blockData.id}").shiny().build())
         }
     }
 

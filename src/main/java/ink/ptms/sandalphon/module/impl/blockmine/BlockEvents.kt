@@ -89,6 +89,21 @@ class BlockEvents : Listener, Helper {
                 e.player.info("实例已创建.")
                 BlockMine.export()
             }
+            if (Items.hasName(e.player.inventory.itemInMainHand, "调试魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "BlockMine")) {
+                e.isCancelled = true
+                val blockData = BlockMine.getBlock(e.player.inventory.itemInMainHand.itemMeta!!.lore!![1].unColored())
+                if (blockData == null) {
+                    e.player.error("该魔杖已失效.")
+                    return
+                }
+                val pair = blockData.find(e.block.location)
+                if (pair == null) {
+                    e.player.error("该位置不存在实例.")
+                    return
+                }
+                blockData.build(pair.first)
+                e.player.info("实例已重建.")
+            }
             if (Items.hasName(e.player.inventory.itemInMainHand, "捕获魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "BlockMine")) {
                 e.isCancelled = true
                 val args = e.player.inventory.itemInMainHand.itemMeta!!.lore!![1].unColored().split(" ")
@@ -137,6 +152,23 @@ class BlockEvents : Listener, Helper {
                 blockData.blocks.remove(mid.first)
                 e.player.info("实例已删除.")
                 BlockMine.export()
+            }
+            if (Items.hasName(e.player.inventory.itemInMainHand, "调试魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "BlockMine")) {
+                e.isCancelled = true
+                val blockData = BlockMine.getBlock(e.player.inventory.itemInMainHand.itemMeta!!.lore!![1].unColored())
+                if (blockData == null) {
+                    e.player.error("该魔杖已失效.")
+                    return
+                }
+                val pair = blockData.find(e.clickedBlock!!.location)
+                if (pair == null) {
+                    e.player.error("该位置不存在实例.")
+                    return
+                }
+                blockData.clean(pair.first)
+                pair.first.current = if (pair.first.current + 1 == blockData.progress.size) 0 else pair.first.current + 1
+                blockData.build(pair.first)
+                e.player.info("实例阶段已切换.")
             }
             if (Items.hasName(e.player.inventory.itemInMainHand, "捕获魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "BlockMine")) {
                 e.isCancelled = true

@@ -89,14 +89,14 @@ class BlockData(@Expose val id: String) {
     }
 
     fun grow(blockState: BlockState, force: Boolean = false): Boolean {
-        if (!blockState.update && blockState.current + 1 == progress.size) {
+        if (!force && !blockState.update) {
             blockState.latest = System.currentTimeMillis()
             return false
         }
         if (!force && System.currentTimeMillis() - blockState.latest < (growTime * 1000L)) {
             return false
         }
-        if (Numbers.random(growChange)) {
+        if (!force && Numbers.random(growChange)) {
             if (isBroken(blockState)) {
                 blockState.current = 0
             } else if (!blockState.update) {
@@ -160,6 +160,10 @@ class BlockData(@Expose val id: String) {
                             inv.addItem(ItemBuilder(Material.MAP).name("§f阶段 (+)").lore("§7新增阶段").build())
                         }.event {
                             it.isCancelled = true
+                            if (it.rawSlot == -999) {
+                                openEdit(player)
+                                it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                            }
                             if (it.rawSlot >= 0 && it.rawSlot < progress.size) {
                                 if (it.clickType == ClickType.CLICK && it.castClick().isLeftClick) {
                                     openEditProgress(player, progress[it.rawSlot])
@@ -189,9 +193,13 @@ class BlockData(@Expose val id: String) {
                         .rows(3)
                         .build { inv ->
                             openProgress.structures.forEach { structure -> structureMap[structure.origin] = structure }
-                            structureMap.forEach { (k, _) -> inv.addItem(ItemBuilder(k).lore("", "§8点击编辑").build()) }
+                            structureMap.forEach { (k, v) -> inv.addItem(ItemBuilder(k).lore("§7替换: ${Items.getName(ItemStack(v.replace))}", "§7工具: ${v.tool ?: "无"}", "§7掉落: ${v.drop.size} 项", "", "§8点击编辑").build()) }
                         }.event {
                             it.isCancelled = true
+                            if (it.rawSlot == -999) {
+                                openEditProgress(player)
+                                it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                            }
                             if (it.rawSlot in 0..26 && Items.nonNull(it.currentItem)) {
                                 val structure = structureMap[it.currentItem.type]
                                 if (structure != null) {
@@ -207,7 +215,7 @@ class BlockData(@Expose val id: String) {
                         .rows(3)
                         .build { inv ->
                             inv.setItem(11, ItemBuilder(Material.GLASS).name("§f替换").lore("§7${Items.getName(ItemStack(openStructure.replace))}").build())
-                            inv.setItem(13, ItemBuilder(Material.IRON_PICKAXE).name("§f工具").lore("§7${if (openStructure.tool == null) "无" else openStructure.tool}").build())
+                            inv.setItem(13, ItemBuilder(Material.IRON_PICKAXE).name("§f工具").lore("§7${openStructure.tool ?: "无"}").build())
                             inv.setItem(15, ItemBuilder(Material.CHEST_MINECART).name("§f掉落").lore(openStructure.drop.map { "§7${it.item} * ${it.amount} (${it.chance * 100}%)" }).build())
                         }.event {
                             it.isCancelled = true
@@ -227,6 +235,10 @@ class BlockData(@Expose val id: String) {
                                 }
                                 15 -> {
                                     openEditDrop(player, openProgress, openStructure)
+                                    it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                                }
+                                -999 -> {
+                                    openEditProgress(player, openProgress)
                                     it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                                 }
                             }
@@ -250,6 +262,10 @@ class BlockData(@Expose val id: String) {
                     inv.addItem(ItemBuilder(Material.MAP).name("§f掉落 (+)").lore("§7新增掉落").build())
                 }.event {
                     it.isCancelled = true
+                    if (it.rawSlot == -999) {
+                        openEditProgress(player, openProgress, openStructure)
+                        it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+                    }
                     if (it.rawSlot >= 0 && it.rawSlot < openStructure.drop.size) {
                         if (it.clickType == ClickType.CLICK && it.castClick().isLeftClick) {
                             Signs.fakeSign(player, arrayOf("${openStructure.drop[it.rawSlot].chance}")) { sign ->
