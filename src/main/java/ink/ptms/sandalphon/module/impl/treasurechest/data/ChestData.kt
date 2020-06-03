@@ -5,7 +5,8 @@ import ink.ptms.cronus.internal.condition.ConditionParser
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.api.NMS
 import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
-import ink.ptms.sandalphon.module.impl.treasurechest.event.ItemGenerateEvent
+import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestOpenEvent
+import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestGenerateEvent
 import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.cronus.CronusUtils
@@ -26,10 +27,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
-import java.util.stream.Collectors
-import java.util.stream.IntStream
 import kotlin.collections.ArrayList
-import kotlin.collections.MutableList
 import kotlin.collections.all
 import kotlin.collections.filter
 import kotlin.collections.forEach
@@ -86,7 +84,7 @@ class ChestData(val block: Location) {
     }
 
     fun update(player: Player, inventory: Inventory): Inventory {
-        val content: MutableList<Int> = IntStream.range(0, inventory.size).boxed().collect(Collectors.toList())!!
+        val content = (0 until inventory.size).toMutableList()
         val items = ArrayList<Pair<String, Int>>()
         if (random == -1 to -1) {
             items.addAll(item)
@@ -100,7 +98,7 @@ class ChestData(val block: Location) {
         }
         items.forEach { (k, v) ->
             val item = ZaphkielAPI.getItem(k, player) ?: return@forEach
-            val event = ItemGenerateEvent(player, this, item, v).call()
+            val event = ChestGenerateEvent(player, this, item, v).call()
             if (event.nonCancelled()) {
                 inventory.setItem(content.removeAt(Numbers.getRandom().nextInt(content.size)), event.item.save().run {
                     this.amount = event.amount
@@ -151,6 +149,10 @@ class ChestData(val block: Location) {
     }
 
     fun open(player: Player) {
+        if (ChestOpenEvent(player, this).call().isCancelled) {
+            player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
+            return
+        }
         if (!check(player)) {
             player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
             return

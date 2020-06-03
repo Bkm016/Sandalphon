@@ -2,6 +2,7 @@ package ink.ptms.sandalphon.module.impl.blockmine.data
 
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.blockmine.BlockMine
+import ink.ptms.sandalphon.module.impl.blockmine.event.BlockGrowEvent
 import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.internal.gson.annotations.Expose
@@ -89,6 +90,9 @@ class BlockData(@Expose val id: String) {
     }
 
     fun grow(blockState: BlockState, force: Boolean = false): Boolean {
+        if (BlockGrowEvent(this, blockState).call().isCancelled) {
+            return false
+        }
         if (!force && !blockState.update) {
             blockState.latest = System.currentTimeMillis()
             return false
