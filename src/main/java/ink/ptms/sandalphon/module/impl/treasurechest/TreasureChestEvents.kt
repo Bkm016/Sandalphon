@@ -31,7 +31,7 @@ import org.bukkit.event.player.PlayerJoinEvent
  * @Author sky
  * @Since 2020-05-29 22:00
  */
-@TListener(depend = ["Zaphkiel"])
+@TListener
 class TreasureChestEvents : Listener, Helper {
 
     init {

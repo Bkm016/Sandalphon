@@ -3,7 +3,7 @@ package ink.ptms.sandalphon.module.impl.blockmine.data
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.blockmine.BlockMine
 import ink.ptms.sandalphon.module.impl.blockmine.event.BlockGrowEvent
-import ink.ptms.zaphkiel.ZaphkielAPI
+import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.book.builder.BookBuilder
@@ -259,9 +259,8 @@ class BlockData(@Expose val id: String) {
                 .rows(3)
                 .build { inv ->
                     openStructure.drop.forEachIndexed { index, drop ->
-                        val itemStream = ZaphkielAPI.getItem(drop.item, player) ?: return@forEachIndexed
-                        val item = itemStream.save()
-                        inv.setItem(index, ItemBuilder(item.type).name("§f${itemStream.getZaphkielName()}").lore("§7${drop.chance * 100}%", "", "§7左键编辑", "§c丢弃删除").build())
+                        val item = Utils.item(drop.item, player) ?: return@forEachIndexed
+                        inv.setItem(index, ItemBuilder(item.type).name("§f${drop.item}").lore("§7${drop.chance * 100}%", "", "§7左键编辑", "§c丢弃删除").build())
                     }
                     inv.addItem(ItemBuilder(Material.MAP).name("§f掉落 (+)").lore("§7新增掉落").build())
                 }.event {
@@ -291,10 +290,10 @@ class BlockData(@Expose val id: String) {
                                 .rows(3)
                                 .close { close ->
                                     close.inventory.filter { item -> Items.nonNull(item) }.forEach { item ->
-                                        val itemStream = ZaphkielAPI.read(item)
-                                        if (itemStream.isExtension()) {
+                                        val itemId = Utils.itemId(item)
+                                        if (itemId != null) {
                                             openProgress.structures.filter { structure -> structure.origin == openStructure.origin }.forEach { structure ->
-                                                structure.drop.add(BlockDrop(itemStream.getZaphkielName(), item.amount, 0.0))
+                                                structure.drop.add(BlockDrop(itemId, item.amount, 0.0))
                                             }
                                         }
                                     }

@@ -1,27 +1,54 @@
 package ink.ptms.sandalphon.util
 
 import com.google.common.base.Enums
+import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.internal.gson.*
+import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.util.item.ItemStacker
 import io.izzel.taboolib.util.item.Items
+import me.asgard.sacreditem.SacredItemBuilder
+import me.asgard.sacreditem.item.SacredItemManager
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
+import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
 import org.bukkit.util.Vector
 
 object Utils {
 
+    @TInject("SacredItem")
+    val asgardHook: Boolean = false
     val serializer = GsonBuilder().excludeFieldsWithoutExposeAnnotation()
             .registerTypeAdapter(Vector::class.java, JsonSerializer<Vector> { a, _, _ -> JsonPrimitive("${a.x},${a.y},${a.z}") })
-            .registerTypeAdapter(Vector::class.java, JsonDeserializer<Vector> { a, _, _ -> a.asString.split(",").run { Vector(this[0].asDouble(),this[1].asDouble(), this[2].asDouble()) } })
+            .registerTypeAdapter(Vector::class.java, JsonDeserializer { a, _, _ -> a.asString.split(",").run { Vector(this[0].asDouble(),this[1].asDouble(), this[2].asDouble()) } })
             .registerTypeAdapter(Material::class.java, JsonSerializer<Material> { a, _, _ -> JsonPrimitive(a.name) })
-            .registerTypeAdapter(Material::class.java, JsonDeserializer<Material> { a, _, _ -> Items.asMaterial(a.asString) })
+            .registerTypeAdapter(Material::class.java, JsonDeserializer { a, _, _ -> Items.asMaterial(a.asString) })
             .registerTypeAdapter(Location::class.java, JsonSerializer<Location> { a, _, _ -> JsonPrimitive(fromLocation(a)) })
-            .registerTypeAdapter(Location::class.java, JsonDeserializer<Location> { a, _, _ -> toLocation(a.asString) })
+            .registerTypeAdapter(Location::class.java, JsonDeserializer { a, _, _ -> toLocation(a.asString) })
             .registerTypeAdapter(BlockFace::class.java, JsonSerializer<BlockFace> { a, _, _ -> JsonPrimitive(a.name) })
-            .registerTypeAdapter(BlockFace::class.java, JsonDeserializer<BlockFace> { a, _, _ -> Enums.getIfPresent(BlockFace::class.java, a.asString).or(BlockFace.SELF) })
+            .registerTypeAdapter(BlockFace::class.java, JsonDeserializer { a, _, _ -> Enums.getIfPresent(BlockFace::class.java, a.asString).or(BlockFace.SELF) })
             .create()
+
+    fun item(item: String, player: Player): ItemStack? {
+        if (asgardHook) {
+            return SacredItemBuilder.buildItem(player, SacredItemManager.getInstance().getItem(item) ?: return null)
+        }
+        return ZaphkielAPI.getItem(item, player)?.save()
+    }
+
+    fun itemId(itemStack: ItemStack): String? {
+        if (asgardHook) {
+            return SacredItemManager.getInstance().itemList.firstOrNull { itemStack.isSimilar(SacredItemManager.getInstance().getItem(it)) }
+        }
+        val itemStream = ZaphkielAPI.read(itemStack)
+        if (itemStream.isExtension()) {
+            return itemStream.getZaphkielName()
+        }
+        return null
+    }
 
     fun format(json: JsonElement): String {
         return GsonBuilder().setPrettyPrinting().create().toJson(json)

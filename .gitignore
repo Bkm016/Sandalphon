@@ -2,7 +2,8 @@
 ### Gradle template
 .gradle
 /build/
-/libs/
+/libs/MythicMobs-4.8.0-SNAPSHOT.jar
+/libs/Zaphkiel.jar
 
 # Ignore Gradle GUI config
 gradle-app.setting

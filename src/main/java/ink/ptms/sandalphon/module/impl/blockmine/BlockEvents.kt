@@ -4,6 +4,7 @@ import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
+import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.nms.nbt.NBTBase
@@ -35,7 +36,7 @@ import kotlin.math.min
  * @Author sky
  * @Since 2020-06-01 21:43
  */
-@TListener(depend = ["Zaphkiel"])
+@TListener
 class BlockEvents : Listener, Helper {
 
     val catcher = HashMap<String, KV<Location?, Location?>>()
@@ -46,13 +47,19 @@ class BlockEvents : Listener, Helper {
         e.isCancelled = true
         if (pair.second.second.origin == e.block.type) {
             if (pair.second.second.tool != null) {
-                val itemStream = ZaphkielAPI.read(e.player.inventory.itemInMainHand)
-                if (itemStream.isVanilla() || !itemStream.getZaphkielData().containsKey("blockmine")) {
-                    return
-                }
-                val blockmine = itemStream.getZaphkielData()["blockmine"] as NBTList
-                if (!blockmine.contains(NBTBase(pair.second.second.tool))) {
-                    return
+                if (Utils.asgardHook) {
+                    if (!Items.hasLore(e.player.inventory.itemInMainHand, pair.second.second.tool)) {
+                        return
+                    }
+                } else {
+                    val itemStream = ZaphkielAPI.read(e.player.inventory.itemInMainHand)
+                    if (itemStream.isVanilla() || !itemStream.getZaphkielData().containsKey("blockmine")) {
+                        return
+                    }
+                    val blockmine = itemStream.getZaphkielData()["blockmine"] as NBTList
+                    if (!blockmine.contains(NBTBase(pair.second.second.tool))) {
+                        return
+                    }
                 }
             }
             e.block.type = pair.second.second.replace
@@ -61,7 +68,7 @@ class BlockEvents : Listener, Helper {
             }
             pair.second.first.update = true
             pair.second.second.drop.filter { Numbers.random(it.chance) }.forEach {
-                e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), (ZaphkielAPI.getItem(it.item, e.player)?.save() ?: return@forEach).run {
+                e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), (Utils.item(it.item, e.player) ?: return@forEach).run {
                     this.amount = it.amount
                     this
                 }).pickupDelay = 20

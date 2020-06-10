@@ -97,13 +97,21 @@ class ChestData(val block: Location) {
             }
         }
         items.forEach { (k, v) ->
-            val item = ZaphkielAPI.getItem(k, player) ?: return@forEach
-            val event = ChestGenerateEvent(player, this, item, v).call()
-            if (event.nonCancelled()) {
-                inventory.setItem(content.removeAt(Numbers.getRandom().nextInt(content.size)), event.item.save().run {
-                    this.amount = event.amount
+            if (Utils.asgardHook) {
+                val item = Utils.item(k, player) ?: return@forEach
+                inventory.setItem(content.removeAt(Numbers.getRandom().nextInt(content.size)), item.run {
+                    this.amount = amount
                     this
                 })
+            } else {
+                val item = ZaphkielAPI.getItem(k, player) ?: return@forEach
+                val event = ChestGenerateEvent(player, this, item, v).call()
+                if (event.nonCancelled()) {
+                    inventory.setItem(content.removeAt(Numbers.getRandom().nextInt(content.size)), event.item.save().run {
+                        this.amount = event.amount
+                        this
+                    })
+                }
             }
         }
         return inventory
@@ -162,15 +170,22 @@ class ChestData(val block: Location) {
                 player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                 return
             }
-            val itemStream = ZaphkielAPI.read(player.inventory.itemInMainHand)
-            if (itemStream.isVanilla()) {
-                player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
-                return
-            }
-            val compound = itemStream.getZaphkielData()["treasurechest"]
-            if (compound == null || (compound.asString() != locked && compound.asString() != "all")) {
-                player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
-                return
+            if (Utils.asgardHook) {
+                if (!Items.hasLore(player.inventory.itemInMainHand, locked)) {
+                    player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
+                    return
+                }
+            } else {
+                val itemStream = ZaphkielAPI.read(player.inventory.itemInMainHand)
+                if (itemStream.isVanilla()) {
+                    player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
+                    return
+                }
+                val compound = itemStream.getZaphkielData()["treasurechest"]
+                if (compound == null || (compound.asString() != locked && compound.asString() != "all")) {
+                    player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
+                    return
+                }
             }
             player.inventory.itemInMainHand.amount -= 1
         }
@@ -300,8 +315,8 @@ class ChestData(val block: Location) {
                 .rows(if (link.isNotEmpty()) 6 else 3)
                 .build {
                     item.forEach { (k, v) ->
-                        val itemStream = ZaphkielAPI.getItem(k, player) ?: return@forEach
-                        it.addItem(itemStream.save().run {
+                        val itemStack = Utils.item(k, player) ?: return@forEach
+                        it.addItem(itemStack.run {
                             this.amount = v
                             this
                         })
@@ -309,9 +324,9 @@ class ChestData(val block: Location) {
                 }.close {
                     this.item.clear()
                     it.inventory.filter { item -> Items.nonNull(item) }.forEach { item ->
-                        val itemStream = ZaphkielAPI.read(item)
-                        if (itemStream.isExtension()) {
-                            this.item.add(itemStream.getZaphkielName() to item.amount)
+                        val itemId = Utils.itemId(item)
+                        if (itemId != null) {
+                            this.item.add(itemId to item.amount)
                         }
                     }
                     TreasureChest.export()

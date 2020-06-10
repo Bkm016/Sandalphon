@@ -34,7 +34,7 @@ object TreasureChest {
 
     @TSchedule
     fun import() {
-        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
             return
         }
         chests.clear()

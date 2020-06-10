@@ -27,7 +27,7 @@ class BlockCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.0, description = "新建开采结构", arguments = ["序号"], type = CommandType.PLAYER)
     fun create(sender: CommandSender, args: Array<String>) {
-        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
             sender.error("该功能依赖 Zaphkiel 插件.")
             return
         }
@@ -52,7 +52,7 @@ class BlockCommand : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
                 sender.error("该功能依赖 Zaphkiel 插件.")
                 return
             }
@@ -76,7 +76,7 @@ class BlockCommand : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
                 sender.error("该功能依赖 Zaphkiel 插件.")
                 return
             }
@@ -98,7 +98,7 @@ class BlockCommand : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
                 sender.error("该功能依赖 Zaphkiel 插件.")
                 return
             }
@@ -120,7 +120,7 @@ class BlockCommand : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
                 sender.error("该功能依赖 Zaphkiel 插件.")
                 return
             }

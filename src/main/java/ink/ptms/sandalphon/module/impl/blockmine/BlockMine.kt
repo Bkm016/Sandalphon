@@ -45,7 +45,7 @@ object BlockMine {
     @Suppress("UNCHECKED_CAST")
     @TSchedule
     fun import() {
-        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
             return
         }
         blocks.clear()
