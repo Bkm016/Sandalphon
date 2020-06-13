@@ -29,7 +29,7 @@ class SpawnerEvents : Listener, Helper {
         Spawner.spawners.forEach { spawnerData ->
             spawnerData.mobs.forEach { (k, v) ->
                 if (v.uniqueId == e.entity.uniqueId) {
-                    spawnerData.time[k] = System.currentTimeMillis() +(spawnerData.respawn * 1000L)
+                    spawnerData.time[k] = System.currentTimeMillis() + (spawnerData.respawn * 1000L)
                     e.entity.setMetadata("RESPAWN", FixedMetadataValue(Sandalphon.getPlugin(), spawnerData.respawn))
                 }
             }

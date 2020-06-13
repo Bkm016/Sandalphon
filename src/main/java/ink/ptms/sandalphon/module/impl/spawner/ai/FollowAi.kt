@@ -37,7 +37,12 @@ class FollowAi(val entity: LivingEntity, val target: Location, val speed: Double
         })
         if (counter.next()) {
             if (entity.location.world!!.name == target.world!!.name) {
-                if (current.distance(entity.location) < 1) {
+                // 近距离传送
+                if (target.distance(entity.location) < 1.5) {
+                    entity.teleport(target)
+                }
+                // 卡位判定
+                else if (current.distance(entity.location) < 1) {
                     if (wait++ >= 10) {
                         entity.teleport(target)
                         return

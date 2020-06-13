@@ -89,7 +89,7 @@ class ChestData(val block: Location) {
         if (random == -1 to -1) {
             items.addAll(item)
         } else {
-            val random = Numbers.getRandomInteger(random.first, random.second.coerceAtLeast(item.size).coerceAtLeast(random.first))
+            val random = Numbers.getRandomInteger(random.first, random.second.coerceAtMost(item.size).coerceAtLeast(random.first))
             item.toList().toMutableList().run {
                 (1..random).forEach { _ ->
                     items.add(this.removeAt(Numbers.getRandom().nextInt(this.size)))
@@ -190,7 +190,7 @@ class ChestData(val block: Location) {
             player.inventory.itemInMainHand.amount -= 1
         }
         if (global) {
-            if (globalTime > System.currentTimeMillis()) {
+            if (globalTime > System.currentTimeMillis() || (update == -1L && globalTime > 0)) {
                 if (replace == Material.CHEST || replace == Material.TRAPPED_CHEST) {
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                 }

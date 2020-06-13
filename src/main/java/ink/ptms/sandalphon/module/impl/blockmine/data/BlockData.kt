@@ -93,7 +93,7 @@ class BlockData(@Expose val id: String) {
         if (BlockGrowEvent(this, blockState).call().isCancelled) {
             return false
         }
-        if (!force && !blockState.update) {
+        if (!force && (!blockState.update && blockState.current + 1 == progress.size)) {
             blockState.latest = System.currentTimeMillis()
             return false
         }

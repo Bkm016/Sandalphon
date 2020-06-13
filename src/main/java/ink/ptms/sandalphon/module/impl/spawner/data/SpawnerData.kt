@@ -21,7 +21,9 @@ import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
+import org.bukkit.entity.Creature
 import org.bukkit.entity.LivingEntity
+import org.bukkit.entity.Mob
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.metadata.FixedMetadataValue
@@ -69,9 +71,10 @@ class SpawnerData(val block: Location, val mob: MythicMob) {
             val entity = mobs.remove(loc) ?: return
             EntityReleaseEvent(entity, this).call()
             entity.remove()
+            time[loc] = System.currentTimeMillis() + (respawn * 1000L)
         } else {
             val entity = mobs[loc]
-            if (entity != null && entity.isValid) {
+            if (entity != null && (entity.isValid && !entity.hasMetadata("RESPAWN"))) {
                 if (entity.location.world!!.name == loc.world!!.name) {
                     if (entity.hasMetadata("SPAWNER_BACKING")) {
                         if (entity.location.distance(pos) < 0.8) {
@@ -79,6 +82,9 @@ class SpawnerData(val block: Location, val mob: MythicMob) {
                             entity.isInvulnerable = false
                             SimpleAiSelector.getExecutor().removeGoalAi(entity, "FollowAi")
                         } else {
+                            if (entity is Mob) {
+                                entity.target = null
+                            }
                             if (entity.isLeashed) {
                                 entity.setLeashHolder(null)
                             }

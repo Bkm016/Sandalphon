@@ -4,8 +4,10 @@ import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.holographic.Hologram
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockData
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockType
+import ink.ptms.sandalphon.module.impl.spawner.ai.FollowAi
 import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import ink.ptms.sandalphon.util.Utils
+import io.izzel.taboolib.module.ai.SimpleAiSelector
 import io.izzel.taboolib.module.command.lite.CommandBuilder
 import io.izzel.taboolib.module.db.local.LocalFile
 import io.izzel.taboolib.module.inject.TFunction
@@ -24,6 +26,7 @@ import org.bukkit.entity.EntityType
 import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
+import org.bukkit.metadata.FixedMetadataValue
 
 object Spawner {
 
@@ -46,7 +49,8 @@ object Spawner {
         spawners.clear()
         data.getKeys(false).forEach {
             spawners.add(SpawnerData(Utils.toLocation(it.replace("__", ".")), MythicMobs.inst().mobManager.getMythicMob(data.getString("$it.mob"))).run {
-                this.time.putAll(data.getConfigurationSection("$it.time")?.getValues(false)?.map { Utils.toLocation(it.key.replace("__", ".")) to it.value as Long }?.toMap() ?: emptyMap())
+                this.time.putAll(data.getConfigurationSection("$it.time")?.getValues(false)?.map { Utils.toLocation(it.key.replace("__", ".")) to it.value as Long }?.toMap()
+                        ?: emptyMap())
                 this.copy.addAll(data.getStringList("$it.link").map { link -> Utils.toLocation(link) })
                 this.activationrange = data.getInt("$it.activationrange")
                 this.leashrange = data.getInt("$it.leashrange")
@@ -81,5 +85,19 @@ object Spawner {
 
     fun getSpawner(block: Block): SpawnerData? {
         return spawners.firstOrNull { it.isSpawner(block) }
+    }
+
+    fun toSpawn(entity: LivingEntity): Boolean {
+        val mythicMob = MythicMobs.inst().mobManager.getMythicMobInstance(entity)?.type ?: return false
+        val spawnerData = spawners.firstOrNull { it.mob.internalName == mythicMob.internalName } ?: return false
+        val pair = spawnerData.mobs.entries.firstOrNull { it.value.uniqueId == entity.uniqueId } ?: return false
+        if (entity.location.world!!.name == pair.key.world!!.name) {
+            entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(Sandalphon.getPlugin(), true))
+            entity.isInvulnerable = true
+            SimpleAiSelector.getExecutor().addGoalAi(entity, FollowAi(entity, pair.key.clone().add(0.5, 1.5, 0.5), 1.5), 1)
+        } else {
+            entity.teleport(pair.key.clone().add(0.5, 1.5, 0.5))
+        }
+        return true
     }
 }
