@@ -8,7 +8,9 @@ import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.util.item.Items
+import io.lumine.xikage.mythicmobs.MythicMobs
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent
+import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicReloadedEvent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
@@ -23,6 +25,11 @@ import org.bukkit.metadata.FixedMetadataValue
  */
 @TListener(depend = ["MythicMobs"])
 class SpawnerEvents : Listener, Helper {
+
+    @EventHandler
+    fun e(e: MythicReloadedEvent) {
+        Spawner.spawners.forEach { it.mob = MythicMobs.inst().mobManager.getMythicMob(it.mob.internalName) }
+    }
 
     @EventHandler
     fun e(e: MythicMobDeathEvent) {

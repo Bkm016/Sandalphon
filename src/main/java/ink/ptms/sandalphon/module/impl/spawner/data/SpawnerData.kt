@@ -34,7 +34,7 @@ import java.util.function.Consumer
  * @Author sky
  * @Since 2020-05-27 16:03
  */
-class SpawnerData(val block: Location, val mob: MythicMob) {
+class SpawnerData(val block: Location, var mob: MythicMob) {
 
     val mobs = HashMap<Location, LivingEntity>()
     val time = HashMap<Location, Long>()
@@ -66,7 +66,7 @@ class SpawnerData(val block: Location, val mob: MythicMob) {
         if (SpawnerTickEvent(this).call().isCancelled) {
             return
         }
-        val pos = loc.clone().add(0.5, 1.5, 0.5)
+        val pos = loc.clone().add(0.5, 1.0, 0.5)
         if (loc.world!!.players.all { it.location.distance(loc) > activationrange }) {
             val entity = mobs.remove(loc) ?: return
             EntityReleaseEvent(entity, this).call()
