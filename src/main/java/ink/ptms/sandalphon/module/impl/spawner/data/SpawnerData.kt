@@ -104,11 +104,11 @@ class SpawnerData(val block: Location, val mob: MythicMob) {
             } else {
                 val time = time[loc] ?: 0L
                 if (time < System.currentTimeMillis()) {
-                    val event = EntitySpawnEvent.Pre(this, loc.clone(), time > 0).call()
+                    val event = EntitySpawnEvent.Pre(this, pos.clone(), time > 0).call()
                     event.nonCancelled {
                         val activeMob = mob.spawn(BukkitAdapter.adapt(event.location), 1)
                         mobs[loc] = activeMob.livingEntity
-                        EntitySpawnEvent.Post(activeMob.livingEntity, this, loc.clone(), time > 0).call()
+                        EntitySpawnEvent.Post(activeMob.livingEntity, this, event.location, time > 0).call()
                     }
                 }
             }
