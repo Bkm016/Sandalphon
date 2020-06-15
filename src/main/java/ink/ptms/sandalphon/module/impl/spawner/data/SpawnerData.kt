@@ -4,7 +4,7 @@ import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.spawner.Spawner
 import ink.ptms.sandalphon.module.impl.spawner.ai.FollowAi
 import ink.ptms.sandalphon.module.impl.spawner.event.EntityReleaseEvent
-import ink.ptms.sandalphon.module.impl.spawner.event.EntityRespawnEvent
+import ink.ptms.sandalphon.module.impl.spawner.event.EntitySpawnEvent
 import ink.ptms.sandalphon.module.impl.spawner.event.SpawnerTickEvent
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusUtils
@@ -104,11 +104,12 @@ class SpawnerData(val block: Location, val mob: MythicMob) {
             } else {
                 val time = time[loc] ?: 0L
                 if (time < System.currentTimeMillis()) {
-                    val activeMob = mob.spawn(BukkitAdapter.adapt(pos), 1)
-                    if (time > 0) {
-                        EntityRespawnEvent(activeMob.livingEntity, this, loc).call()
+                    val event = EntitySpawnEvent.Pre(this, loc.clone(), time > 0).call()
+                    event.nonCancelled {
+                        val activeMob = mob.spawn(BukkitAdapter.adapt(event.location), 1)
+                        mobs[loc] = activeMob.livingEntity
+                        EntitySpawnEvent.Post(activeMob.livingEntity, this, loc.clone(), time > 0).call()
                     }
-                    mobs[loc] = activeMob.livingEntity
                 }
             }
         }
