@@ -82,7 +82,7 @@ class SpawnerData(val block: Location, val mob: MythicMob) {
                             entity.isInvulnerable = false
                             SimpleAiSelector.getExecutor().removeGoalAi(entity, "FollowAi")
                         } else {
-                            if (entity is Mob) {
+                            if (entity is Mob && entity.target != null) {
                                 entity.target = null
                             }
                             if (entity.isLeashed) {
