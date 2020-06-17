@@ -2,6 +2,7 @@ package ink.ptms.sandalphon.module.impl.scriptblock
 
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockData
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockType
+import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusParser
 import io.izzel.taboolib.cronus.CronusUtils
@@ -38,6 +39,7 @@ object ScriptBlock {
 
     @TFunction.Cancel
     fun export() {
+        data.getKeys(false).forEach { data.set(it, null) }
         blocks.forEach { block ->
             val location = Utils.fromLocation(block.block).replace(".", "__")
             data.set("$location.link", block.link.map { Utils.fromLocation(it) })

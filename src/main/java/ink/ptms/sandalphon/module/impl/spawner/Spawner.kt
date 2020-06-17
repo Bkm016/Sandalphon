@@ -6,6 +6,7 @@ import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockData
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockType
 import ink.ptms.sandalphon.module.impl.spawner.ai.FollowAi
 import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
+import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.module.ai.SimpleAiSelector
 import io.izzel.taboolib.module.command.lite.CommandBuilder
@@ -63,6 +64,7 @@ object Spawner {
     @TFunction.Cancel
     @TSchedule(period = 20 * 60, async = true)
     fun export() {
+        data.getKeys(false).forEach { data.set(it, null) }
         spawners.forEach { spawner ->
             val location = Utils.fromLocation(spawner.block).replace(".", "__")
             data.set("$location.time", spawner.time.map { Utils.fromLocation(it.key).replace(".", "__") to it.value }.toMap())

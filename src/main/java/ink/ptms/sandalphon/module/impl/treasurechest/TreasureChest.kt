@@ -56,6 +56,7 @@ object TreasureChest {
 
     @TSchedule(period = 20 * 60, async = true)
     fun export() {
+        data.getKeys(false).forEach { data.set(it, null) }
         chests.forEach { chest ->
             val location = Utils.fromLocation(chest.block).replace(".", "__")
             data.set("$location.item", chest.item.map { "${it.first} ${it.second}" })

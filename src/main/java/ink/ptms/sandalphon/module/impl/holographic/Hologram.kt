@@ -1,6 +1,7 @@
 package ink.ptms.sandalphon.module.impl.holographic
 
 import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
+import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.module.db.local.LocalFile
 import io.izzel.taboolib.module.inject.TFunction
@@ -33,6 +34,7 @@ object Hologram {
 
     @TFunction.Cancel
     fun export() {
+        data.getKeys(false).forEach { data.set(it, null) }
         holograms.forEach { holo ->
             data.set("${holo.id}.location", Utils.fromLocation(holo.location))
             data.set("${holo.id}.content", holo.holoContent)
