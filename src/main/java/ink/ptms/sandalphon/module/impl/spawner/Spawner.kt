@@ -6,6 +6,7 @@ import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockData
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockType
 import ink.ptms.sandalphon.module.impl.spawner.ai.FollowAi
 import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
+import ink.ptms.sandalphon.module.impl.spawner.event.EntityToSpawnEvent
 import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.module.ai.SimpleAiSelector
@@ -97,6 +98,7 @@ object Spawner {
             entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(Sandalphon.getPlugin(), true))
             entity.isInvulnerable = true
             SimpleAiSelector.getExecutor().addGoalAi(entity, FollowAi(entity, pair.key.clone().add(0.5, 1.5, 0.5), 1.5), 1)
+            EntityToSpawnEvent.Start(entity, spawnerData).call()
         } else {
             entity.teleport(pair.key.clone().add(0.5, 1.5, 0.5))
         }
