@@ -5,6 +5,7 @@ import ink.ptms.sandalphon.module.impl.spawner.Spawner
 import ink.ptms.sandalphon.module.impl.spawner.ai.FollowAi
 import ink.ptms.sandalphon.module.impl.spawner.event.EntityReleaseEvent
 import ink.ptms.sandalphon.module.impl.spawner.event.EntitySpawnEvent
+import ink.ptms.sandalphon.module.impl.spawner.event.EntityToSpawnEvent
 import ink.ptms.sandalphon.module.impl.spawner.event.SpawnerTickEvent
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusUtils
@@ -81,6 +82,7 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                             entity.removeMetadata("SPAWNER_BACKING", Sandalphon.getPlugin())
                             entity.isInvulnerable = false
                             SimpleAiSelector.getExecutor().removeGoalAi(entity, "FollowAi")
+                            EntityToSpawnEvent.Stop(entity, this).call()
                         } else {
                             if (entity is Mob && entity.target != null) {
                                 entity.target = null
@@ -97,6 +99,7 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                         entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(Sandalphon.getPlugin(), true))
                         entity.isInvulnerable = true
                         SimpleAiSelector.getExecutor().addGoalAi(entity, FollowAi(entity, pos, 1.5), 1)
+                        EntityToSpawnEvent.Start(entity, this).call()
                     }
                 } else {
                     entity.teleport(pos)
