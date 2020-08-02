@@ -15,6 +15,7 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.metadata.FixedMetadataValue
@@ -25,6 +26,13 @@ import org.bukkit.metadata.FixedMetadataValue
  */
 @TListener(depend = ["MythicMobs"])
 class SpawnerEvents : Listener, Helper {
+
+    @EventHandler
+    fun e(e: EntityTargetEvent) {
+        if (e.entity.hasMetadata("SPAWNER_BACKING")) {
+            e.isCancelled = true
+        }
+    }
 
     @EventHandler
     fun e(e: MythicReloadedEvent) {
