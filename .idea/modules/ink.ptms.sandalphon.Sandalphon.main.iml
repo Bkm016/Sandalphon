@@ -54,7 +54,7 @@
     <orderEntry type="module-library" scope="PROVIDED">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../libs/MythicMobs-4.8.0-SNAPSHOT.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../libs/MythicMobs.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
