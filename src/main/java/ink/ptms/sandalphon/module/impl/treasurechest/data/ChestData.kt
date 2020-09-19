@@ -17,6 +17,7 @@ import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
 import io.izzel.taboolib.util.lite.Effects
+import io.izzel.taboolib.util.lite.Materials
 import io.izzel.taboolib.util.lite.Numbers
 import io.izzel.taboolib.util.lite.Signs
 import org.bukkit.*
@@ -250,13 +251,13 @@ class ChestData(val block: Location) {
                 .title("编辑宝藏 ${Utils.fromLocation(block)}")
                 .rows(3)
                 .build { inv ->
-                    inv.setItem(10, ItemBuilder(Material.NAME_TAG).name("§f名称").lore("§7$title").build())
-                    inv.setItem(11, ItemBuilder(Material.TRIPWIRE_HOOK).name("§f钥匙").lore("§7${if (locked == "null") "无" else locked}").build())
-                    inv.setItem(12, ItemBuilder(Material.HOPPER_MINECART).name("§f随机").lore("§7${random.first} -> ${random.second}").build())
-                    inv.setItem(13, ItemBuilder(Material.CHEST_MINECART).name("§f刷新").lore("§7${getTimeDisplay(update)}").build())
-                    inv.setItem(14, ItemBuilder(Material.BEACON).name("§f全局").lore(if (global) "§a启用" else "§c禁用").build())
-                    inv.setItem(15, ItemBuilder(Material.GLASS).name("§f替换").lore("§7${Items.getName(ItemStack(replace))}").build())
-                    inv.setItem(16, ItemBuilder(Material.OBSERVER).name("§f条件").lore(conditionText.map { "§7$it" }).build())
+                    inv.setItem(10, ItemBuilder(Materials.NAME_TAG.parseMaterial()).name("§f名称").lore("§7$title").build())
+                    inv.setItem(11, ItemBuilder(Materials.TRIPWIRE_HOOK.parseMaterial()).name("§f钥匙").lore("§7${if (locked == "null") "无" else locked}").build())
+                    inv.setItem(12, ItemBuilder(Materials.HOPPER_MINECART.parseMaterial()).name("§f随机").lore("§7${random.first} -> ${random.second}").build())
+                    inv.setItem(13, ItemBuilder(Materials.CHEST_MINECART.parseMaterial()).name("§f刷新").lore("§7${getTimeDisplay(update)}").build())
+                    inv.setItem(14, ItemBuilder(Materials.BEACON.parseMaterial()).name("§f全局").lore(if (global) "§a启用" else "§c禁用").build())
+                    inv.setItem(15, ItemBuilder(Materials.GLASS.parseMaterial()).name("§f替换").lore("§7${Items.getName(ItemStack(replace))}").build())
+                    inv.setItem(16, ItemBuilder(Materials.OBSERVER.parseMaterial()).name("§f条件").lore(conditionText.map { "§7$it" }).build())
                 }.event {
                     it.isCancelled = true
                     when (it.rawSlot) {

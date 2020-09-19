@@ -15,6 +15,7 @@ import io.izzel.taboolib.util.book.builder.BookBuilder
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.inventory.ClickType
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
+import io.izzel.taboolib.util.lite.Materials
 import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter
 import io.lumine.xikage.mythicmobs.mobs.MythicMob
 import org.bukkit.Bukkit
@@ -127,9 +128,9 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                 .title("编辑刷怪箱 ${Utils.fromLocation(block)}")
                 .rows(3)
                 .build { inv ->
-                    inv.setItem(11, ItemBuilder(Material.OBSERVER).name("§f激活范围 (${activationrange})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
-                    inv.setItem(13, ItemBuilder(Material.PISTON).name("§f活动范围 (${leashrange})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
-                    inv.setItem(15, ItemBuilder(Material.BONE_BLOCK).name("§f复活时间 (${respawn})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
+                    inv.setItem(11, ItemBuilder(Materials.OBSERVER.parseMaterial()).name("§f激活范围 (${activationrange})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
+                    inv.setItem(13, ItemBuilder(Materials.PISTON.parseMaterial()).name("§f活动范围 (${leashrange})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
+                    inv.setItem(15, ItemBuilder(Materials.BONE_BLOCK.parseMaterial()).name("§f复活时间 (${respawn})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
                 }.event {
                     it.isCancelled = true
                     when (it.rawSlot) {
@@ -141,7 +142,7 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                                 activationrange -= if (it.castClick().isShiftClick) 10 else 1
                                 it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                             }
-                            it.inventory.setItem(11, ItemBuilder(Material.OBSERVER).name("§f激活范围 (${activationrange})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
+                            it.inventory.setItem(11, ItemBuilder(Materials.OBSERVER.parseMaterial()).name("§f激活范围 (${activationrange})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
                         }
                         13 -> {
                             if (it.clickType == ClickType.CLICK && it.castClick().isLeftClick) {
@@ -151,7 +152,7 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                                 leashrange -= if (it.castClick().isShiftClick) 10 else 1
                                 it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                             }
-                            it.inventory.setItem(13, ItemBuilder(Material.PISTON).name("§f活动范围 (${leashrange})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
+                            it.inventory.setItem(13, ItemBuilder(Materials.PISTON.parseMaterial()).name("§f活动范围 (${leashrange})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
                         }
                         15 -> {
                             if (it.clickType == ClickType.CLICK && it.castClick().isLeftClick) {
@@ -161,7 +162,7 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                                 respawn -= if (it.castClick().isShiftClick) 10 else 1
                                 it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                             }
-                            it.inventory.setItem(15, ItemBuilder(Material.BONE_BLOCK).name("§f复活时间 (${respawn})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
+                            it.inventory.setItem(15, ItemBuilder(Materials.BONE_BLOCK.parseMaterial()).name("§f复活时间 (${respawn})").lore("§7左键 + 1", "§7右键 - 1", "§7SHIFT * 10", "", "§8关闭后生效").build())
                         }
                     }
                 }.close {

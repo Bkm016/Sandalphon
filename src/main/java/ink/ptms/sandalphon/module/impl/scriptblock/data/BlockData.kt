@@ -10,6 +10,7 @@ import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.book.builder.BookBuilder
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
+import io.izzel.taboolib.util.lite.Materials
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
@@ -48,9 +49,9 @@ class BlockData(val block: Location, var blockType: BlockType = BlockType.INTERA
                 .title("编辑脚本 ${Utils.fromLocation(block)}")
                 .rows(3)
                 .build { inv ->
-                    inv.setItem(11, ItemBuilder(Material.DAYLIGHT_DETECTOR).name("§f触发方式").lore("§7${blockType.display}").build())
-                    inv.setItem(13, ItemBuilder(Material.PISTON).name("§f动作").lore(blockAction.map { "§7$it" }).build())
-                    inv.setItem(15, ItemBuilder(Material.OBSERVER).name("§f条件").lore(blockCondition.map { "§7$it" }).build())
+                    inv.setItem(11, ItemBuilder(Materials.DAYLIGHT_DETECTOR.parseMaterial()).name("§f触发方式").lore("§7${blockType.display}").build())
+                    inv.setItem(13, ItemBuilder(Materials.PISTON.parseMaterial()).name("§f动作").lore(blockAction.map { "§7$it" }).build())
+                    inv.setItem(15, ItemBuilder(Materials.OBSERVER.parseMaterial()).name("§f条件").lore(blockCondition.map { "§7$it" }).build())
                 }.event {
                     it.isCancelled = true
                     when (it.rawSlot) {
@@ -64,11 +65,11 @@ class BlockData(val block: Location, var blockType: BlockType = BlockType.INTERA
                         }
                         13 -> {
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(blockAction.joinToString("\n")).build()).name("§f§f§f编辑动作").lore("§7ScriptBlock", "§7${Utils.fromLocation(block)}").build())
+                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(blockAction.joinToString("\n")).build()).name("§f§f§f编辑动作").lore("§7ScriptBlock", "§7${Utils.fromLocation(block)}").build())
                         }
                         15 -> {
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(blockAction.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7ScriptBlock", "§7${Utils.fromLocation(block)}").build())
+                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(blockAction.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7ScriptBlock", "§7${Utils.fromLocation(block)}").build())
                         }
                     }
                 }.close {

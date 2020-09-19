@@ -13,6 +13,7 @@ import io.izzel.taboolib.util.book.builder.BookBuilder
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.inventory.ClickType
 import io.izzel.taboolib.util.item.inventory.MenuBuilder
+import io.izzel.taboolib.util.lite.Materials
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -96,9 +97,9 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
                 .title("编辑全息 $id")
                 .rows(3)
                 .build { inv ->
-                    inv.setItem(11, ItemBuilder(Material.PISTON).name("§f移动").lore("§7左键 + 0.1", "§7右键 - 0.1", "", "§8关闭后生效").build())
-                    inv.setItem(13, ItemBuilder(Material.BOOKSHELF).name("§f内容").lore(holoContent.map { "§7$it" }).build())
-                    inv.setItem(15, ItemBuilder(Material.OBSERVER).name("§f条件").lore(holoCondition.map { "§7$it" }).build())
+                    inv.setItem(11, ItemBuilder(Materials.PISTON.parseMaterial()).name("§f移动").lore("§7左键 + 0.1", "§7右键 - 0.1", "", "§8关闭后生效").build())
+                    inv.setItem(13, ItemBuilder(Materials.BOOKSHELF.parseMaterial()).name("§f内容").lore(holoContent.map { "§7$it" }).build())
+                    inv.setItem(15, ItemBuilder(Materials.OBSERVER.parseMaterial()).name("§f条件").lore(holoCondition.map { "§7$it" }).build())
                 }.event {
                     it.isCancelled = true
                     when (it.rawSlot) {
