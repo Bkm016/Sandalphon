@@ -11,7 +11,6 @@ import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.lite.Numbers
-import net.minecraft.server.v1_15_R1.PacketPlayOutAnimation
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
