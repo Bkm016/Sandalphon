@@ -2,6 +2,7 @@
   <library name="Gradle: ink.ptms.cronus:Cronus:1">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../../../development/Gradle/repo/caches/modules-2/files-2.1/ink.ptms.cronus/Cronus/1/d8c5b7ebd229b7ccf75376e588da010bbd3a9223/Cronus-1.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/ink.ptms.cronus/Cronus/1/d8c5b7ebd229b7ccf75376e588da010bbd3a9223/Cronus-1.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

@@ -1,10 +1,16 @@
-name: Sandalphon
-main: ink.ptms.sandalphon.Sandalphon
-api-version: 1.13
-author: 坏黑
 
-softdepend:
-  - Zaphkiel
-  - Cronus
 
+#         Powered by TabooLib 5.0         #
+
+
+name: ${name}
+main: ${main}
 version: ${version}
+authors:
+  - Bkm016
+softdepend:
+  - Cronus
+  - Zaphkiel
+
+lib-version: ${libVersion}
+api-version: 1.13
