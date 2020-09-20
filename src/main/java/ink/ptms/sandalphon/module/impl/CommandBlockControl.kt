@@ -46,7 +46,7 @@ object CommandBlockControl : Helper {
                 when {
                     // 充能
                     args[1].startsWith("powered") -> try {
-                        val block = sender.block.getRelative(getCommandBlockFace(sender.block))
+                        val block = sender.block.getRelative(getBlockFace(sender.block))
                         // 短充能
                         if (args[1].startsWith("powered:")) {
                             block.type = Material.REDSTONE_BLOCK
@@ -61,7 +61,7 @@ object CommandBlockControl : Helper {
                     }
                     // 选取
                     args[1].startsWith("selected") -> try {
-                        val collect = collect(sender.block, getCommandBlockFace(sender.block))
+                        val collect = collect(sender.block, getBlockFace(sender.block))
                         if (collect.isEmpty()) {
                             return@execute
                         } else {
@@ -137,15 +137,15 @@ object CommandBlockControl : Helper {
         return list
     }
 
-    fun getCommandBlockFace(block: Block): BlockFace {
+    fun getBlockFace(block: Block): BlockFace {
         return if (Version.isAfter(Version.v1_13)) {
             (block.blockData as Directional).facing
         } else {
-            getCommandBlockFace(block.data.toInt())
+            getBlockFace(block.data.toInt())
         }
     }
 
-    fun getCommandBlockFace(data: Int): BlockFace {
+    fun getBlockFace(data: Int): BlockFace {
         return when (data) {
             0 -> BlockFace.DOWN
             1 -> BlockFace.UP
@@ -153,7 +153,7 @@ object CommandBlockControl : Helper {
             3 -> BlockFace.SOUTH
             4 -> BlockFace.WEST
             5 -> BlockFace.EAST
-            else -> BlockFace.UP
+            else -> BlockFace.SELF
         }
     }
 

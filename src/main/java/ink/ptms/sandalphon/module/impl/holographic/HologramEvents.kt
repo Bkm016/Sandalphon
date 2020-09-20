@@ -1,12 +1,15 @@
 package ink.ptms.sandalphon.module.impl.holographic
 
 import ink.ptms.sandalphon.module.Helper
+import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.inject.TListener
+import io.izzel.taboolib.util.chat.TextComponent
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import org.bukkit.inventory.meta.BookMeta
 
 /**
  * @Author sky
@@ -36,10 +39,17 @@ class HologramEvents : Listener, Helper {
                 e.player.error("该全息已失效. (${e.previousBookMeta.lore!![1].unColored()})")
             } else {
                 hologramData.holoContent.clear()
-                if (e.newBookMeta.pages[0].unColored() != "clear") {
-                    hologramData.holoContent.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
+                val lines = e.newBookMeta.pages.flatMap {
+                    TextComponent(it).toPlainText().replace("§0", "").split("\n")
+                }
+                if (lines[0].unColored() != "clear") {
+                    hologramData.holoContent.addAll(lines)
                 }
                 hologramData.init()
+                // sb 1.12
+                if (Version.isBefore(Version.v1_13) && e.player.itemInHand.itemMeta is BookMeta) {
+                    e.player.setItemInHand(null)
+                }
             }
         } else if (e.previousBookMeta.displayName.contains("编辑条件") && e.previousBookMeta.lore!![0].unColored() == "Hologram") {
             val hologramData = Hologram.getHologram(e.previousBookMeta.lore!![1].unColored())
@@ -47,10 +57,17 @@ class HologramEvents : Listener, Helper {
                 e.player.error("该全息已失效. (${e.previousBookMeta.lore!![1].unColored()})")
             } else {
                 hologramData.holoCondition.clear()
-                if (e.newBookMeta.pages[0].unColored() != "clear") {
-                    hologramData.holoCondition.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
+                val lines = e.newBookMeta.pages.flatMap {
+                    TextComponent(it).toPlainText().replace("§0", "").split("\n")
+                }
+                if (lines[0].unColored() != "clear") {
+                    hologramData.holoContent.addAll(lines)
                 }
                 hologramData.init()
+                // sb 1.12
+                if (Version.isBefore(Version.v1_13) && e.player.itemInHand.itemMeta is BookMeta) {
+                    e.player.setItemInHand(null)
+                }
             }
         }
     }

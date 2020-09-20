@@ -9,6 +9,7 @@ import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.hologram.Hologram
 import io.izzel.taboolib.module.hologram.THologram
 import io.izzel.taboolib.module.locale.TLocale
+import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.book.builder.BookBuilder
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.inventory.ClickType
@@ -113,17 +114,27 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
                             }
                         }
                         13 -> {
+                            val item = ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(holoContent.joinToString("\n")).build()).name("§f§f§f编辑内容").lore("§7Hologram", "§7$id").build()
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(holoContent.joinToString("\n")).build()).name("§f§f§f编辑内容").lore("§7Hologram", "§7$id").build())
+                            player.inventory.addItem(item)
+                            openBook(player, item)
                         }
                         15 -> {
+                            val item = ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(holoCondition.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7Hologram", "§7$id").build()
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(holoCondition.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7Hologram", "§7$id").build())
+                            player.inventory.addItem(item)
+                            openBook(player, item)
                         }
                     }
                 }.close {
                     ink.ptms.sandalphon.module.impl.holographic.Hologram.export()
                     init()
                 }.open(player)
+    }
+
+    fun openBook(player: Player, itemStack: ItemStack) {
+        val slot = (0..8).firstOrNull { player.inventory.getItem(it) == itemStack } ?: return
+        player.inventory.heldItemSlot = slot
+        BookFormatter.forceOpen(player, itemStack)
     }
 }

@@ -38,7 +38,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
             return
         }
         val block = (sender as Player).getTargetBlockExact()
-        if (block == null || block.blockData.material == Material.AIR) {
+        if (block == null || block.type == Material.AIR) {
             sender.error("无效的方块.")
             return
         }
@@ -64,7 +64,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
             return
         }
         val block = (sender as Player).getTargetBlockExact()
-        if (block == null || block.blockData.material == Material.AIR) {
+        if (block == null || block.type == Material.AIR) {
             sender.error("无效的方块.")
             return
         }
@@ -88,7 +88,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
             return
         }
         val block = (sender as Player).getTargetBlockExact()
-        if (block == null || block.blockData.material == Material.AIR) {
+        if (block == null || block.type == Material.AIR) {
             sender.error("无效的方块.")
             return
         }
@@ -109,7 +109,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
             return
         }
         val block = (sender as Player).getTargetBlockExact()
-        if (block == null || block.blockData.material == Material.AIR) {
+        if (block == null || block.type == Material.AIR) {
             sender.error("无效的方块.")
             return
         }

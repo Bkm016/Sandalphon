@@ -40,7 +40,11 @@ class TreasureChestEvents : Listener, Helper {
             override fun onReceive(player: Player, packet: Packet): Boolean {
                 if (packet.`is`("PacketPlayInUseItem")) {
                     val a = packet.read("a")
-                    val pos = NMS.handle().fromBlockPosition(SimpleReflection.getFieldValueChecked(a.javaClass, a, "c", true))
+                    val pos = if (a.javaClass.simpleName == "BlockPosition") {
+                        NMS.handle().fromBlockPosition(a)
+                    } else {
+                        NMS.handle().fromBlockPosition(SimpleReflection.getFieldValueChecked(a.javaClass, a, "c", true))
+                    }
                     val loc = Location(player.world, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
                     val chest = TreasureChest.getChest(loc.block) ?: return true
                     if (packet.read("b").toString() == "MAIN_HAND") {

@@ -9,6 +9,7 @@ import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestOpenEvent
 import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestGenerateEvent
 import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
+import io.izzel.taboolib.Version
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.db.local.LocalPlayer
 import io.izzel.taboolib.util.Times
@@ -60,14 +61,35 @@ class ChestData(val block: Location) {
     val condition = ArrayList<Condition>()
     val conditionText = ArrayList<String>()
 
+    val isHighVersion = Version.isAfter(Version.v1_13)
+
     init {
-        if (block.block.blockData is Chest) {
-            when ((block.block.blockData as Chest).type) {
-                Chest.Type.LEFT -> link.add((block.block.state as DoubleChest).rightSide!!.inventory.location!!)
-                Chest.Type.RIGHT -> link.add((block.block.state as DoubleChest).leftSide!!.inventory.location!!)
-                else -> {
+        if (isHighVersion) {
+            if (block.block.blockData is Chest) {
+                when ((block.block.blockData as Chest).type) {
+                    Chest.Type.LEFT -> link.add((block.block.state as DoubleChest).rightSide!!.inventory.location!!)
+                    Chest.Type.RIGHT -> link.add((block.block.state as DoubleChest).leftSide!!.inventory.location!!)
+                    else -> {
+                    }
                 }
             }
+        } else {
+            if (block.block.state is DoubleChest) {
+                val doubleChest = block.block.state as DoubleChest
+                if (doubleChest.leftSide == doubleChest.inventory.holder) {
+                    doubleChest.rightSide?.inventory?.location?.let { link.add(it) }
+                } else {
+                    doubleChest.leftSide?.inventory?.location?.let { link.add(it) }
+                }
+            }
+        }
+    }
+
+    fun isChest(block: Block): Boolean {
+        return if (isHighVersion) {
+            block.blockData is Chest
+        } else {
+            block.state is DoubleChest
         }
     }
 
@@ -138,9 +160,17 @@ class ChestData(val block: Location) {
                     player.playSound(block, Sound.BLOCK_WOOD_BREAK, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
                     Effects.create(Particle.CRIT, block.clone().add(0.5, 0.5, 0.5)).speed(0.5).count(50).player(player).play()
                 }
-                player.sendBlockChange(block, replace.createBlockData())
+                if (isHighVersion) {
+                    player.sendBlockChange(block, replace.createBlockData())
+                } else {
+                    player.sendBlockChange(block, replace, 0)
+                }
             } else {
-                player.sendBlockChange(block, block.block.blockData)
+                if (isHighVersion) {
+                    player.sendBlockChange(block, block.block.blockData)
+                } else {
+                    player.sendBlockChange(block, block.block.type, block.block.data)
+                }
             }
         } else {
             val data = LocalPlayer.get(player)
@@ -150,9 +180,17 @@ class ChestData(val block: Location) {
                     player.playSound(block, Sound.BLOCK_WOOD_BREAK, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
                     Effects.create(Particle.CRIT, block.clone().add(0.5, 0.5, 0.5)).speed(0.5).count(50).player(player).play()
                 }
-                player.sendBlockChange(block, replace.createBlockData())
+                if (isHighVersion) {
+                    player.sendBlockChange(block, replace.createBlockData())
+                } else {
+                    player.sendBlockChange(block, replace, 0)
+                }
             } else {
-                player.sendBlockChange(block, block.block.blockData)
+                if (isHighVersion) {
+                    player.sendBlockChange(block, block.block.blockData)
+                } else {
+                    player.sendBlockChange(block, block.block.type, block.block.data)
+                }
             }
         }
     }
@@ -236,13 +274,13 @@ class ChestData(val block: Location) {
                         }
                     }.open(player)
         }
-        if (block.block.blockData is Chest) {
-            player.world.players.forEach { p ->
-                NMS.HANDLE.sendBlockAction(p, block.block, 1, 1)
+        if (isChest(block.block)) {
+            player.world.players.forEach {
+                NMS.HANDLE.sendBlockAction(it, block.block, 1, 1)
             }
             player.world.playSound(block, Sound.BLOCK_CHEST_OPEN, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
         } else {
-            player.playSound(block, Sound.BLOCK_CHEST_OPEN, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
+            player.world.playSound(block, Sound.BLOCK_CHEST_OPEN, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
         }
     }
 

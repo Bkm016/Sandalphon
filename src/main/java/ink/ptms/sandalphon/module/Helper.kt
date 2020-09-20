@@ -37,7 +37,7 @@ interface Helper {
     }
 
     fun Block.display() {
-        world.playEffect(location, Effect.STEP_SOUND, blockData.material)
+        world.playEffect(location, Effect.STEP_SOUND, type)
     }
 
     fun String.unColored(): String {

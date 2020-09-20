@@ -2,6 +2,7 @@ package ink.ptms.sandalphon.module.impl.blockmine
 
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
+import ink.ptms.sandalphon.module.impl.CommandBlockControl
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
 import ink.ptms.sandalphon.util.Utils
@@ -236,7 +237,7 @@ class BlockEvents : Listener, Helper {
                     if (block.type == Material.AIR) {
                         return@build
                     }
-                    val direction = if (block.blockData is Directional) (block.blockData as Directional).facing else BlockFace.SELF
+                    val direction = CommandBlockControl.getBlockFace(block)
                     blockProgress.structures.add(BlockStructure(direction, block.type, Material.AIR, block.location.subtract(mid).toVector()))
                 }
                 blockProgress.structures.forEach { mid.clone().add(it.offset).block.type = it.replace }
