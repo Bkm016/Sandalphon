@@ -71,6 +71,7 @@
     </orderEntry>
     <orderEntry type="library" name="Gradle: ink.ptms.cronus:Cronus:1" level="project" />
     <orderEntry type="library" name="Gradle: ink.ptms.core:v11500:all:11500" level="project" />
+    <orderEntry type="library" name="Gradle: ink.ptms.core:v11200:all:11200" level="project" />
     <orderEntry type="library" name="Gradle: io.izzel.taboolib:TabooLib:all:5.28" level="project" />
     <orderEntry type="library" name="Gradle: io.izzel.taboolib:TabooLibLoader:all:1.8" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.41" level="project" />

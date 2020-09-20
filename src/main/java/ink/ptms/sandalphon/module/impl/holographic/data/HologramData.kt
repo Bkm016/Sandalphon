@@ -114,11 +114,11 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
                         }
                         13 -> {
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(holoContent.joinToString("\n")).build()).name("§f§f§f编辑内容").lore("§7Hologram", "§7$id").build())
+                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(holoContent.joinToString("\n")).build()).name("§f§f§f编辑内容").lore("§7Hologram", "§7$id").build())
                         }
                         15 -> {
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(holoCondition.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7Hologram", "§7$id").build())
+                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(holoCondition.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7Hologram", "§7$id").build())
                         }
                     }
                 }.close {

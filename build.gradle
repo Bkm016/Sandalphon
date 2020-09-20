@@ -29,6 +29,7 @@ repositories {
 dependencies {
     compile 'ink.ptms.cronus:Cronus:1'
     compile 'ink.ptms.core:v11500:11500:all'
+    compile 'ink.ptms.core:v11200:11200:all'
     compile 'io.izzel.taboolib:TabooLib:5.28:all'
     compile 'io.izzel.taboolib:TabooLibLoader:1.8:all'
     compile "org.jetbrains.kotlin:kotlin-stdlib:1.2.41"

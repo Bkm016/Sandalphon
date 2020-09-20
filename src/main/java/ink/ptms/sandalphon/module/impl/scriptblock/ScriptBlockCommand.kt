@@ -37,7 +37,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
             sender.error("该功能依赖 Cronus 插件.")
             return
         }
-        val block = (sender as Player).getTargetBlockExact(10, FluidCollisionMode.NEVER)
+        val block = (sender as Player).getTargetBlockExact()
         if (block == null || block.blockData.material == Material.AIR) {
             sender.error("无效的方块.")
             return
@@ -63,7 +63,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
             sender.error("该功能依赖 Cronus 插件.")
             return
         }
-        val block = (sender as Player).getTargetBlockExact(10, FluidCollisionMode.NEVER)
+        val block = (sender as Player).getTargetBlockExact()
         if (block == null || block.blockData.material == Material.AIR) {
             sender.error("无效的方块.")
             return
@@ -87,7 +87,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
             sender.error("该功能依赖 Cronus 插件.")
             return
         }
-        val block = (sender as Player).getTargetBlockExact(10, FluidCollisionMode.NEVER)
+        val block = (sender as Player).getTargetBlockExact()
         if (block == null || block.blockData.material == Material.AIR) {
             sender.error("无效的方块.")
             return
@@ -108,7 +108,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
             sender.error("该功能依赖 Cronus 插件.")
             return
         }
-        val block = (sender as Player).getTargetBlockExact(10, FluidCollisionMode.NEVER)
+        val block = (sender as Player).getTargetBlockExact()
         if (block == null || block.blockData.material == Material.AIR) {
             sender.error("无效的方块.")
             return
