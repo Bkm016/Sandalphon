@@ -55,7 +55,7 @@ class SpawnerEvents : Listener, Helper {
     fun e(e: BlockBreakEvent) {
         if (e.player.isOp && Items.hasName(e.player.inventory.itemInMainHand, "拷贝魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "Spawner")) {
             e.isCancelled = true
-            val location = Utils.toLocation(e.player.inventory.itemInMainHand.itemMeta!!.lore!![0].unColored())
+            val location = Utils.toLocation(e.player.inventory.itemInMainHand.itemMeta!!.lore!![1].unColored())
             val spawnerData = Spawner.getSpawner(location.block)
             if (spawnerData == null) {
                 e.player.error("该方块不存在刷怪箱.")
@@ -81,7 +81,7 @@ class SpawnerEvents : Listener, Helper {
         }
         if (e.player.isOp && e.action == Action.RIGHT_CLICK_BLOCK && Items.hasName(e.player.inventory.itemInMainHand, "拷贝魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "Spawner")) {
             e.isCancelled = true
-            val location = Utils.toLocation(e.player.inventory.itemInMainHand.itemMeta!!.lore!![0].unColored())
+            val location = Utils.toLocation(e.player.inventory.itemInMainHand.itemMeta!!.lore!![1].unColored())
             val spawnerData = Spawner.getSpawner(location.block)
             if (spawnerData == null) {
                 e.player.error("该方块不存在刷怪箱.")
