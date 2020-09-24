@@ -117,24 +117,16 @@ class HologramData(val id: String, var location: Location, var holoContent: Muta
                             val item = ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(holoContent.joinToString("\n")).build()).name("§f§f§f编辑内容").lore("§7Hologram", "§7$id").build()
                             player.closeInventory()
                             player.inventory.addItem(item)
-                            openBook(player, item)
                         }
                         15 -> {
                             val item = ItemBuilder(BookBuilder(Materials.WRITABLE_BOOK.parseItem()).pagesRaw(holoCondition.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7Hologram", "§7$id").build()
                             player.closeInventory()
                             player.inventory.addItem(item)
-                            openBook(player, item)
                         }
                     }
                 }.close {
                     ink.ptms.sandalphon.module.impl.holographic.Hologram.export()
                     init()
                 }.open(player)
-    }
-
-    fun openBook(player: Player, itemStack: ItemStack) {
-        val slot = (0..8).firstOrNull { player.inventory.getItem(it) == itemStack } ?: return
-        player.inventory.heldItemSlot = slot
-        BookFormatter.forceOpen(player, itemStack)
     }
 }
