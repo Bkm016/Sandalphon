@@ -76,24 +76,27 @@ class TreasureChestEvents : Listener, Helper {
 
     @EventHandler
     fun e(e: InventoryCloseEvent) {
-        if (e.inventory.holder is ChestInventory && e.inventory.viewers.size == 1) {
-            val chest = (e.inventory.holder as ChestInventory).chestData
-            e.inventory.filter { item -> Items.nonNull(item) }.forEachIndexed { index, item ->
-                Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
-                    CronusUtils.addItem(e.player as Player, item)
-                    (e.player as Player).playSound(e.player.location, Sound.ENTITY_ITEM_PICKUP, 1f, 2f)
-                }, index.toLong())
-            }
-            e.inventory.clear()
-            chest.globalInventory = null
-            chest.globalTime = System.currentTimeMillis() + chest.update
-            chest.tick(e.player as Player, true)
-            // closed animation
-            if (chest.replace == Material.CHEST || chest.replace == Material.TRAPPED_CHEST) {
-                e.player.world.players.forEach { p ->
-                    ink.ptms.sandalphon.module.api.NMS.HANDLE.sendBlockAction(p, chest.block.block, 1, 0)
+        if (e.inventory.holder is ChestInventory) {
+            e.inventory.viewers.remove(e.player)
+            if (e.inventory.viewers.isEmpty()) {
+                val chest = (e.inventory.holder as ChestInventory).chestData
+                e.inventory.filter { item -> Items.nonNull(item) }.forEachIndexed { index, item ->
+                    Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
+                        CronusUtils.addItem(e.player as Player, item)
+                        (e.player as Player).playSound(e.player.location, Sound.ENTITY_ITEM_PICKUP, 1f, 2f)
+                    }, index.toLong())
                 }
-                e.player.world.playSound(chest.block, Sound.BLOCK_CHEST_CLOSE, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
+                e.inventory.clear()
+                chest.globalInventory = null
+                chest.globalTime = System.currentTimeMillis() + chest.update
+                chest.tick(e.player as Player, true)
+                // closed animation
+                if (chest.replace == Material.CHEST || chest.replace == Material.TRAPPED_CHEST) {
+                    e.player.world.players.forEach { p ->
+                        ink.ptms.sandalphon.module.api.NMS.HANDLE.sendBlockAction(p, chest.block.block, 1, 0)
+                    }
+                    e.player.world.playSound(chest.block, Sound.BLOCK_CHEST_CLOSE, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
+                }
             }
         }
     }
