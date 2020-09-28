@@ -7,6 +7,7 @@ import ink.ptms.sandalphon.module.api.NMS
 import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
 import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestOpenEvent
 import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestGenerateEvent
+import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestGenerateLegacyEvent
 import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.Version
@@ -111,7 +112,7 @@ class ChestData(val block: Location) {
         val items = ArrayList<Pair<String, Int>>()
         if (random == -1 to -1) {
             items.addAll(item)
-        } else {
+        } else if (item.isNotEmpty()) {
             val random = Numbers.getRandomInteger(random.first, random.second.coerceAtMost(item.size).coerceAtLeast(random.first))
             item.toList().toMutableList().run {
                 (1..random).forEach { _ ->
@@ -122,10 +123,13 @@ class ChestData(val block: Location) {
         items.forEach { (k, v) ->
             if (Utils.asgardHook) {
                 val item = Utils.item(k, player) ?: return@forEach
-                inventory.setItem(content.removeAt(Numbers.getRandom().nextInt(content.size)), item.run {
-                    this.amount = amount
-                    this
-                })
+                val event = ChestGenerateLegacyEvent(player, this, item, v).call()
+                if (event.nonCancelled()) {
+                    inventory.setItem(content.removeAt(Numbers.getRandom().nextInt(content.size)), event.item.run {
+                        this.amount = event.amount
+                        this
+                    })
+                }
             } else {
                 val item = ZaphkielAPI.getItem(k, player) ?: return@forEach
                 val event = ChestGenerateEvent(player, this, item, v).call()
@@ -353,10 +357,10 @@ class ChestData(val block: Location) {
                 .title("编辑宝藏内容 ${Utils.fromLocation(block)}")
                 .rows(if (link.isNotEmpty()) 6 else 3)
                 .build {
-                    item.forEach { (k, v) ->
-                        val itemStack = Utils.item(k, player) ?: return@forEach
-                        it.addItem(itemStack.run {
-                            this.amount = v
+                    item.forEachIndexed { i, p ->
+                        val itemStack = Utils.item(p.first, player) ?: return@forEachIndexed
+                        it.setItem(i, itemStack.run {
+                            this.amount = p.second
                             this
                         })
                     }

@@ -40,17 +40,24 @@ class TreasureChestEvents : Listener, Helper {
             override fun onReceive(player: Player, packet: Packet): Boolean {
                 if (packet.`is`("PacketPlayInUseItem")) {
                     val a = packet.read("a")
-                    val pos = if (a.javaClass.simpleName == "BlockPosition") {
-                        NMS.handle().fromBlockPosition(a)
+                    if (a.javaClass.simpleName == "BlockPosition") {
+                        val pos = NMS.handle().fromBlockPosition(a)
+                        val loc = Location(player.world, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
+                        val chest = TreasureChest.getChest(loc.block) ?: return true
+                        if (packet.read("c").toString() == "MAIN_HAND") {
+                            Bukkit.getScheduler().runTask(Sandalphon.getPlugin(), Runnable {
+                                chest.open(player)
+                            })
+                        }
                     } else {
-                        NMS.handle().fromBlockPosition(SimpleReflection.getFieldValueChecked(a.javaClass, a, "c", true))
-                    }
-                    val loc = Location(player.world, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
-                    val chest = TreasureChest.getChest(loc.block) ?: return true
-                    if (packet.read("b").toString() == "MAIN_HAND") {
-                        Bukkit.getScheduler().runTask(Sandalphon.getPlugin(), Runnable {
-                            chest.open(player)
-                        })
+                        val pos = NMS.handle().fromBlockPosition(SimpleReflection.getFieldValueChecked(a.javaClass, a, "c", true))
+                        val loc = Location(player.world, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
+                        val chest = TreasureChest.getChest(loc.block) ?: return true
+                        if (packet.read("b").toString() == "MAIN_HAND") {
+                            Bukkit.getScheduler().runTask(Sandalphon.getPlugin(), Runnable {
+                                chest.open(player)
+                            })
+                        }
                     }
                     return false
                 }

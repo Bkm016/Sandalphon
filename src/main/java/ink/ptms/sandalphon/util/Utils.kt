@@ -4,6 +4,7 @@ import com.google.common.base.Enums
 import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.internal.gson.*
 import io.izzel.taboolib.module.inject.TInject
+import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.item.ItemStacker
 import io.izzel.taboolib.util.item.Items
 import me.asgard.sacreditem.SacredItemBuilder
@@ -41,7 +42,7 @@ object Utils {
 
     fun itemId(itemStack: ItemStack): String? {
         if (asgardHook) {
-            return SacredItemManager.getInstance().itemList.firstOrNull { itemStack.isSimilar(SacredItemManager.getInstance().getItem(it)) }
+            return SacredItemManager.getInstance().itemList.map { TLocale.Translate.setUncolored(it.split("-")[0]).trim() }.firstOrNull { itemStack.isSimilar(SacredItemManager.getInstance().getItem(it)) }
         }
         val itemStream = ZaphkielAPI.read(itemStack)
         if (itemStream.isExtension()) {
