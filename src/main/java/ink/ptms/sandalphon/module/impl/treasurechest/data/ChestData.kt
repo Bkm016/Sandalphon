@@ -240,9 +240,9 @@ class ChestData(val block: Location) {
                 return
             }
             if (globalInventory == null) {
-                globalInventory = Bukkit.createInventory(ChestInventory(this), if (link.isNotEmpty()) 54 else 27, title)
+                globalInventory = update(player, Bukkit.createInventory(ChestInventory(this), if (link.isNotEmpty()) 54 else 27, title))
             }
-            player.openInventory(update(player, globalInventory!!))
+            player.openInventory(globalInventory!!)
         } else {
             val data = LocalPlayer.get(player)
             val time = data.getLong("Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}")
