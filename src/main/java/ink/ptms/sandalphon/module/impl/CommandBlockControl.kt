@@ -139,7 +139,11 @@ object CommandBlockControl : Helper {
 
     fun getBlockFace(block: Block): BlockFace {
         return if (Version.isAfter(Version.v1_13)) {
-            (block.blockData as Directional).facing
+            if (block.blockData is Directional) {
+                (block.blockData as Directional).facing
+            } else {
+                BlockFace.SELF
+            }
         } else {
             getBlockFace(block.data.toInt())
         }

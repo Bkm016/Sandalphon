@@ -76,7 +76,7 @@ class BlockData(@Expose val id: String) {
                     this
                 }
             }
-            Bukkit.getScheduler().runTaskAsynchronously(Sandalphon.getPlugin(), Runnable {
+            Bukkit.getScheduler().runTaskAsynchronously(Sandalphon.plugin, Runnable {
                 Effects.create(Particle.EXPLOSION_NORMAL, block.location.add(0.5, 0.5, 0.5)).count(5).offset(doubleArrayOf(0.5, 0.5, 0.5)).range(50.0).play()
             })
         }
@@ -299,7 +299,7 @@ class BlockData(@Expose val id: String) {
                                         }
                                     }
                                     BlockMine.export()
-                                    Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
+                                    Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable {
                                         openEditDrop(player, openProgress, openStructure)
                                     }, 1)
                                 }.open(player)

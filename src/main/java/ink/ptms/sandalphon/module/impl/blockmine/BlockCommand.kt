@@ -9,6 +9,8 @@ import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.command.base.*
+import io.izzel.taboolib.module.db.local.SecuredFile
+import io.izzel.taboolib.util.Files
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
@@ -148,7 +150,6 @@ class BlockCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.6, description = "重载开采结构")
     fun import(sender: CommandSender, args: Array<String>) {
-        BlockMine.data.load(File(Sandalphon.getPlugin().dataFolder, "module/blockmine.yml"))
         BlockMine.import()
         sender.info("操作成功.")
     }

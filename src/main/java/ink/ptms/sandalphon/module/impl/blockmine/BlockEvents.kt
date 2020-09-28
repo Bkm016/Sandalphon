@@ -237,11 +237,10 @@ class BlockEvents : Listener, Helper {
                     if (block.type == Material.AIR) {
                         return@build
                     }
-                    val direction = CommandBlockControl.getBlockFace(block)
-                    blockProgress.structures.add(BlockStructure(direction, block.type, Material.AIR, block.location.subtract(mid).toVector()))
+                    blockProgress.structures.add(BlockStructure(CommandBlockControl.getBlockFace(block), block.type, Material.AIR, block.location.subtract(mid).toVector()))
                 }
                 blockProgress.structures.forEach { mid.clone().add(it.offset).block.type = it.replace }
-                Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
+                Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable {
                     blockProgress.structures.forEach {
                         val block = mid.clone().add(it.offset).block.run {
                             this.type = it.origin
