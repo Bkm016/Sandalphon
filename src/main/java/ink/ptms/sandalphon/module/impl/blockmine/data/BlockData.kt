@@ -306,7 +306,7 @@ class BlockData(@Expose val id: String) {
                                         }
                                     }
                                     BlockMine.export()
-                                    Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
+                                    Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable {
                                         openEditDrop(player, openProgress, openStructure)
                                     }, 1)
                                 }.open(player)

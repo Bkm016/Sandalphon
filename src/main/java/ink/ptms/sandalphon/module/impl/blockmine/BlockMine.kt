@@ -14,12 +14,14 @@ import io.izzel.taboolib.internal.gson.JsonDeserializer
 import io.izzel.taboolib.internal.gson.JsonPrimitive
 import io.izzel.taboolib.internal.gson.JsonSerializer
 import io.izzel.taboolib.module.db.local.LocalFile
+import io.izzel.taboolib.module.db.local.SecuredFile
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.module.packet.Packet
 import io.izzel.taboolib.module.packet.TPacket
 import io.izzel.taboolib.module.tellraw.TellrawCreator
 import io.izzel.taboolib.module.tellraw.TellrawJson
+import io.izzel.taboolib.util.Files
 import io.izzel.taboolib.util.item.Items
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
@@ -28,12 +30,10 @@ import org.bukkit.Material
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
+import java.io.File
+import java.nio.charset.StandardCharsets
 
 object BlockMine {
-
-    @LocalFile("module/blockmine.yml")
-    lateinit var data: FileConfiguration
-        private set
 
     val blocks = ArrayList<BlockData>()
     val blocksCache = HashSet<Material>()
@@ -50,28 +50,37 @@ object BlockMine {
             return
         }
         blocks.clear()
-        data.getKeys(false).forEach {
-            blocks.add(Utils.serializer.fromJson(data.getString(it)!!, BlockData::class.java))
+        Files.folder(Sandalphon.plugin.dataFolder, "module/blockmine").listFiles()?.map { file ->
+            if (file.name.endsWith(".json")) {
+                blocks.add(Utils.serializer.fromJson(file.readText(StandardCharsets.UTF_8), BlockData::class.java))
+            }
         }
         cached()
+        println("[Sandalphon] Loaded ${blocks.size} structure blocks.")
     }
 
     @TFunction.Cancel
     @TSchedule(period = 20 * 60, async = true)
     fun export() {
-        data.getKeys(false).forEach { data.set(it, null) }
         blocks.forEach { block ->
-            data.set(block.id, Utils.format(Utils.serializer.toJsonTree(block)))
+            Files.file(Sandalphon.plugin.dataFolder, "module/blockmine/${block.id}.json").writeText(Utils.format(Utils.serializer.toJsonTree(block)), StandardCharsets.UTF_8)
         }
     }
 
     fun cached() {
         blocksCache.clear()
-        blocksCache.addAll(blocks.flatMap { b -> b.progress.flatMap { p -> p.structures.flatMap { listOf(it.origin, it.replace) } } })
+        blocks.forEach { b ->
+            b.progress.forEach { p ->
+                p.structures.forEach {
+                    blocksCache.add(it.origin)
+                    blocksCache.add(it.replace)
+                }
+            }
+        }
     }
 
     fun delete(id: String) {
-        data.set(id, null)
+        Files.deepDelete(File(Sandalphon.plugin.dataFolder, "module/blockmine/$id.json"))
     }
 
     fun find(block: Location): Pair<BlockData, Pair<BlockState, BlockStructure>>? {
