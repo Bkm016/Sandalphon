@@ -25,4 +25,9 @@ public class NMSHandle extends NMS {
             ((org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer) player).getHandle().playerConnection.sendPacket(new net.minecraft.server.v1_12_R1.PacketPlayOutBlockAction(new net.minecraft.server.v1_12_R1.BlockPosition(block.getLocation().getX(), block.getLocation().getY(), block.getLocation().getZ()), net.minecraft.server.v1_12_R1.Blocks.CHEST, a, b));
         }
     }
+
+    @Override
+    public void setBlockData(Block block, byte data) {
+        ((CraftBlock) block).setData(data, false);
+    }
 }

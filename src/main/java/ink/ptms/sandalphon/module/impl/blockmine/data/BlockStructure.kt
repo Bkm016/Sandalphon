@@ -22,4 +22,8 @@ class BlockStructure(
         var tool: String? = null,
         @Expose
         val drop: MutableList<BlockDrop> = ArrayList()
-)
+) {
+
+        @Expose
+        val metadata = HashMap<String, String>()
+}

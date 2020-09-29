@@ -15,4 +15,6 @@ public abstract class NMS {
 
     abstract public void sendBlockAction(Player player, Block block, int a, int b);
 
+    abstract public void setBlockData(Block block, byte data);
+
 }

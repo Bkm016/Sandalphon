@@ -7,6 +7,7 @@ import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
 import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
+import io.izzel.taboolib.Version
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.nms.nbt.NBTBase
 import io.izzel.taboolib.module.nms.nbt.NBTList
@@ -238,24 +239,9 @@ class BlockEvents : Listener, Helper {
                         return@build
                     }
                     val direction = CommandBlockControl.getBlockFace(block)
-                    blockProgress.structures.add(BlockStructure(direction, block.type, Material.AIR, block.location.subtract(mid).toVector()))
+                    val structure = BlockStructure(direction, block.type, Material.AIR, block.location.subtract(mid).toVector())
+                    blockProgress.structures.add(structure)
                 }
-                blockProgress.structures.forEach { mid.clone().add(it.offset).block.type = it.replace }
-                Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
-                    blockProgress.structures.forEach {
-                        val block = mid.clone().add(it.offset).block.run {
-                            this.type = it.origin
-                            this
-                        }
-                        val bData = block.blockData
-                        if (bData is Directional) {
-                            block.blockData = bData.run {
-                                this.facing = it.direction
-                                this
-                            }
-                        }
-                    }
-                }, 20)
                 e.player.info("结构已储存.")
                 BlockMine.export()
                 BlockMine.cached()

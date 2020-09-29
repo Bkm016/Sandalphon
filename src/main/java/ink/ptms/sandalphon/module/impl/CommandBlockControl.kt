@@ -157,5 +157,17 @@ object CommandBlockControl : Helper {
         }
     }
 
+    fun fromBlockFace(blockFace: BlockFace): Int {
+        return when (blockFace) {
+            BlockFace.DOWN -> 0
+            BlockFace.UP -> 1
+            BlockFace.NORTH -> 2
+            BlockFace.SOUTH -> 3
+            BlockFace.WEST -> 4
+            BlockFace.EAST -> 5
+            else -> 0
+        }
+    }
+
     class Data(var index: Int, var desc: Boolean)
 }

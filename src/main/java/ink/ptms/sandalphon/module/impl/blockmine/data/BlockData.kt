@@ -1,9 +1,12 @@
 package ink.ptms.sandalphon.module.impl.blockmine.data
 
 import ink.ptms.sandalphon.Sandalphon
+import ink.ptms.sandalphon.module.api.NMS
+import ink.ptms.sandalphon.module.impl.CommandBlockControl
 import ink.ptms.sandalphon.module.impl.blockmine.BlockMine
 import ink.ptms.sandalphon.module.impl.blockmine.event.BlockGrowEvent
 import ink.ptms.sandalphon.util.Utils
+import io.izzel.taboolib.Version
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.internal.gson.annotations.Expose
 import io.izzel.taboolib.util.book.builder.BookBuilder
@@ -69,14 +72,18 @@ class BlockData(@Expose val id: String) {
                 this.type = it.origin
                 this
             }
-            val blockData = block.blockData
-            if (blockData is Directional) {
-                block.blockData = blockData.run {
-                    this.facing = it.direction
-                    this
+            if (isAfter11300) {
+                val blockData = block.blockData
+                if (blockData is Directional) {
+                    block.blockData = blockData.run {
+                        this.facing = it.direction
+                        this
+                    }
                 }
+            } else {
+                NMS.HANDLE.setBlockData(block, CommandBlockControl.fromBlockFace(it.direction).toByte())
             }
-            Bukkit.getScheduler().runTaskAsynchronously(Sandalphon.getPlugin(), Runnable {
+            Bukkit.getScheduler().runTaskAsynchronously(Sandalphon.plugin, Runnable {
                 Effects.create(Particle.EXPLOSION_NORMAL, block.location.add(0.5, 0.5, 0.5)).count(5).offset(doubleArrayOf(0.5, 0.5, 0.5)).range(50.0).play()
             })
         }
@@ -308,5 +315,10 @@ class BlockData(@Expose val id: String) {
                 }.close {
                     BlockMine.export()
                 }.open(player)
+    }
+
+    companion object {
+
+        val isAfter11300 = Version.isAfter(Version.v1_13)
     }
 }
