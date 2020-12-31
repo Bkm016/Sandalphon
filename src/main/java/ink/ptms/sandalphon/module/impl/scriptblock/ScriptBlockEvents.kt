@@ -104,6 +104,7 @@ class ScriptBlockEvents : Listener, Helper {
                 }
                 blockData.init()
             }
+            e.isSigning = false
         } else if (e.previousBookMeta.displayName.contains("编辑条件") && e.previousBookMeta.lore!![0].unColored() == "ScriptBlock") {
             val blockData = ScriptBlock.getBlock(Utils.toLocation(e.previousBookMeta.lore!![1].unColored()).block)
             if (blockData == null) {
@@ -115,6 +116,7 @@ class ScriptBlockEvents : Listener, Helper {
                 }
                 blockData.init()
             }
+            e.isSigning = false
         }
     }
 }

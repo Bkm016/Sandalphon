@@ -51,6 +51,7 @@ class HologramEvents : Listener, Helper {
                     e.player.setItemInHand(null)
                 }
             }
+            e.isSigning = false
         } else if (e.previousBookMeta.displayName.contains("编辑条件") && e.previousBookMeta.lore!![0].unColored() == "Hologram") {
             val hologramData = Hologram.getHologram(e.previousBookMeta.lore!![1].unColored())
             if (hologramData == null) {
@@ -69,6 +70,7 @@ class HologramEvents : Listener, Helper {
                     e.player.setItemInHand(null)
                 }
             }
+            e.isSigning = false
         }
     }
 }

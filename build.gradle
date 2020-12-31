@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'ink.ptms.sandalphon'
-version = '1.2.3 BETA'
+version = '1.2.4 BETA'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    compile 'ink.ptms.zaphkiel:Zaphkiel:1.2'
+    compile 'public:Zaphkiel:1.0.0'
     compile 'ink.ptms.cronus:Cronus:1'
     compile 'ink.ptms.core:v11600:11600:all'
     compile 'ink.ptms.core:v11200:11200:all'
