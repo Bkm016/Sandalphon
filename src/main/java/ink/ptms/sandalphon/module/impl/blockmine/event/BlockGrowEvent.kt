@@ -3,7 +3,6 @@ package ink.ptms.sandalphon.module.impl.blockmine.event
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockData
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import io.izzel.taboolib.module.event.EventCancellable
-import io.izzel.taboolib.module.event.EventNormal
 
 /**
  * @Author sky

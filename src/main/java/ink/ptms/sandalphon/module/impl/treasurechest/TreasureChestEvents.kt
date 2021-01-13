@@ -9,7 +9,6 @@ import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.module.lite.SimpleReflection
 import io.izzel.taboolib.module.nms.NMS
 import io.izzel.taboolib.module.packet.Packet
-import io.izzel.taboolib.module.packet.TPacket
 import io.izzel.taboolib.module.packet.TPacketHandler
 import io.izzel.taboolib.module.packet.TPacketListener
 import io.izzel.taboolib.util.item.Items
@@ -25,7 +24,6 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerEditBookEvent
-import org.bukkit.event.player.PlayerJoinEvent
 
 /**
  * @Author sky
@@ -117,6 +115,7 @@ class TreasureChestEvents : Listener, Helper {
                 }
                 chestData.init()
             }
+            e.isSigning = false
         }
     }
 }

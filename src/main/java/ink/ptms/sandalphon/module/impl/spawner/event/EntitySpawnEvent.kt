@@ -4,7 +4,6 @@ import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import io.izzel.taboolib.module.event.EventCancellable
 import io.izzel.taboolib.module.event.EventNormal
 import org.bukkit.Location
-import org.bukkit.entity.Entity
 import org.bukkit.entity.LivingEntity
 
 /**

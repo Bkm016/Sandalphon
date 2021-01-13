@@ -1,16 +1,10 @@
 package ink.ptms.sandalphon.module.impl.blockmine
 
-import ink.ptms.cronus.builder.element.BuilderStageList
-import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockData
-import ink.ptms.sandalphon.module.impl.holographic.Hologram
-import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.command.base.*
-import io.izzel.taboolib.module.db.local.SecuredFile
-import io.izzel.taboolib.util.Files
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
@@ -18,7 +12,6 @@ import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import java.io.File
 
 /**
  * @Author sky
@@ -53,7 +46,7 @@ class BlockCommand : BaseMainCommand(), Helper {
             return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
             if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
                 sender.error("该功能依赖 Zaphkiel 插件.")
                 return
@@ -77,7 +70,7 @@ class BlockCommand : BaseMainCommand(), Helper {
             return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
             if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
                 sender.error("该功能依赖 Zaphkiel 插件.")
                 return
@@ -99,7 +92,7 @@ class BlockCommand : BaseMainCommand(), Helper {
             return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
             if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
                 sender.error("该功能依赖 Zaphkiel 插件.")
                 return
@@ -121,7 +114,7 @@ class BlockCommand : BaseMainCommand(), Helper {
             return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
             if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
                 sender.error("该功能依赖 Zaphkiel 插件.")
                 return

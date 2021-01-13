@@ -7,9 +7,7 @@ import ink.ptms.sandalphon.module.impl.blockmine.BlockMine
 import ink.ptms.sandalphon.module.impl.blockmine.event.BlockGrowEvent
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.Version
-import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.internal.gson.annotations.Expose
-import io.izzel.taboolib.util.book.builder.BookBuilder
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.Items
 import io.izzel.taboolib.util.item.inventory.ClickType
@@ -213,7 +211,7 @@ class BlockData(@Expose val id: String) {
                                 it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                             }
                             if (it.rawSlot in 0..26 && Items.nonNull(it.currentItem)) {
-                                val structure = structureMap[it.currentItem.type]
+                                val structure = structureMap[it.currentItem!!.type]
                                 if (structure != null) {
                                     openEditProgress(player, openProgress, structure)
                                     it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)

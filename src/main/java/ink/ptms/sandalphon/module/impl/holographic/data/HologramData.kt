@@ -5,11 +5,9 @@ import ink.ptms.cronus.internal.condition.Condition
 import ink.ptms.cronus.internal.condition.ConditionParser
 import ink.ptms.cronus.internal.program.NoneProgram
 import ink.ptms.cronus.uranus.function.FunctionParser
-import io.izzel.taboolib.cronus.CronusUtils
 import io.izzel.taboolib.module.hologram.Hologram
 import io.izzel.taboolib.module.hologram.THologram
 import io.izzel.taboolib.module.locale.TLocale
-import io.izzel.taboolib.util.book.BookFormatter
 import io.izzel.taboolib.util.book.builder.BookBuilder
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.item.inventory.ClickType
@@ -17,10 +15,8 @@ import io.izzel.taboolib.util.item.inventory.MenuBuilder
 import io.izzel.taboolib.util.lite.Materials
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 class HologramData(val id: String, var location: Location, var holoContent: MutableList<String> = ArrayList(), var holoCondition: MutableList<String> = ArrayList()) {
 

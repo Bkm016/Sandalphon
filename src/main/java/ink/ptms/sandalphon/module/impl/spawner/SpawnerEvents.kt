@@ -2,9 +2,6 @@ package ink.ptms.sandalphon.module.impl.spawner
 
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
-import ink.ptms.sandalphon.module.impl.scriptblock.ScriptBlock
-import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockType
-import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.util.item.Items

@@ -28,7 +28,7 @@ object CommandBlockControl : Helper {
     val mapIndex = HashMap<Location, Data>()
 
     @TInject
-    val cbc = CommandBuilder.create("CommandBlockControl", null)
+    val cbc = CommandBuilder.create("CommandBlockControl", Sandalphon.plugin)
             .aliases("cbc")
             .permission("*")
             .execute { sender, args ->

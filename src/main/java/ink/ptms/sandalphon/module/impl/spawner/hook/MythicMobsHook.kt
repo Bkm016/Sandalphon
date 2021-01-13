@@ -1,13 +1,12 @@
 package ink.ptms.sandalphon.module.impl.spawner.hook
 
 import ink.ptms.sandalphon.module.impl.spawner.Spawner
-import io.izzel.taboolib.module.inject.TFunction
-import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.inject.TListener
-import io.izzel.taboolib.module.inject.TSchedule
 import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMechanicLoadEvent
 import io.lumine.xikage.mythicmobs.io.MythicLineConfig
-import io.lumine.xikage.mythicmobs.skills.*
+import io.lumine.xikage.mythicmobs.skills.INoTargetSkill
+import io.lumine.xikage.mythicmobs.skills.SkillMechanic
+import io.lumine.xikage.mythicmobs.skills.SkillMetadata
 import org.bukkit.entity.LivingEntity
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener

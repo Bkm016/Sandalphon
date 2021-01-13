@@ -3,11 +3,12 @@ package ink.ptms.sandalphon.module.impl.treasurechest.data
 import ink.ptms.cronus.internal.condition.Condition
 import ink.ptms.cronus.internal.condition.ConditionParser
 import ink.ptms.sandalphon.Sandalphon
+import ink.ptms.sandalphon.module.api.HologramMessager
 import ink.ptms.sandalphon.module.api.NMS
 import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
-import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestOpenEvent
 import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestGenerateEvent
 import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestGenerateLegacyEvent
+import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestOpenEvent
 import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.Version
@@ -30,14 +31,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
-import kotlin.collections.ArrayList
-import kotlin.collections.all
-import kotlin.collections.filter
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.map
-import kotlin.collections.toList
-import kotlin.collections.toMutableList
 
 /**
  * @Author sky
@@ -205,27 +198,37 @@ class ChestData(val block: Location) {
             return
         }
         if (!check(player)) {
+            HologramMessager.send(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f你无法打开这个箱子.")
+            player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
+            return
+        }
+        if (TreasureChest.isGuardianNearly(block)) {
+            HologramMessager.send(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f这个箱子正在被监视.")
             player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
             return
         }
         if (locked != "null") {
             if (Items.isNull(player.inventory.itemInMainHand)) {
+                HologramMessager.send(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f需要钥匙才可以打开.")
                 player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                 return
             }
             if (Utils.asgardHook) {
                 if (!Items.hasLore(player.inventory.itemInMainHand, locked)) {
+                    HologramMessager.send(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f需要钥匙才可以打开.")
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                     return
                 }
             } else {
                 val itemStream = ZaphkielAPI.read(player.inventory.itemInMainHand)
                 if (itemStream.isVanilla()) {
+                    HologramMessager.send(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f需要钥匙才可以打开.")
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                     return
                 }
                 val compound = itemStream.getZaphkielData()["treasurechest"]
                 if (compound == null || (compound.asString() != locked && compound.asString() != "all")) {
+                    HologramMessager.send(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f需要钥匙才可以打开.")
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                     return
                 }
@@ -235,6 +238,7 @@ class ChestData(val block: Location) {
         if (global) {
             if (globalTime > System.currentTimeMillis() || (update == -1L && globalTime > 0)) {
                 if (replace == Material.CHEST || replace == Material.TRAPPED_CHEST) {
+                    HologramMessager.send(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f这个箱子什么都没有.")
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                 }
                 return
@@ -248,6 +252,7 @@ class ChestData(val block: Location) {
             val time = data.getLong("Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}")
             if (time > System.currentTimeMillis() || (update == -1L && time > 0)) {
                 if (replace == Material.CHEST || replace == Material.TRAPPED_CHEST) {
+                    HologramMessager.send(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f这个箱子什么都没有.")
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, Numbers.getRandomDouble(1.5, 2.0).toFloat())
                 }
                 return
@@ -343,7 +348,7 @@ class ChestData(val block: Location) {
                         }
                         16 -> {
                             player.closeInventory()
-                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(conditionText.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7TreasureChestw", "§7${Utils.fromLocation(block)}").build())
+                            CronusUtils.addItem(player, ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(conditionText.joinToString("\n")).build()).name("§f§f§f编辑条件").lore("§7TreasureChest", "§7${Utils.fromLocation(block)}").build())
                         }
                     }
                 }.close {

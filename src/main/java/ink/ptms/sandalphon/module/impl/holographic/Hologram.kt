@@ -1,7 +1,6 @@
 package ink.ptms.sandalphon.module.impl.holographic
 
 import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
-import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
 import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.module.db.local.LocalFile
 import io.izzel.taboolib.module.inject.TFunction

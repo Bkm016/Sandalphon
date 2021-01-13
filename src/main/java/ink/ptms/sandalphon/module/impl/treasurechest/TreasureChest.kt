@@ -10,18 +10,16 @@ import io.izzel.taboolib.module.db.local.LocalFile
 import io.izzel.taboolib.module.inject.TFunction
 import io.izzel.taboolib.module.inject.TSchedule
 import io.izzel.taboolib.util.item.Items
-import io.izzel.taboolib.util.lite.Numbers
+import io.lumine.xikage.mythicmobs.MythicMobs
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.block.Block
-import org.bukkit.block.DoubleChest
-import org.bukkit.block.data.type.Chest
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.entity.LivingEntity
 import org.bukkit.entity.Player
 import org.bukkit.util.NumberConversions
-import org.spigotmc.AsyncCatcher
 
 object TreasureChest {
 
@@ -30,6 +28,10 @@ object TreasureChest {
         private set
 
     val chests = ArrayList<ChestData>()
+
+    val isMythicMobsHooked by lazy {
+        Bukkit.getPluginManager().getPlugin("MythicMobs") != null
+    }
 
     @TSchedule
     fun import() {
@@ -46,7 +48,7 @@ object TreasureChest {
                 this.locked = data.getString("$it.locked")!!
                 this.global = data.getBoolean("$it.global")
                 this.globalTime = data.getLong("$it.global-time")
-                this.replace = Items.asMaterial(data.getString("$it.replace"))
+                this.replace = Items.asMaterial(data.getString("$it.replace"))!!
                 this.conditionText.addAll(data.getStringList("$it.condition"))
                 this
             })
@@ -107,5 +109,19 @@ object TreasureChest {
 
     fun getChest(block: Block): ChestData? {
         return chests.firstOrNull { it.isBlock(block) }
+    }
+
+    fun isGuardianNearly(loc: Location): Boolean {
+        if (isMythicMobsHooked) {
+            return loc.world!!.getNearbyEntities(loc, 16.0, 16.0, 16.0).any {
+                if (it is LivingEntity) {
+                    val mob = MythicMobs.inst().mobManager.getMythicMobInstance(it)
+                    mob != null && mob.type.config.getStringList("Purtmars.Type").contains("guardian:treasure")
+                } else {
+                    false
+                }
+            }
+        }
+        return false
     }
 }

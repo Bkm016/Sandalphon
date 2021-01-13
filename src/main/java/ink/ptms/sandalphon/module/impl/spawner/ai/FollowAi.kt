@@ -4,7 +4,6 @@ import io.izzel.taboolib.module.ai.SimpleAi
 import io.izzel.taboolib.module.ai.SimpleAiSelector
 import io.izzel.taboolib.module.lite.SimpleCounter
 import org.bukkit.Location
-import org.bukkit.attribute.Attribute
 import org.bukkit.entity.LivingEntity
 
 /**

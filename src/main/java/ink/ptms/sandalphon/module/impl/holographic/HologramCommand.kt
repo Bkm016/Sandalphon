@@ -44,7 +44,7 @@ class HologramCommand : BaseMainCommand(), Helper {
             return arrayOf(Argument("序号") { Hologram.holograms.map { it.id }})
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
             if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
                 sender.error("该功能依赖 Cronus 插件.")
                 return
@@ -69,7 +69,7 @@ class HologramCommand : BaseMainCommand(), Helper {
             return arrayOf(Argument("序号") { Hologram.holograms.map { it.id }})
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
             if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
                 sender.error("该功能依赖 Cronus 插件.")
                 return
@@ -91,7 +91,7 @@ class HologramCommand : BaseMainCommand(), Helper {
             return arrayOf(Argument("序号") { Hologram.holograms.map { it.id }})
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
             if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
                 sender.error("该功能依赖 Cronus 插件.")
                 return
@@ -115,7 +115,7 @@ class HologramCommand : BaseMainCommand(), Helper {
             return arrayOf(Argument("序号") { Hologram.holograms.map { it.id }})
         }
 
-        override fun onCommand(sender: CommandSender, p1: Command?, p2: String?, args: Array<out String>) {
+        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
             if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
                 sender.error("该功能依赖 Cronus 插件.")
                 return

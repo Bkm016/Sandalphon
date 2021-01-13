@@ -5,7 +5,6 @@ import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.internal.gson.*
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.locale.TLocale
-import io.izzel.taboolib.util.item.ItemStacker
 import io.izzel.taboolib.util.item.Items
 import me.asgard.sacreditem.SacredItemBuilder
 import me.asgard.sacreditem.item.SacredItemManager

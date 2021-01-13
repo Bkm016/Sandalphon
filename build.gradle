@@ -5,14 +5,14 @@ plugins {
 }
 
 group = 'ink.ptms.sandalphon'
-version = '1.2.4 BETA'
+version = '1.2.5 BETA'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 taboolib {
-    tabooLibVersion = '5.36'
-    loaderVersion = '2.6'
+    tabooLibVersion = '5.46'
+    loaderVersion = '2.10'
     classifier = null
 }
 
