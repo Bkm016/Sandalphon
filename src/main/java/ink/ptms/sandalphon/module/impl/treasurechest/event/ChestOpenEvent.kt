@@ -5,7 +5,7 @@ import io.izzel.taboolib.module.event.EventCancellable
 import org.bukkit.entity.Player
 
 /**
- * @Author sky
- * @Since 2020-05-30 16:35
+ * @author sky
+ * @since 2020-05-30 16:35
  */
 class ChestOpenEvent(val player: Player, val chestData: ChestData) : EventCancellable<ChestOpenEvent>()

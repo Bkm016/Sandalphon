@@ -23,8 +23,8 @@ import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
 
 /**
- * @Author sky
- * @Since 2020-06-01 13:35
+ * @author sky
+ * @since 2020-06-01 13:35
  */
 class BlockData(@Expose val id: String) {
 

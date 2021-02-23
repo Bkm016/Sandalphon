@@ -9,8 +9,8 @@ import org.bukkit.Bukkit
 import org.bukkit.configuration.file.FileConfiguration
 
 /**
- * @Author sky
- * @Since 2020-05-27 11:17
+ * @author sky
+ * @since 2020-05-27 11:17
  */
 object Hologram {
 
@@ -36,8 +36,8 @@ object Hologram {
         data.getKeys(false).forEach { data.set(it, null) }
         holograms.forEach { holo ->
             data.set("${holo.id}.location", Utils.fromLocation(holo.location))
-            data.set("${holo.id}.content", holo.holoContent)
-            data.set("${holo.id}.condition", holo.holoCondition)
+            data.set("${holo.id}.content", holo.content)
+            data.set("${holo.id}.condition", holo.condition)
         }
     }
 

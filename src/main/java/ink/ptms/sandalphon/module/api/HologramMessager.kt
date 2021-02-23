@@ -1,6 +1,6 @@
 package ink.ptms.sandalphon.module.api
 
-import ink.ptms.sandalphon.util.UtilsJ
+import ink.ptms.sandalphon.util.Utils.printed
 import io.izzel.taboolib.kotlin.Tasks
 import io.izzel.taboolib.module.hologram.Hologram
 import io.izzel.taboolib.module.hologram.THologram
@@ -51,7 +51,7 @@ object HologramMessager : Listener {
                 holograms.add(THologram.create(location.clone().add(0.0, (((message.size - 1) - index) * 0.3), 0.0), content).also {
                     if (content.isNotEmpty()) {
                         it.addViewer(player)
-                        it.flash(UtilsJ.toPrintEffect(content), 1)
+                        it.flash(content.printed("_"), 1)
                     }
                 })
             }

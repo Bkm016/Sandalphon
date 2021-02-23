@@ -4,7 +4,7 @@ import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import io.izzel.taboolib.module.event.EventCancellable
 
 /**
- * @Author sky
- * @Since 2020-05-27 22:39
+ * @author sky
+ * @since 2020-05-27 22:39
  */
 class SpawnerTickEvent(val spawner: SpawnerData) : EventCancellable<SpawnerTickEvent>()

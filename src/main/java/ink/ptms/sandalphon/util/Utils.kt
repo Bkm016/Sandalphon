@@ -3,6 +3,7 @@ package ink.ptms.sandalphon.util
 import com.google.common.base.Enums
 import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.internal.gson.*
+import io.izzel.taboolib.kotlin.kether.common.util.LocalizedException
 import io.izzel.taboolib.module.inject.TInject
 import io.izzel.taboolib.module.locale.TLocale
 import io.izzel.taboolib.util.item.Items
@@ -30,7 +31,7 @@ object Utils {
             .registerTypeAdapter(Location::class.java, JsonDeserializer { a, _, _ -> toLocation(a.asString) })
             .registerTypeAdapter(BlockFace::class.java, JsonSerializer<BlockFace> { a, _, _ -> JsonPrimitive(a.name) })
             .registerTypeAdapter(BlockFace::class.java, JsonDeserializer { a, _, _ -> Enums.getIfPresent(BlockFace::class.java, a.asString).or(BlockFace.SELF) })
-            .create()
+            .create()!!
 
     fun item(item: String, player: Player): ItemStack? {
         if (asgardHook) {
@@ -64,7 +65,31 @@ object Utils {
         }
     }
 
-    private fun String.asDouble(): Double {
+    fun String.asDouble(): Double {
         return NumberConversions.toDouble(this)
+    }
+
+    fun String.printed(separator: String = ""): List<String> {
+        val result = ArrayList<String>()
+        var i = 0
+        while (i < length) {
+            if (get(i) == '§') {
+                i++
+            } else {
+                result.add("${substring(0, i + 1)}${if (i % 2 == 1) separator else ""}")
+            }
+            i++
+        }
+        if (separator.isNotEmpty() && i % 2 == 0) {
+            result.add(this)
+        }
+        return result
+    }
+
+    fun LocalizedException.print() {
+        println("[Sandalphon] Unexpected exception while parsing kether shell:")
+        localizedMessage.split("\n").forEach {
+            println("[Sandalphon] $it")
+        }
     }
 }

@@ -5,25 +5,20 @@ import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
 import io.izzel.taboolib.module.command.base.*
 import io.izzel.taboolib.util.lite.Numbers
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.io.File
 
 /**
- * @Author sky
- * @Since 2020-05-20 17:51
+ * @author sky
+ * @since 2020-05-20 17:51
  */
 @BaseCommand(name = "hologram", aliases = ["hd"], permission = "admin")
 class HologramCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.0, description = "新建全息", arguments = ["序号"], type = CommandType.PLAYER)
     fun create(sender: CommandSender, args: Array<String>) {
-        if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-            sender.error("该功能依赖 Cronus 插件.")
-            return
-        }
         val hologramData = Hologram.getHologram(args[0])
         if (hologramData != null) {
             sender.error("该全息已存在.")
@@ -45,10 +40,6 @@ class HologramCommand : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-                sender.error("该功能依赖 Cronus 插件.")
-                return
-            }
             val hologramData = Hologram.getHologram(args[0])
             if (hologramData == null) {
                 sender.error("该全息不存在.")
@@ -70,10 +61,6 @@ class HologramCommand : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-                sender.error("该功能依赖 Cronus 插件.")
-                return
-            }
             val hologramData = Hologram.getHologram(args[0])
             if (hologramData == null) {
                 sender.error("该全息不存在.")
@@ -92,10 +79,6 @@ class HologramCommand : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-                sender.error("该功能依赖 Cronus 插件.")
-                return
-            }
             val hologramData = Hologram.getHologram(args[0])
             if (hologramData == null) {
                 sender.error("该全息不存在.")
@@ -116,10 +99,6 @@ class HologramCommand : BaseMainCommand(), Helper {
         }
 
         override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-                sender.error("该功能依赖 Cronus 插件.")
-                return
-            }
             val hologramData = Hologram.getHologram(args[0])
             if (hologramData == null) {
                 sender.error("该全息不存在.")

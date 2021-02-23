@@ -29,8 +29,8 @@ import kotlin.math.max
 import kotlin.math.min
 
 /**
- * @Author sky
- * @Since 2020-06-01 21:43
+ * @author sky
+ * @since 2020-06-01 21:43
  */
 @TListener
 class BlockEvents : Listener, Helper {

@@ -24,8 +24,8 @@ import org.bukkit.entity.Player
 import org.bukkit.metadata.FixedMetadataValue
 
 /**
- * @Author sky
- * @Since 2020-05-27 16:03
+ * @author sky
+ * @since 2020-05-27 16:03
  */
 class SpawnerData(val block: Location, var mob: MythicMob) {
 

@@ -11,15 +11,14 @@ import io.izzel.taboolib.module.command.base.CommandType
 import io.izzel.taboolib.module.command.base.SubCommand
 import io.izzel.taboolib.util.item.ItemBuilder
 import io.izzel.taboolib.util.lite.Numbers
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.io.File
 
 /**
- * @Author sky
- * @Since 2020-05-20 17:51
+ * @author sky
+ * @since 2020-05-20 17:51
  */
 @BaseCommand(name = "scriptblock", aliases = ["sb"], permission = "admin")
 class ScriptBlockCommand : BaseMainCommand(), Helper {
@@ -33,10 +32,6 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.0, description = "新建脚本", type = CommandType.PLAYER)
     fun create(sender: CommandSender, args: Array<String>) {
-        if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-            sender.error("该功能依赖 Cronus 插件.")
-            return
-        }
         val block = (sender as Player).getTargetBlockExact()
         if (block == null || block.type == Material.AIR) {
             sender.error("无效的方块.")
@@ -59,10 +54,6 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.1, description = "移除脚本", type = CommandType.PLAYER)
     fun remove(sender: CommandSender, args: Array<String>) {
-        if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-            sender.error("该功能依赖 Cronus 插件.")
-            return
-        }
         val block = (sender as Player).getTargetBlockExact()
         if (block == null || block.type == Material.AIR) {
             sender.error("无效的方块.")
@@ -83,10 +74,6 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.2, description = "编辑脚本", type = CommandType.PLAYER)
     fun edit(sender: CommandSender, args: Array<String>) {
-        if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-            sender.error("该功能依赖 Cronus 插件.")
-            return
-        }
         val block = (sender as Player).getTargetBlockExact()
         if (block == null || block.type == Material.AIR) {
             sender.error("无效的方块.")
@@ -104,10 +91,6 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.4, description = "链接脚本", type = CommandType.PLAYER)
     fun link(sender: CommandSender, args: Array<String>) {
-        if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-            sender.error("该功能依赖 Cronus 插件.")
-            return
-        }
         val block = (sender as Player).getTargetBlockExact()
         if (block == null || block.type == Material.AIR) {
             sender.error("无效的方块.")

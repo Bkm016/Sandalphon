@@ -19,8 +19,8 @@ import org.bukkit.command.BlockCommandSender
 import org.bukkit.util.NumberConversions
 
 /**
- * @Author sky
- * @Since 2020-02-15 17:32
+ * @author sky
+ * @since 2020-02-15 17:32
  */
 object CommandBlockControl : Helper {
 

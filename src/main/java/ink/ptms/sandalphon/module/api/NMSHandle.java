@@ -10,8 +10,8 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 /**
- * @Author sky
- * @Since 2020-05-30 17:00
+ * @author sky
+ * @since 2020-05-30 17:00
  */
 public class NMSHandle extends NMS {
 

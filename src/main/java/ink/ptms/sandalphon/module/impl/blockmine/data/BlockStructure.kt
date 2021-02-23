@@ -6,8 +6,8 @@ import org.bukkit.block.BlockFace
 import org.bukkit.util.Vector
 
 /**
- * @Author sky
- * @Since 2020-06-01 16:11
+ * @author sky
+ * @since 2020-06-01 16:11
  */
 class BlockStructure(
         @Expose

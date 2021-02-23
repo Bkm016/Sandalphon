@@ -39,8 +39,8 @@ object ScriptBlock {
             val location = Utils.fromLocation(block.block).replace(".", "__")
             data.set("$location.link", block.link.map { Utils.fromLocation(it) })
             data.set("$location.type", block.blockType.name)
-            data.set("$location.action", block.blockAction)
-            data.set("$location.condition", block.blockCondition)
+            data.set("$location.action", block.action)
+            data.set("$location.condition", block.condition)
         }
     }
 

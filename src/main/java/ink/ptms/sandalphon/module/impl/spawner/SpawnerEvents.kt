@@ -18,8 +18,8 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.metadata.FixedMetadataValue
 
 /**
- * @Author sky
- * @Since 2020-05-29 13:08
+ * @author sky
+ * @since 2020-05-29 13:08
  */
 @TListener(depend = ["MythicMobs"])
 class SpawnerEvents : Listener, Helper {

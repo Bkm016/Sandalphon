@@ -19,8 +19,8 @@ import org.bukkit.entity.Player
 import java.io.File
 
 /**
- * @Author sky
- * @Since 2020-05-20 17:51
+ * @author sky
+ * @since 2020-05-20 17:51
  */
 @BaseCommand(name = "spawner", aliases = ["ss"], permission = "admin")
 class SpawnerCommand : BaseMainCommand(), Helper {

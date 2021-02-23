@@ -49,7 +49,7 @@ object TreasureChest {
                 this.global = data.getBoolean("$it.global")
                 this.globalTime = data.getLong("$it.global-time")
                 this.replace = Items.asMaterial(data.getString("$it.replace"))!!
-                this.conditionText.addAll(data.getStringList("$it.condition"))
+                this.condition.addAll(data.getStringList("$it.condition"))
                 this
             })
         }
@@ -69,7 +69,7 @@ object TreasureChest {
             data.set("$location.global", chest.global)
             data.set("$location.global-time", chest.globalTime)
             data.set("$location.replace", chest.replace.name)
-            data.set("$location.condition", chest.conditionText)
+            data.set("$location.condition", chest.condition)
         }
     }
 

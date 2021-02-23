@@ -12,10 +12,10 @@ import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.meta.BookMeta
 
 /**
- * @Author sky
- * @Since 2020-05-21 13:33
+ * @author sky
+ * @since 2020-05-21 13:33
  */
-@TListener(depend = ["Cronus"])
+@TListener
 class HologramEvents : Listener, Helper {
 
     @EventHandler
@@ -38,12 +38,12 @@ class HologramEvents : Listener, Helper {
             if (hologramData == null) {
                 e.player.error("该全息已失效. (${e.previousBookMeta.lore!![1].unColored()})")
             } else {
-                hologramData.holoContent.clear()
+                hologramData.content.clear()
                 val lines = e.newBookMeta.pages.flatMap {
                     TextComponent(it).toPlainText().replace("§0", "").split("\n")
                 }
                 if (lines[0].unColored() != "clear") {
-                    hologramData.holoContent.addAll(lines)
+                    hologramData.content.addAll(lines)
                 }
                 hologramData.init()
                 // sb 1.12
@@ -57,12 +57,12 @@ class HologramEvents : Listener, Helper {
             if (hologramData == null) {
                 e.player.error("该全息已失效. (${e.previousBookMeta.lore!![1].unColored()})")
             } else {
-                hologramData.holoCondition.clear()
+                hologramData.condition.clear()
                 val lines = e.newBookMeta.pages.flatMap {
                     TextComponent(it).toPlainText().replace("§0", "").split("\n")
                 }
                 if (lines[0].unColored() != "clear") {
-                    hologramData.holoContent.addAll(lines)
+                    hologramData.content.addAll(lines)
                 }
                 hologramData.init()
                 // sb 1.12

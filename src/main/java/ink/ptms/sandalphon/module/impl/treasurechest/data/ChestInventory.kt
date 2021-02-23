@@ -5,8 +5,8 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.InventoryHolder
 
 /**
- * @Author sky
- * @Since 2020-05-30 17:49
+ * @author sky
+ * @since 2020-05-30 17:49
  */
 class ChestInventory(val chestData: ChestData) : InventoryHolder {
 

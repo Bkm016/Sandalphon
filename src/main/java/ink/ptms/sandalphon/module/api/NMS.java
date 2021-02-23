@@ -5,8 +5,8 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 /**
- * @Author sky
- * @Since 2020-05-30 17:00
+ * @author sky
+ * @since 2020-05-30 17:00
  */
 public abstract class NMS {
 

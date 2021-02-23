@@ -7,8 +7,8 @@ import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
 
 /**
- * @Author sky
- * @Since 2020-05-27 22:39
+ * @author sky
+ * @since 2020-05-27 22:39
  */
 class EntitySpawnEvent {
 

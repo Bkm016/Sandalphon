@@ -14,8 +14,8 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 /**
- * @Author sky
- * @Since 2020-06-01 17:49
+ * @author sky
+ * @since 2020-06-01 17:49
  */
 @BaseCommand(name = "blockmine", aliases = ["mine"], permission = "admin")
 class BlockCommand : BaseMainCommand(), Helper {

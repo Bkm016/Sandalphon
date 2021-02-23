@@ -16,15 +16,18 @@ import org.bukkit.event.player.PlayerMoveEvent
 import org.bukkit.inventory.EquipmentSlot
 
 /**
- * @Author sky
- * @Since 2020-05-21 13:33
+ * @author sky
+ * @since 2020-05-21 13:33
  */
-@TListener(depend = ["Cronus"])
+@TListener
 class ScriptBlockEvents : Listener, Helper {
 
     @EventHandler
     fun e(e: BlockBreakEvent) {
-        if (e.player.isOp && Items.hasName(e.player.inventory.itemInMainHand, "链接魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "ScriptBlock")) {
+        if (e.player.isOp
+            && Items.hasName(e.player.inventory.itemInMainHand, "链接魔杖")
+            && Items.hasLore(e.player.inventory.itemInMainHand, "ScriptBlock")
+        ) {
             e.isCancelled = true
             val location = Utils.toLocation(e.player.inventory.itemInMainHand.itemMeta!!.lore!![1].unColored())
             val blockData = ScriptBlock.getBlock(location.block)
@@ -49,7 +52,11 @@ class ScriptBlockEvents : Listener, Helper {
         if (e.hand != EquipmentSlot.HAND) {
             return
         }
-        if (e.player.isOp && e.action == Action.RIGHT_CLICK_BLOCK && Items.hasName(e.player.inventory.itemInMainHand, "链接魔杖") && Items.hasLore(e.player.inventory.itemInMainHand, "ScriptBlock")) {
+        if (e.player.isOp
+            && e.action == Action.RIGHT_CLICK_BLOCK
+            && Items.hasName(e.player.inventory.itemInMainHand, "链接魔杖")
+            && Items.hasLore(e.player.inventory.itemInMainHand, "ScriptBlock")
+        ) {
             e.isCancelled = true
             val location = Utils.toLocation(e.player.inventory.itemInMainHand.itemMeta!!.lore!![1].unColored())
             val blockData = ScriptBlock.getBlock(location.block)
@@ -68,8 +75,12 @@ class ScriptBlockEvents : Listener, Helper {
             ScriptBlock.export()
         } else if (e.action == Action.RIGHT_CLICK_BLOCK || e.action == Action.LEFT_CLICK_BLOCK) {
             ScriptBlock.getBlock(e.clickedBlock!!)?.run {
-                if (this.blockType == BlockType.INTERACT && this.check(e.player)) {
-                    this.eval(e.player)
+                if (blockType == BlockType.INTERACT) {
+                    check(e.player).thenAccept { cond ->
+                        if (cond) {
+                            eval(e.player)
+                        }
+                    }
                 }
             }
         }
@@ -79,8 +90,12 @@ class ScriptBlockEvents : Listener, Helper {
     fun e(e: PlayerMoveEvent) {
         if (e.to != null && e.from.block != e.to!!.block) {
             ScriptBlock.getBlock(e.to!!.block.getRelative(BlockFace.DOWN))?.run {
-                if (this.blockType == BlockType.WALK && this.check(e.player)) {
-                    this.eval(e.player)
+                if (blockType == BlockType.WALK) {
+                    check(e.player).thenAccept { cond ->
+                        if (cond) {
+                            eval(e.player)
+                        }
+                    }
                 }
             }
         }
@@ -96,11 +111,10 @@ class ScriptBlockEvents : Listener, Helper {
             if (blockData == null) {
                 e.player.error("该脚本已失效. (${e.newBookMeta.author})")
             } else {
-                blockData.blockAction.clear()
+                blockData.action.clear()
                 if (e.newBookMeta.pages[0].unColored() != "clear") {
-                    blockData.blockAction.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
+                    blockData.action.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
                 }
-                blockData.init()
             }
             e.isSigning = false
         } else if (e.previousBookMeta.displayName.contains("编辑条件") && e.previousBookMeta.lore!![0].unColored() == "ScriptBlock") {
@@ -108,11 +122,10 @@ class ScriptBlockEvents : Listener, Helper {
             if (blockData == null) {
                 e.player.error("该脚本已失效. (${e.newBookMeta.author})")
             } else {
-                blockData.blockCondition.clear()
+                blockData.condition.clear()
                 if (e.newBookMeta.pages[0].unColored() != "clear") {
-                    blockData.blockCondition.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
+                    blockData.condition.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
                 }
-                blockData.init()
             }
             e.isSigning = false
         }

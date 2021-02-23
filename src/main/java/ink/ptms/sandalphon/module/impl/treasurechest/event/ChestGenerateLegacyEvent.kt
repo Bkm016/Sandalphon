@@ -6,7 +6,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 /**
- * @Author sky
- * @Since 2020-05-30 16:35
+ * @author sky
+ * @since 2020-05-30 16:35
  */
 class ChestGenerateLegacyEvent(val player: Player, val chestData: ChestData, var item: ItemStack, var amount: Int) : EventCancellable<ChestGenerateLegacyEvent>()

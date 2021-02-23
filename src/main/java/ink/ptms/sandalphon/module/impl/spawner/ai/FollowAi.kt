@@ -7,8 +7,8 @@ import org.bukkit.Location
 import org.bukkit.entity.LivingEntity
 
 /**
- * @Author sky
- * @Since 2018-09-21 9:52
+ * @author sky
+ * @since 2018-09-21 9:52
  */
 class FollowAi(val entity: LivingEntity, val target: Location, val speed: Double) : SimpleAi() {
 

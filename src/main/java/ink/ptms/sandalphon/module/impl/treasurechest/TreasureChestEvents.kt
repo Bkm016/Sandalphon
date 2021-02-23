@@ -26,14 +26,14 @@ import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerEditBookEvent
 
 /**
- * @Author sky
- * @Since 2020-05-29 22:00
+ * @author sky
+ * @since 2020-05-29 22:00
  */
 @TListener
 class TreasureChestEvents : Listener, Helper {
 
     init {
-        TPacketHandler.addListener(Sandalphon.getPlugin(), object : TPacketListener() {
+        TPacketHandler.addListener(Sandalphon.plugin, object : TPacketListener() {
 
             override fun onReceive(player: Player, packet: Packet): Boolean {
                 if (packet.`is`("PacketPlayInUseItem")) {
@@ -43,7 +43,7 @@ class TreasureChestEvents : Listener, Helper {
                         val loc = Location(player.world, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
                         val chest = TreasureChest.getChest(loc.block) ?: return true
                         if (packet.read("c").toString() == "MAIN_HAND") {
-                            Bukkit.getScheduler().runTask(Sandalphon.getPlugin(), Runnable {
+                            Bukkit.getScheduler().runTask(Sandalphon.plugin, Runnable {
                                 chest.open(player)
                             })
                         }
@@ -52,7 +52,7 @@ class TreasureChestEvents : Listener, Helper {
                         val loc = Location(player.world, pos.x.toDouble(), pos.y.toDouble(), pos.z.toDouble())
                         val chest = TreasureChest.getChest(loc.block) ?: return true
                         if (packet.read("b").toString() == "MAIN_HAND") {
-                            Bukkit.getScheduler().runTask(Sandalphon.getPlugin(), Runnable {
+                            Bukkit.getScheduler().runTask(Sandalphon.plugin, Runnable {
                                 chest.open(player)
                             })
                         }
@@ -79,7 +79,7 @@ class TreasureChestEvents : Listener, Helper {
             if (e.inventory.viewers.isEmpty()) {
                 val chest = (e.inventory.holder as ChestInventory).chestData
                 e.inventory.filter { item -> Items.nonNull(item) }.forEachIndexed { index, item ->
-                    Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
+                    Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable {
                         CronusUtils.addItem(e.player as Player, item)
                         (e.player as Player).playSound(e.player.location, Sound.ENTITY_ITEM_PICKUP, 1f, 2f)
                     }, index.toLong())
@@ -109,11 +109,10 @@ class TreasureChestEvents : Listener, Helper {
             if (chestData == null) {
                 e.player.error("该宝藏已失效. (${e.previousBookMeta.lore!![1].unColored()})")
             } else {
-                chestData.conditionText.clear()
+                chestData.condition.clear()
                 if (e.newBookMeta.pages[0].unColored() != "clear") {
-                    chestData.conditionText.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
+                    chestData.condition.addAll(e.newBookMeta.pages.flatMap { it.replace("§0", "").split("\n") })
                 }
-                chestData.init()
             }
             e.isSigning = false
         }

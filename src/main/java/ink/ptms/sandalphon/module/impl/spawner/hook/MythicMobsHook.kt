@@ -12,8 +12,8 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 
 /**
- * @Author sky
- * @Since 2020-06-13 12:17
+ * @author sky
+ * @since 2020-06-13 12:17
  */
 @TListener(depend = ["MythicMobs"])
 class MythicMobsHook : Listener {

@@ -5,8 +5,8 @@ import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import io.izzel.taboolib.module.event.EventCancellable
 
 /**
- * @Author sky
- * @Since 2020-06-02 13:59
+ * @author sky
+ * @since 2020-06-02 13:59
  */
 class BlockGrowEvent(val blockData: BlockData, val blockState: BlockState) : EventCancellable<BlockGrowEvent>() {
 }
