@@ -91,7 +91,7 @@ object TreasureChest {
                 player.closeInventory()
                 // closed animation
                 if (chest.replace == Material.CHEST || chest.replace == Material.TRAPPED_CHEST) {
-                    ink.ptms.sandalphon.module.api.NMS.HANDLE.sendBlockAction(player, chest.block.block, 1, 0)
+                    ink.ptms.sandalphon.module.api.NMS.HANDLE!!.sendBlockAction(player, chest.block.block, 1, 0)
                 }
             }
         }
