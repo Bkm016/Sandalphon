@@ -23,15 +23,25 @@ object Utils {
     @TInject("SacredItem")
     val asgardHook: Boolean = false
     val serializer = GsonBuilder().excludeFieldsWithoutExposeAnnotation()
-            .registerTypeAdapter(Vector::class.java, JsonSerializer<Vector> { a, _, _ -> JsonPrimitive("${a.x},${a.y},${a.z}") })
-            .registerTypeAdapter(Vector::class.java, JsonDeserializer { a, _, _ -> a.asString.split(",").run { Vector(this[0].asDouble(),this[1].asDouble(), this[2].asDouble()) } })
-            .registerTypeAdapter(Material::class.java, JsonSerializer<Material> { a, _, _ -> JsonPrimitive(a.name) })
-            .registerTypeAdapter(Material::class.java, JsonDeserializer { a, _, _ -> Items.asMaterial(a.asString) })
-            .registerTypeAdapter(Location::class.java, JsonSerializer<Location> { a, _, _ -> JsonPrimitive(fromLocation(a)) })
-            .registerTypeAdapter(Location::class.java, JsonDeserializer { a, _, _ -> toLocation(a.asString) })
-            .registerTypeAdapter(BlockFace::class.java, JsonSerializer<BlockFace> { a, _, _ -> JsonPrimitive(a.name) })
-            .registerTypeAdapter(BlockFace::class.java, JsonDeserializer { a, _, _ -> Enums.getIfPresent(BlockFace::class.java, a.asString).or(BlockFace.SELF) })
-            .create()!!
+        .registerTypeAdapter(
+            Vector::class.java,
+            JsonSerializer<Vector> { a, _, _ -> JsonPrimitive("${a.x},${a.y},${a.z}") })
+        .registerTypeAdapter(
+            Vector::class.java,
+            JsonDeserializer { a, _, _ ->
+                a.asString.split(",").run { Vector(this[0].asDouble(), this[1].asDouble(), this[2].asDouble()) }
+            })
+        .registerTypeAdapter(Material::class.java, JsonSerializer<Material> { a, _, _ -> JsonPrimitive(a.name) })
+        .registerTypeAdapter(Material::class.java, JsonDeserializer { a, _, _ -> Items.asMaterial(a.asString) })
+        .registerTypeAdapter(
+            Location::class.java,
+            JsonSerializer<Location> { a, _, _ -> JsonPrimitive(fromLocation(a)) })
+        .registerTypeAdapter(Location::class.java, JsonDeserializer { a, _, _ -> toLocation(a.asString) })
+        .registerTypeAdapter(BlockFace::class.java, JsonSerializer<BlockFace> { a, _, _ -> JsonPrimitive(a.name) })
+        .registerTypeAdapter(
+            BlockFace::class.java,
+            JsonDeserializer { a, _, _ -> Enums.getIfPresent(BlockFace::class.java, a.asString).or(BlockFace.SELF) })
+        .create()!!
 
     fun item(item: String, player: Player): ItemStack? {
         if (asgardHook) {
@@ -42,7 +52,9 @@ object Utils {
 
     fun itemId(itemStack: ItemStack): String? {
         if (asgardHook) {
-            return SacredItemManager.getInstance().itemList.map { TLocale.Translate.setUncolored(it.split("-")[0]).trim() }.firstOrNull { itemStack.isSimilar(SacredItemManager.getInstance().getItem(it)) }
+            return SacredItemManager.getInstance().itemList.map {
+                TLocale.Translate.setUncolored(it.split("-")[0]).trim()
+            }.firstOrNull { itemStack.isSimilar(SacredItemManager.getInstance().getItem(it)) }
         }
         val itemStream = ZaphkielAPI.read(itemStack)
         if (itemStream.isExtension()) {
@@ -61,7 +73,12 @@ object Utils {
 
     fun toLocation(source: String): Location {
         return source.split(",").run {
-            Location(Bukkit.getWorld(get(0)), getOrElse(1) { "0" }.asDouble(), getOrElse(2) { "0" }.asDouble(), getOrElse(3) { "0" }.asDouble())
+            Location(
+                Bukkit.getWorld(get(0)),
+                getOrElse(1) { "0" }.asDouble(),
+                getOrElse(2) { "0" }.asDouble(),
+                getOrElse(3) { "0" }.asDouble()
+            )
         }
     }
 

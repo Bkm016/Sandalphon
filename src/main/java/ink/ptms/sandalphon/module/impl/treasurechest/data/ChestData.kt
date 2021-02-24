@@ -151,7 +151,7 @@ class ChestData(val block: Location) {
 
     fun tick() {
         if (open.isNotEmpty()) {
-            block.world!!.players.forEach { NMS.HANDLE.sendBlockAction(it, block.block, 1, 1) }
+            block.world!!.players.forEach { NMS.HANDLE!!.sendBlockAction(it, block.block, 1, 1) }
         }
         block.world!!.players.forEach { tick(it) }
     }
@@ -290,7 +290,7 @@ class ChestData(val block: Location) {
                         // closed animation
                         if (open.isEmpty() && (replace == Material.CHEST || replace == Material.TRAPPED_CHEST)) {
                             player.world.players.forEach { p ->
-                                NMS.HANDLE.sendBlockAction(p, block.block, 1, 0)
+                                NMS.HANDLE!!.sendBlockAction(p, block.block, 1, 0)
                             }
                             player.world.playSound(block, Sound.BLOCK_CHEST_CLOSE, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
                         }
@@ -298,7 +298,7 @@ class ChestData(val block: Location) {
             }
             if (isChest(block.block)) {
                 player.world.players.forEach {
-                    NMS.HANDLE.sendBlockAction(it, block.block, 1, 1)
+                    NMS.HANDLE!!.sendBlockAction(it, block.block, 1, 1)
                 }
                 player.world.playSound(block, Sound.BLOCK_CHEST_OPEN, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
             } else {

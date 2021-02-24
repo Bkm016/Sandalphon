@@ -86,7 +86,11 @@ class BlockEvents : Listener, Helper {
                     e.player.error("该位置已存在实例.")
                     return
                 }
-                val blockState = BlockState(e.block.location, blockData.progress.size - 1, 0, false)
+                val blockState = if (e.player.isSneaking){
+                    BlockState(e.block.location.add(0.0,1.0,0.0), blockData.progress.size - 1, 0, false)
+                }else{
+                    BlockState(e.block.location, blockData.progress.size - 1, 0, false)
+                }
                 blockData.blocks.add(blockState)
                 blockData.build(blockState)
                 e.player.info("实例已创建.")
@@ -229,7 +233,7 @@ class BlockEvents : Listener, Helper {
                 build(e.player, pair.key!!, pair.value!!, true) { loc ->
                     Effects.create(Particle.VILLAGER_HAPPY, loc.add(0.5, 0.5, 0.5)).count(5).player(e.player).play()
                     val block = loc.block
-                    if (block.type == Material.AIR) {
+                    if (block.type == Material.AIR || block.type == Material.BEDROCK) {
                         return@build
                     }
                     val direction = CommandBlockControl.getBlockFace(block)
@@ -239,6 +243,7 @@ class BlockEvents : Listener, Helper {
                 e.player.info("结构已储存.")
                 BlockMine.export()
                 BlockMine.cached()
+                blockData.openEdit(e.player)
             }
         }
     }
