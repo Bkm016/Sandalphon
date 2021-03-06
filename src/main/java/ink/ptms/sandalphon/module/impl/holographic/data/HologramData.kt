@@ -20,9 +20,8 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import java.util.concurrent.CompletableFuture
 
-class HologramData(val id: String, var location: Location, content: MutableList<String> = ArrayList(), var condition: MutableList<String> = ArrayList()) {
+class HologramData(val id: String, var location: Location, val content: MutableList<String> = ArrayList(), var condition: MutableList<String> = ArrayList()) {
 
-    var content = TLocale.Translate.setColored(content).toMutableList()
     val holograms = HashMap<String, List<Hologram>>()
 
     init {
@@ -69,7 +68,7 @@ class HologramData(val id: String, var location: Location, content: MutableList<
         }
         val holograms = Lists.newArrayList<Hologram>()
         content.forEachIndexed { index, content ->
-            val hologram = THologram.create(location.clone().add(0.0, (((this.content.size - 1) - index) * 0.3), 0.0), content.toFunction(player))
+            val hologram = THologram.create(location.clone().add(0.0, (((this.content.size - 1) - index) * 0.3), 0.0), TLocale.Translate.setColored(content.toFunction(player)))
             if (content.isNotEmpty()) {
                 check(player).thenAccept {
                     if (it) {
