@@ -92,7 +92,7 @@ class HologramData(val id: String, var location: Location, val content: MutableL
                     check(player).thenAccept {
                         if (it) {
                             hologram.addViewer(player)
-                            val text = content.toFunction(player)
+                            val text = TLocale.Translate.setColored(content.toFunction(player))
                             if (hologram.text != text) {
                                 hologram.flash(text)
                             }
