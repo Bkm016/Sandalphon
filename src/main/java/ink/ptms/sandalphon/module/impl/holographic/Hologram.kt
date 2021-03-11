@@ -22,9 +22,6 @@ object Hologram {
 
     @TSchedule
     fun import() {
-        if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-            return
-        }
         holograms.clear()
         data.getKeys(false).forEach {
             holograms.add(HologramData(it, Utils.toLocation(data.getString("$it.location")!!), data.getStringList("$it.content"), data.getStringList("$it.condition")))

@@ -20,9 +20,6 @@ object ScriptBlock {
 
     @TSchedule
     fun import() {
-        if (Bukkit.getPluginManager().getPlugin("Cronus") == null) {
-            return
-        }
         blocks.clear()
         data.getKeys(false).forEach {
             blocks.add(BlockData(Utils.toLocation(it.replace("__", ".")), BlockType.valueOf(data.getString("$it.type")!!), data.getStringList("$it.action"), data.getStringList("$it.condition")).run {
