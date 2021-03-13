@@ -44,7 +44,8 @@ object BlockMine {
     @TSchedule(period = 20 * 60, async = true)
     fun export() {
         blocks.forEach { block ->
-            Files.file(Sandalphon.plugin.dataFolder, "module/blockmine/${block.id}.json").writeText(Utils.format(Utils.serializer.toJsonTree(block)), StandardCharsets.UTF_8)
+            Files.file(Sandalphon.plugin.dataFolder, "module/blockmine/${block.id}.json")
+                .writeText(Utils.format(Utils.serializer.toJsonTree(block)), StandardCharsets.UTF_8)
         }
     }
 
@@ -64,14 +65,14 @@ object BlockMine {
         Files.deepDelete(File(Sandalphon.plugin.dataFolder, "module/blockmine/$id.json"))
     }
 
-    fun find(block: Location): Pair<BlockData, Pair<BlockState, BlockStructure>>? {
+    fun find(block: Location): FindResult? {
         if (block.block.type !in blocksCache) {
             return null
         }
-        for (b in blocks) {
+        blocks.forEach { b ->
             val find = b.find(block)
             if (find != null) {
-                return b to find
+                return FindResult(b, find.first, find.second)
             }
         }
         return null
@@ -80,4 +81,6 @@ object BlockMine {
     fun getBlock(id: String): BlockData? {
         return blocks.firstOrNull { it.id == id }
     }
+
+    class FindResult(val blockData: BlockData, val blockState: BlockState, val blockStructure: BlockStructure)
 }

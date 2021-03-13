@@ -39,12 +39,13 @@ class BlockEvents : Listener, Helper {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     fun player(e: BlockBreakEvent) {
-        val pair = BlockMine.find(e.block.location) ?: return
-        e.isCancelled = true
-        if (pair.second.second.origin == e.block.type) {
-            if (pair.second.second.tool != null) {
+        val result = BlockMine.find(e.block.location)
+        if (e.block.type == result?.blockStructure?.origin) {
+            e.isCancelled = true
+            // 检查破坏工具
+            if (result.blockStructure.tool != null) {
                 if (Utils.asgardHook) {
-                    if (!Items.hasLore(e.player.inventory.itemInMainHand, pair.second.second.tool)) {
+                    if (!Items.hasLore(e.player.inventory.itemInMainHand, result.blockStructure.tool)) {
                         return
                     }
                 } else {
@@ -53,22 +54,26 @@ class BlockEvents : Listener, Helper {
                         return
                     }
                     val blockmine = itemStream.getZaphkielData()["blockmine"] as NBTList
-                    if (!blockmine.contains(NBTBase(pair.second.second.tool))) {
+                    if (!blockmine.contains(NBTBase(result.blockStructure.tool))) {
                         return
                     }
                 }
             }
-            e.block.type = pair.second.second.replace
-            e.block.world.players.filter { it != e.player }.forEach {
-                it.playEffect(e.block.location, Effect.STEP_SOUND, pair.second.second.origin)
-            }
-            pair.second.first.update = true
-            pair.second.second.drop.filter { Numbers.random(it.chance) }.forEach {
-                e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), (Utils.item(it.item, e.player) ?: return@forEach).run {
-                    this.amount = it.amount
-                    this
-                }).pickupDelay = 20
-            }
+            ink.ptms.sandalphon.module.impl.blockmine.event.BlockBreakEvent(e.player, result.blockData, result.blockState, result.blockStructure)
+                .call()
+                .nonCancelled {
+                    e.block.type = result.blockStructure.replace
+                    e.block.world.players.filter { it != e.player }.forEach {
+                        it.playEffect(e.block.location, Effect.STEP_SOUND, result.blockStructure.origin)
+                    }
+                    result.blockState.update = true
+                    result.blockStructure.drop.filter { Numbers.random(it.chance) }.forEach {
+                        e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), (Utils.item(it.item, e.player) ?: return@forEach).run {
+                            this.amount = it.amount
+                            this
+                        }).pickupDelay = 20
+                    }
+                }
         }
     }
 
@@ -86,9 +91,9 @@ class BlockEvents : Listener, Helper {
                     e.player.error("该位置已存在实例.")
                     return
                 }
-                val blockState = if (e.player.isSneaking){
-                    BlockState(e.block.location.add(0.0,1.0,0.0), blockData.progress.size - 1, 0, false)
-                }else{
+                val blockState = if (e.player.isSneaking) {
+                    BlockState(e.block.location.add(0.0, 1.0, 0.0), blockData.progress.size - 1, 0, false)
+                } else {
                     BlockState(e.block.location, blockData.progress.size - 1, 0, false)
                 }
                 blockData.blocks.add(blockState)
