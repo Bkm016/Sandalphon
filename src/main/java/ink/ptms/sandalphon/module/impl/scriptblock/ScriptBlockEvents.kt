@@ -6,10 +6,12 @@ import ink.ptms.sandalphon.util.Utils
 import io.izzel.taboolib.module.inject.TListener
 import io.izzel.taboolib.util.item.Items
 import org.bukkit.block.BlockFace
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.entity.ProjectileHitEvent
 import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerMoveEvent
@@ -94,6 +96,21 @@ class ScriptBlockEvents : Listener, Helper {
                     check(e.player).thenAccept { cond ->
                         if (cond) {
                             eval(e.player)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    fun e(e: ProjectileHitEvent) {
+        if (e.hitBlock != null && e.entity.shooter is Player) {
+            ScriptBlock.getBlock(e.hitBlock!!)?.run {
+                if (blockType == BlockType.WALK) {
+                    check(e.entity.shooter as Player).thenAccept { cond ->
+                        if (cond) {
+                            eval(e.entity.shooter as Player)
                         }
                     }
                 }

@@ -5,13 +5,13 @@ plugins {
 }
 
 group = 'ink.ptms.sandalphon'
-version = '1.2.7'
+version = '1.2.8'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 taboolib {
-    tabooLibVersion = '5.55'
+    tabooLibVersion = '5.58'
     loaderVersion = '2.12'
     classifier = null
 }
@@ -21,11 +21,13 @@ repositories {
 }
 
 dependencies {
-    compile 'public:Zaphkiel:1.0.0'
-    compile 'ink.ptms.core:v11600:11600:all'
-    compile 'ink.ptms.core:v11200:11200:all'
-    compile 'org.jetbrains.kotlin:kotlin-stdlib'
-	compileOnly fileTree(dir: 'libs', includes: ['*.jar'])
+    implementation 'public:InternalAPI:1.0.0'
+    implementation 'public:MythicMobs:1.0.1'
+    implementation 'public:Zaphkiel:1.0.0'
+    implementation 'ink.ptms.core:v11600:11600:all'
+    implementation 'ink.ptms.core:v11200:11200:all'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+    implementation fileTree(dir: 'libs', includes: ['*.jar'])
 }
 
 processResources {

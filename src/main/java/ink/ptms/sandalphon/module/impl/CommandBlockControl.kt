@@ -50,7 +50,7 @@ object CommandBlockControl : Helper {
                         // 短充能
                         if (args[1].startsWith("powered:")) {
                             block.type = Material.REDSTONE_BLOCK
-                            Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable { block.type = Material.GLASS }, NumberConversions.toLong(args[1].substring("powered:".length)))
+                            Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable { block.type = Material.GLASS }, NumberConversions.toLong(args[1].substring("powered:".length)))
                         }
                         // 长充能
                         else {
@@ -71,12 +71,12 @@ object CommandBlockControl : Helper {
                         val block = collect.getOrNull(index.index)
                         if (block != null) {
                             block.type = Material.REDSTONE_BLOCK
-                            Bukkit.getScheduler().runTaskAsynchronously(Sandalphon.getPlugin(), Runnable {
+                            Bukkit.getScheduler().runTaskAsynchronously(Sandalphon.plugin, Runnable {
                                 block.world.playEffect(block.location, Effect.STEP_SOUND, block.type)
                             })
                             // 短选取
                             if (args[1].startsWith("selected:")) {
-                                Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable { block.type = Material.GLASS }, NumberConversions.toLong(args[1].substring("selected:".length)))
+                                Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable { block.type = Material.GLASS }, NumberConversions.toLong(args[1].substring("selected:".length)))
                             }
                         }
                         when (args.getOrElse(2) { "cycle" }) {
@@ -121,7 +121,7 @@ object CommandBlockControl : Helper {
                     }
                 }
                 map[sender.block.location] = System.currentTimeMillis() + (NumberConversions.toInt(args[0]) * 50L)
-            }
+            }!!
 
     fun collect(block: Block, face: BlockFace): List<Block> {
         val list = Lists.newArrayList<Block>()

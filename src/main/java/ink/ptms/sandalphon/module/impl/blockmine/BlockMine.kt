@@ -37,7 +37,6 @@ object BlockMine {
             }
         }
         cached()
-        println("[Sandalphon] Loaded ${blocks.size} structure blocks.")
     }
 
     @TFunction.Cancel
