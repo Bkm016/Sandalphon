@@ -15,7 +15,9 @@ abstract class NMS {
     abstract fun setBlockData(block: Block?, data: Byte)
 
     companion object {
+
         @TInject(asm = "ink.ptms.sandalphon.module.api.NMSHandle")
-        val HANDLE: NMS? = null
+        lateinit var HANDLE: NMS
+            private set
     }
 }
