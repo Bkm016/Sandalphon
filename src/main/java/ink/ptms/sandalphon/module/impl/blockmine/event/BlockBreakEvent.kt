@@ -10,6 +10,12 @@ import org.bukkit.entity.Player
  * @author sky
  * @since 2020-06-02 13:59
  */
-class BlockBreakEvent(val player: Player, val blockData: BlockData, val blockState: BlockState, val blockStructure: BlockStructure) :
+class BlockBreakEvent(
+    val player: Player,
+    val blockData: BlockData,
+    val blockState: BlockState,
+    val blockStructure: BlockStructure,
+    val bukkitEvent: org.bukkit.event.block.BlockBreakEvent
+) :
     EventCancellable<BlockBreakEvent>() {
 }

@@ -59,7 +59,7 @@ class BlockEvents : Listener, Helper {
                     }
                 }
             }
-            ink.ptms.sandalphon.module.impl.blockmine.event.BlockBreakEvent(e.player, result.blockData, result.blockState, result.blockStructure)
+            ink.ptms.sandalphon.module.impl.blockmine.event.BlockBreakEvent(e.player, result.blockData, result.blockState, result.blockStructure, e)
                 .call()
                 .nonCancelled {
                     e.block.type = result.blockStructure.replace
