@@ -41,15 +41,18 @@ object TreasureChest {
         chests.clear()
         data.getKeys(false).forEach {
             chests.add(ChestData(Utils.toLocation(it.replace("__", "."))).run {
-                this.item.addAll(data.getStringList("$it.item").map { item -> item.split(" ")[0] to NumberConversions.toInt(item.split(" ")[1]) })
-                this.title = data.getString("$it.title")!!
-                this.random = data.getInt("$it.random.min") to data.getInt("$it.random.max")
-                this.update = data.getLong("$it.update")
-                this.locked = data.getString("$it.locked")!!
-                this.global = data.getBoolean("$it.global")
-                this.globalTime = data.getLong("$it.global-time")
-                this.replace = Items.asMaterial(data.getString("$it.replace"))!!
-                this.condition.addAll(data.getStringList("$it.condition"))
+                item.addAll(data.getStringList("$it.item").map { item -> item.split(" ")[0] to NumberConversions.toInt(item.split(" ")[1]) })
+                if (data.contains("$it.link")) {
+                    link = Utils.toLocation(data.getString("$it.link")!!.replace("__", "."))
+                }
+                title = data.getString("$it.title")!!
+                random = data.getInt("$it.random.min") to data.getInt("$it.random.max")
+                update = data.getLong("$it.update")
+                locked = data.getString("$it.locked")!!
+                global = data.getBoolean("$it.global")
+                globalTime = data.getLong("$it.global-time")
+                replace = Items.asMaterial(data.getString("$it.replace"))!!
+                condition.addAll(data.getStringList("$it.condition"))
                 this
             })
         }
@@ -60,6 +63,9 @@ object TreasureChest {
         data.getKeys(false).forEach { data.set(it, null) }
         chests.forEach { chest ->
             val location = Utils.fromLocation(chest.block).replace(".", "__")
+            if (chest.link != null) {
+                data.set("$location.link", Utils.fromLocation(chest.link!!).replace(".", "__"))
+            }
             data.set("$location.item", chest.item.map { "${it.first} ${it.second}" })
             data.set("$location.title", chest.title)
             data.set("$location.random.min", chest.random.first)
@@ -80,7 +86,7 @@ object TreasureChest {
             if (inventory.holder is ChestInventory) {
                 val chest = (inventory.holder as ChestInventory).chestData
                 inventory.filter { item -> Items.nonNull(item) }.forEachIndexed { index, item ->
-                    Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
+                    Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable {
                         CronusUtils.addItem(player as Player, item)
                         player.playSound(player.location, Sound.ENTITY_ITEM_PICKUP, 1f, 2f)
                     }, index.toLong())
@@ -91,7 +97,7 @@ object TreasureChest {
                 player.closeInventory()
                 // closed animation
                 if (chest.replace == Material.CHEST || chest.replace == Material.TRAPPED_CHEST) {
-                    ink.ptms.sandalphon.module.api.NMS.HANDLE!!.sendBlockAction(player, chest.block.block, 1, 0)
+                    ink.ptms.sandalphon.module.api.NMS.HANDLE.sendBlockAction(player, chest.block.block, 1, 0)
                 }
             }
         }

@@ -44,7 +44,11 @@ class TreasureChestEvents : Listener, Helper {
                         val chest = TreasureChest.getChest(loc.block) ?: return true
                         if (packet.read("c").toString() == "MAIN_HAND") {
                             Bukkit.getScheduler().runTask(Sandalphon.plugin, Runnable {
-                                chest.open(player)
+                                if (player.isSneaking && player.isOp && player.inventory.itemInMainHand.type.isAir) {
+                                    chest.openEdit(player)
+                                } else {
+                                    chest.open(player)
+                                }
                             })
                         }
                     } else {
@@ -53,7 +57,11 @@ class TreasureChestEvents : Listener, Helper {
                         val chest = TreasureChest.getChest(loc.block) ?: return true
                         if (packet.read("b").toString() == "MAIN_HAND") {
                             Bukkit.getScheduler().runTask(Sandalphon.plugin, Runnable {
-                                chest.open(player)
+                                if (player.isSneaking && player.isOp && player.inventory.itemInMainHand.type.isAir) {
+                                    chest.openEdit(player)
+                                } else {
+                                    chest.open(player)
+                                }
                             })
                         }
                     }
@@ -91,7 +99,7 @@ class TreasureChestEvents : Listener, Helper {
                 // closed animation
                 if (chest.replace == Material.CHEST || chest.replace == Material.TRAPPED_CHEST) {
                     e.player.world.players.forEach { p ->
-                        ink.ptms.sandalphon.module.api.NMS.HANDLE!!.sendBlockAction(p, chest.block.block, 1, 0)
+                        ink.ptms.sandalphon.module.api.NMS.HANDLE.sendBlockAction(p, chest.block.block, 1, 0)
                     }
                     e.player.world.playSound(chest.block, Sound.BLOCK_CHEST_CLOSE, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
                 }

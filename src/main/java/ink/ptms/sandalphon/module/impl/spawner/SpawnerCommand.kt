@@ -138,7 +138,7 @@ class SpawnerCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.5, description = "重载刷怪箱")
     fun import(sender: CommandSender, args: Array<String>) {
-        Spawner.data.load(File(Sandalphon.getPlugin().dataFolder, "module/spawner.yml"))
+        Spawner.data.load(File(Sandalphon.plugin.dataFolder, "module/spawner.yml"))
         Spawner.import()
         sender.info("操作成功.")
     }

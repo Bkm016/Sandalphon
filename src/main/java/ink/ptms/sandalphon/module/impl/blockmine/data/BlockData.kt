@@ -83,7 +83,7 @@ class BlockData(@Expose val id: String) {
                     }
                 }
             } else {
-                NMS.HANDLE!!.setBlockData(block, CommandBlockControl.fromBlockFace(it.direction).toByte())
+                NMS.HANDLE.setBlockData(block, CommandBlockControl.fromBlockFace(it.direction).toByte())
             }
             Bukkit.getScheduler().runTaskAsynchronously(Sandalphon.plugin, Runnable {
                 Effects.create(Particle.EXPLOSION_NORMAL, block.location.add(0.5, 0.5, 0.5)).count(5)

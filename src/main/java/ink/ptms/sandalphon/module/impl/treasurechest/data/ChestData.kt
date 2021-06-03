@@ -11,6 +11,7 @@ import ink.ptms.sandalphon.util.Utils.print
 import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.Version
 import io.izzel.taboolib.cronus.CronusUtils
+import io.izzel.taboolib.kotlin.getLocalData
 import io.izzel.taboolib.kotlin.kether.KetherShell
 import io.izzel.taboolib.kotlin.kether.common.util.LocalizedException
 import io.izzel.taboolib.kotlin.sendHolographic
@@ -30,6 +31,7 @@ import org.bukkit.block.Block
 import org.bukkit.block.DoubleChest
 import org.bukkit.block.data.type.Chest
 import org.bukkit.entity.Player
+import org.bukkit.inventory.DoubleChestInventory
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
@@ -41,8 +43,8 @@ import java.util.concurrent.CompletableFuture
  */
 class ChestData(val block: Location) {
 
+    var link: Location? = null
     val open = ArrayList<String>()
-    val link = ArrayList<Location>()
     val item = ArrayList<Pair<String, Int>>()
 
     var title = "箱子"
@@ -59,23 +61,12 @@ class ChestData(val block: Location) {
     val isHighVersion = Version.isAfter(Version.v1_13)
 
     init {
-        if (isHighVersion) {
-            if (block.block.blockData is Chest) {
-                when ((block.block.blockData as Chest).type) {
-                    Chest.Type.LEFT -> link.add((block.block.state as DoubleChest).rightSide!!.inventory.location!!)
-                    Chest.Type.RIGHT -> link.add((block.block.state as DoubleChest).leftSide!!.inventory.location!!)
-                    else -> {
-                    }
-                }
-            }
-        } else {
-            if (block.block.state is DoubleChest) {
-                val doubleChest = block.block.state as DoubleChest
-                if (doubleChest.leftSide == doubleChest.inventory.holder) {
-                    doubleChest.rightSide?.inventory?.location?.let { link.add(it) }
-                } else {
-                    doubleChest.leftSide?.inventory?.location?.let { link.add(it) }
-                }
+        val inventory = (block.block.state as org.bukkit.block.Chest).inventory
+        if (inventory is DoubleChestInventory) {
+            link = if (inventory.leftSide.location == block) {
+                inventory.rightSide.location!!
+            } else {
+                inventory.leftSide.location!!
             }
         }
     }
@@ -89,7 +80,7 @@ class ChestData(val block: Location) {
     }
 
     fun isBlock(block: Block): Boolean {
-        return this.block == block.location || block.location in link
+        return this.block == block.location || block.location == link
     }
 
     fun check(player: Player): CompletableFuture<Boolean> {
@@ -151,7 +142,7 @@ class ChestData(val block: Location) {
 
     fun tick() {
         if (open.isNotEmpty()) {
-            block.world!!.players.forEach { NMS.HANDLE!!.sendBlockAction(it, block.block, 1, 1) }
+            block.world!!.players.forEach { NMS.HANDLE.sendBlockAction(it, block.block, 1, 1) }
         }
         block.world!!.players.forEach { tick(it) }
     }
@@ -246,7 +237,6 @@ class ChestData(val block: Location) {
                         return@thenAccept
                     }
                 }
-                player.inventory.itemInMainHand.amount -= 1
             }
             if (global) {
                 if (globalTime > System.currentTimeMillis() || (update == -1L && globalTime > 0)) {
@@ -257,7 +247,10 @@ class ChestData(val block: Location) {
                     return@thenAccept
                 }
                 if (globalInventory == null) {
-                    globalInventory = update(player, Bukkit.createInventory(ChestInventory(this), if (link.isNotEmpty()) 54 else 27, title))
+                    globalInventory = update(player, Bukkit.createInventory(ChestInventory(this), if (link != null) 54 else 27, title))
+                }
+                if (locked != "null") {
+                    player.inventory.itemInMainHand.amount -= 1
                 }
                 player.openInventory(globalInventory!!)
             } else {
@@ -270,15 +263,18 @@ class ChestData(val block: Location) {
                     }
                     return@thenAccept
                 }
+                if (locked != "null") {
+                    player.inventory.itemInMainHand.amount -= 1
+                }
                 MenuBuilder.builder(Sandalphon.plugin)
                     .title(title)
-                    .rows(if (link.isNotEmpty()) 6 else 3)
+                    .rows(if (link != null) 6 else 3)
                     .build {
                         update(player, it)
                         open.add(player.name)
                     }.close {
                         it.inventory.filter { item -> Items.nonNull(item) }.forEachIndexed { index, item ->
-                            Bukkit.getScheduler().runTaskLater(Sandalphon.getPlugin(), Runnable {
+                            Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable {
                                 CronusUtils.addItem(player, item)
                                 player.playSound(player.location, Sound.ENTITY_ITEM_PICKUP, 1f, 2f)
                             }, index.toLong())
@@ -290,7 +286,7 @@ class ChestData(val block: Location) {
                         // closed animation
                         if (open.isEmpty() && (replace == Material.CHEST || replace == Material.TRAPPED_CHEST)) {
                             player.world.players.forEach { p ->
-                                NMS.HANDLE!!.sendBlockAction(p, block.block, 1, 0)
+                                NMS.HANDLE.sendBlockAction(p, block.block, 1, 0)
                             }
                             player.world.playSound(block, Sound.BLOCK_CHEST_CLOSE, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
                         }
@@ -298,7 +294,7 @@ class ChestData(val block: Location) {
             }
             if (isChest(block.block)) {
                 player.world.players.forEach {
-                    NMS.HANDLE!!.sendBlockAction(it, block.block, 1, 1)
+                    NMS.HANDLE.sendBlockAction(it, block.block, 1, 1)
                 }
                 player.world.playSound(block, Sound.BLOCK_CHEST_OPEN, 1f, Numbers.getRandomDouble(0.8, 1.2).toFloat())
             } else {
@@ -308,17 +304,21 @@ class ChestData(val block: Location) {
     }
 
     fun openEdit(player: Player) {
+        fun toGlobal() = ItemBuilder(Materials.BEACON.parseMaterial()).name("§f应用全局").lore(if (global) "§a启用" else "§c禁用").build()
+        fun replaceBlock() = ItemBuilder(Materials.GLASS.parseMaterial()).name("§f替换方块").lore("§7${Items.getName(ItemStack(replace))}").build()
         MenuBuilder.builder()
             .title("编辑宝藏 ${Utils.fromLocation(block)}")
-            .rows(3)
+            .rows(4)
             .build { inv ->
                 inv.setItem(10, ItemBuilder(Materials.NAME_TAG.parseMaterial()).name("§f名称").lore("§7$title").build())
                 inv.setItem(11, ItemBuilder(Materials.TRIPWIRE_HOOK.parseMaterial()).name("§f钥匙").lore("§7${if (locked == "null") "无" else locked}").build())
-                inv.setItem(12, ItemBuilder(Materials.HOPPER_MINECART.parseMaterial()).name("§f随机").lore("§7${random.first} -> ${random.second}").build())
-                inv.setItem(13, ItemBuilder(Materials.CHEST_MINECART.parseMaterial()).name("§f刷新").lore("§7${getTimeDisplay(update)}").build())
-                inv.setItem(14, ItemBuilder(Materials.BEACON.parseMaterial()).name("§f全局").lore(if (global) "§a启用" else "§c禁用").build())
-                inv.setItem(15, ItemBuilder(Materials.GLASS.parseMaterial()).name("§f替换").lore("§7${Items.getName(ItemStack(replace))}").build())
-                inv.setItem(16, ItemBuilder(Materials.OBSERVER.parseMaterial()).name("§f条件").lore(condition.map { "§7$it" }).build())
+                inv.setItem(12, ItemBuilder(Materials.HOPPER_MINECART.parseMaterial()).name("§f随机数量").lore("§7${random.first} -> ${random.second}").build())
+                inv.setItem(13, ItemBuilder(Materials.CHEST_MINECART.parseMaterial()).name("§f刷新时间").lore("§7${getTimeDisplay(update)}").build())
+                inv.setItem(14, toGlobal())
+                inv.setItem(15, replaceBlock())
+                inv.setItem(16, ItemBuilder(Materials.OBSERVER.parseMaterial()).name("§f开启条件").lore(condition.map { "§7$it" }).build())
+                inv.setItem(19, ItemBuilder(Materials.CHEST.parseMaterial()).name("§f编辑内容").build())
+                inv.setItem(20, ItemBuilder(Materials.WATER_BUCKET.parseMaterial()).name("§f重置冷却").lore(if (global) "§7全局" else "§c个人").build())
             }.event {
                 it.isCancelled = true
                 when (it.rawSlot) {
@@ -348,13 +348,13 @@ class ChestData(val block: Location) {
                     }
                     14 -> {
                         global = !global
-                        it.currentItem = ItemBuilder(Material.BEACON).name("§f全局").lore(if (global) "§a启用" else "§c禁用").build()
+                        it.currentItem = toGlobal()
                         it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                     }
                     15 -> {
-                        if (player.inventory.itemInMainHand.type.isBlock || player.inventory.itemInMainHand.type == Material.AIR) {
+                        if (player.inventory.itemInMainHand.type.isBlock) {
                             replace = player.inventory.itemInMainHand.type
-                            it.inventory.setItem(15, ItemBuilder(Material.GLASS).name("§f替换").lore("§7${Items.getName(ItemStack(replace))}").build())
+                            it.currentItem = replaceBlock()
                             it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                         } else {
                             player.sendMessage("§c[Sandalphon] §7手持物品非方块.")
@@ -362,10 +362,23 @@ class ChestData(val block: Location) {
                     }
                     16 -> {
                         player.closeInventory()
-                        CronusUtils.addItem(player,
-                            ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(condition.joinToString("\n")).build()).name("§f§f§f编辑条件")
-                                .lore("§7TreasureChest", "§7${Utils.fromLocation(block)}").build()
+                        CronusUtils.addItem(
+                            player,
+                            ItemBuilder(BookBuilder(ItemStack(Material.WRITABLE_BOOK)).pagesRaw(condition.joinToString("\n")).build())
+                                .name("§f§f§f编辑条件")
+                                .lore("§7TreasureChest", "§7${Utils.fromLocation(block)}")
+                                .build()
                         )
+                    }
+                    19 -> {
+                        openEditContent(player)
+                    }
+                    20 -> {
+                        if (global) {
+                            globalTime = 0
+                        } else {
+                            player.getLocalData().set("Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}", null)
+                        }
                     }
                 }
             }.close {
@@ -374,9 +387,9 @@ class ChestData(val block: Location) {
     }
 
     fun openEditContent(player: Player) {
-        MenuBuilder.builder(Sandalphon.getPlugin())
+        MenuBuilder.builder(Sandalphon.plugin)
             .title("编辑宝藏内容 ${Utils.fromLocation(block)}")
-            .rows(if (link.isNotEmpty()) 6 else 3)
+            .rows(if (link != null) 6 else 3)
             .build {
                 item.forEachIndexed { i, p ->
                     val itemStack = Utils.item(p.first, player) ?: return@forEachIndexed

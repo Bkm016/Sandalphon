@@ -17,5 +17,4 @@ class BlockBreakEvent(
     val blockStructure: BlockStructure,
     val bukkitEvent: org.bukkit.event.block.BlockBreakEvent
 ) :
-    EventCancellable<BlockBreakEvent>() {
-}
+    EventCancellable<BlockBreakEvent>()

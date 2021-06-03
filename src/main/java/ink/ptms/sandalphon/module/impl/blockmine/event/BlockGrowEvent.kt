@@ -8,5 +8,4 @@ import io.izzel.taboolib.module.event.EventCancellable
  * @author sky
  * @since 2020-06-02 13:59
  */
-class BlockGrowEvent(val blockData: BlockData, val blockState: BlockState) : EventCancellable<BlockGrowEvent>() {
-}
+class BlockGrowEvent(val blockData: BlockData, val blockState: BlockState) : EventCancellable<BlockGrowEvent>()

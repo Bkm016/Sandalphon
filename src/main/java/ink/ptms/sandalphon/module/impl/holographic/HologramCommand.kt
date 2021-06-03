@@ -121,7 +121,7 @@ class HologramCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.6, description = "重载全息")
     fun import(sender: CommandSender, args: Array<String>) {
-        Hologram.data.load(File(Sandalphon.getPlugin().dataFolder, "module/hologram.yml"))
+        Hologram.data.load(File(Sandalphon.plugin.dataFolder, "module/hologram.yml"))
         Hologram.import()
         sender.info("操作成功.")
     }

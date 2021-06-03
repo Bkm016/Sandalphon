@@ -8,6 +8,7 @@ import io.izzel.taboolib.module.command.base.BaseCommand
 import io.izzel.taboolib.module.command.base.BaseMainCommand
 import io.izzel.taboolib.module.command.base.CommandType
 import io.izzel.taboolib.module.command.base.SubCommand
+import io.izzel.taboolib.util.Coerce
 import io.izzel.taboolib.util.lite.Numbers
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -22,7 +23,7 @@ import java.io.File
 @BaseCommand(name = "treasurechest", aliases = ["tchest"], permission = "admin")
 class TreasureChestCommand : BaseMainCommand(), Helper {
 
-    @SubCommand(priority = 0.0, description = "新建宝藏", type = CommandType.PLAYER)
+    @SubCommand(priority = 0.0, description = "新建宝藏", arguments = ["编辑内容?"], type = CommandType.PLAYER)
     fun create(sender: CommandSender, args: Array<String>) {
         if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
             sender.error("该功能依赖 Zaphkiel 插件.")
@@ -40,9 +41,12 @@ class TreasureChestCommand : BaseMainCommand(), Helper {
         }
         block.display()
         sender.info("宝藏已创建.")
-        TreasureChest.chests.add(ChestData(block.location).run {
-            this.openEdit(sender)
-            this
+        TreasureChest.chests.add(ChestData(block.location).also {
+            if (Coerce.toBoolean(args.getOrNull(0))) {
+                it.openEditContent(sender)
+            } else {
+                it.openEdit(sender)
+            }
         })
         TreasureChest.export()
     }
@@ -119,7 +123,7 @@ class TreasureChestCommand : BaseMainCommand(), Helper {
         TreasureChest.chests.forEach {
             if (it.block.world?.name == (sender as Player).world.name && it.block.distance(sender.location) < 50) {
                 it.block.block.display()
-                it.link.forEach { link -> link.block.display() }
+                it.link?.block?.display()
                 sender.info("§8 - §f${Utils.fromLocation(it.block)} §7(${Numbers.format(it.block.distance(sender.location))}m)")
             }
         }
@@ -127,7 +131,7 @@ class TreasureChestCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.5, description = "重载宝藏")
     fun import(sender: CommandSender, args: Array<String>) {
-        TreasureChest.data.load(File(Sandalphon.getPlugin().dataFolder, "module/treasurechest.yml"))
+        TreasureChest.data.load(File(Sandalphon.plugin.dataFolder, "module/treasurechest.yml"))
         TreasureChest.import()
         sender.info("操作成功.")
     }

@@ -121,7 +121,7 @@ class ScriptBlockCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.5, description = "重载脚本")
     fun import(sender: CommandSender, args: Array<String>) {
-        ScriptBlock.data.load(File(Sandalphon.getPlugin().dataFolder, "module/scriptblock.yml"))
+        ScriptBlock.data.load(File(Sandalphon.plugin.dataFolder, "module/scriptblock.yml"))
         ScriptBlock.import()
         sender.info("操作成功.")
     }

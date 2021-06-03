@@ -81,7 +81,7 @@ object Spawner {
         val spawnerData = spawners.firstOrNull { it.mob.internalName == mythicMob.internalName } ?: return false
         val pair = spawnerData.mobs.entries.firstOrNull { it.value.uniqueId == entity.uniqueId } ?: return false
         if (entity.location.world!!.name == pair.key.world!!.name) {
-            entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(Sandalphon.getPlugin(), true))
+            entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(Sandalphon.plugin, true))
             entity.isInvulnerable = true
             SimpleAiSelector.getExecutor().addGoalAi(entity, FollowAi(entity, pair.key.clone().add(0.5, 1.5, 0.5), 1.5), 1)
             EntityToSpawnEvent.Start(entity, spawnerData).call()

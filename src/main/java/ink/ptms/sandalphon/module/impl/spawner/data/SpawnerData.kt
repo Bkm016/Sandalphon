@@ -71,7 +71,7 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                 if (entity.location.world!!.name == loc.world!!.name) {
                     if (entity.hasMetadata("SPAWNER_BACKING")) {
                         if (entity.location.distance(pos) < 0.8) {
-                            entity.removeMetadata("SPAWNER_BACKING", Sandalphon.getPlugin())
+                            entity.removeMetadata("SPAWNER_BACKING", Sandalphon.plugin)
                             entity.isInvulnerable = false
                             SimpleAiSelector.getExecutor().removeGoalAi(entity, "FollowAi")
                             EntityToSpawnEvent.Stop(entity, this).call()
@@ -88,7 +88,7 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                             entity.health = (entity.health + (entity.maxHealth * 0.1)).coerceAtMost(entity.maxHealth)
                         }
                     } else if (entity.location.distance(loc) > leashrange) {
-                        entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(Sandalphon.getPlugin(), true))
+                        entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(Sandalphon.plugin, true))
                         entity.isInvulnerable = true
                         SimpleAiSelector.getExecutor().addGoalAi(entity, FollowAi(entity, pos, 1.5), 1)
                         EntityToSpawnEvent.Start(entity, this).call()
