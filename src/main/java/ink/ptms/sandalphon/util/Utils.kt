@@ -20,8 +20,9 @@ import org.bukkit.util.Vector
 
 object Utils {
 
-    @TInject("SacredItem")
-    val asgardHook: Boolean = false
+    val asgardHook: Boolean
+        get() = Bukkit.getPluginManager().isPluginEnabled("SacredItem")
+
     val serializer = GsonBuilder().excludeFieldsWithoutExposeAnnotation()
         .registerTypeAdapter(
             Vector::class.java,
