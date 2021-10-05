@@ -1,12 +1,15 @@
 package ink.ptms.sandalphon
 
-import ink.ptms.sandalphon.module.Database
-import ink.ptms.zaphkiel.module.Vars
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
+import taboolib.common.io.newFile
 import taboolib.common.platform.Plugin
 import taboolib.common.platform.event.SubscribeEvent
-import taboolib.common.platform.function.submit
+import taboolib.common.platform.function.disablePlugin
+import taboolib.common.platform.function.getDataFolder
+import taboolib.expansion.releaseDataContainer
+import taboolib.expansion.setupDataContainer
+import taboolib.expansion.setupPlayerDatabase
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.SecuredFile
 
@@ -16,19 +19,27 @@ object Sandalphon : Plugin() {
     lateinit var conf: SecuredFile
         private set
 
-    val database by lazy {
-        Database()
+    override fun onEnable() {
+        try {
+            if (conf.getBoolean("Database.enable")) {
+                setupPlayerDatabase(conf.getConfigurationSection("Database"))
+            } else {
+                setupPlayerDatabase(newFile(getDataFolder(), "data.db"))
+            }
+        } catch (ex: Throwable) {
+            ex.printStackTrace()
+            disablePlugin()
+            return
+        }
     }
-
-    val playerVars = HashMap<String, Vars>()
 
     @SubscribeEvent
     internal fun e(e: PlayerJoinEvent) {
-        submit { playerVars[e.player.name] = Vars(e.player.name, database[e.player.name].toMutableMap()) }
+        e.player.setupDataContainer()
     }
 
     @SubscribeEvent
     internal fun e(e: PlayerQuitEvent) {
-        playerVars.remove(e.player.name)
+        e.player.releaseDataContainer()
     }
 }
