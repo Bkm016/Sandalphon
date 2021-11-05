@@ -1,4 +1,4 @@
-name: Chemdah Build
+name: Sandalphon Build
 on: [ push ]
 jobs:
   build:
