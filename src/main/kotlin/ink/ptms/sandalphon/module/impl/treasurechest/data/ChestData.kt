@@ -377,7 +377,7 @@ class ChestData(val block: Location) {
             .rows(if (link != null) 6 else 3)
             .build {
                 item.forEachIndexed { i, p ->
-                    val itemStack = Utils.item(p.first, player) ?: return@forEachIndexed
+                    val itemStack = ZaphkielAPI.getItemStack(p.first, player) ?: return@forEachIndexed
                     it.setItem(i, itemStack.run {
                         this.amount = p.second
                         this

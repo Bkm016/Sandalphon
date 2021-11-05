@@ -36,10 +36,6 @@ object Utils {
             JsonDeserializer { a, _, _ -> Enums.getIfPresent(BlockFace::class.java, a.asString).or(BlockFace.SELF) })
         .create()!!
 
-    fun item(item: String, player: Player): ItemStack? {
-        return ZaphkielAPI.getItem(item, player)?.save()
-    }
-
     fun itemId(itemStack: ItemStack): String? {
         val itemStream = ZaphkielAPI.read(itemStack)
         if (itemStream.isExtension()) {

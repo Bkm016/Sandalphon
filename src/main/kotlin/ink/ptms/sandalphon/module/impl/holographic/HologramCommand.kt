@@ -1,128 +1,145 @@
 package ink.ptms.sandalphon.module.impl.holographic
 
-import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
-import io.izzel.taboolib.module.command.base.*
-import io.izzel.taboolib.util.lite.Numbers
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import taboolib.common.platform.command.CommandBody
+import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.function.getDataFolder
+import taboolib.common5.Coerce
+import taboolib.expansion.createHelper
 import java.io.File
 
 /**
  * @author sky
  * @since 2020-05-20 17:51
  */
-@BaseCommand(name = "hologram", aliases = ["hd"], permission = "admin")
-class HologramCommand : BaseMainCommand(), Helper {
+@CommandHeader(name = "hologram", aliases = ["hd"], permission = "admin")
+object HologramCommand : Helper {
 
-    @SubCommand(priority = 0.0, description = "新建全息", arguments = ["序号"], type = CommandType.PLAYER)
-    fun create(sender: CommandSender, args: Array<String>) {
-        val hologramData = Hologram.getHologram(args[0])
-        if (hologramData != null) {
-            sender.error("该全息已存在.")
-            return
-        }
-        sender.info("全息已创建.")
-        Hologram.holograms.add(HologramData(args[0], (sender as Player).location.add(0.0, 1.0, 0.0)).run {
-            this.openEdit(sender)
-            this
-        })
-        Hologram.export()
+    @CommandBody
+    val main = mainCommand {
+        createHelper()
     }
 
-    @SubCommand(priority = 0.1, description = "移除全息", type = CommandType.PLAYER)
-    val remove = object : BaseSubCommand() {
-
-        override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("序号") { Hologram.holograms.map { it.id }})
-        }
-
-        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            val hologramData = Hologram.getHologram(args[0])
-            if (hologramData == null) {
-                sender.error("该全息不存在.")
-                return
+    @CommandBody
+    val create = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                val hologramData = Hologram.getHologram(argument)
+                if (hologramData != null) {
+                    sender.error("该全息已存在.")
+                    return@execute
+                }
+                sender.info("全息已创建.")
+                Hologram.holograms.add(HologramData(argument, sender.location.add(0.0, 1.0, 0.0)).run {
+                    openEdit(sender)
+                    this
+                })
+                Hologram.export()
             }
-            sender.info("全息已移除.")
-            hologramData.cancel()
-            Hologram.holograms.remove(hologramData)
-            Hologram.delete(hologramData.id)
+        }
+    }
+
+    @CommandBody
+    val remove = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                val hologramData = Hologram.getHologram(argument)
+                if (hologramData == null) {
+                    sender.error("该全息不存在.")
+                    return@execute
+                }
+                sender.info("全息已移除.")
+                hologramData.cancel()
+                Hologram.holograms.remove(hologramData)
+                Hologram.delete(hologramData.id)
+                Hologram.export()
+            }
+        }
+    }
+
+    @CommandBody
+    val edit = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                val hologramData = Hologram.getHologram(argument)
+                if (hologramData == null) {
+                    sender.error("该全息不存在.")
+                    return@execute
+                }
+                hologramData.openEdit(sender)
+                sender.info("正在编辑全息.")
+            }
+        }
+    }
+
+    @CommandBody
+    val move = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                val hologramData = Hologram.getHologram(argument)
+                if (hologramData == null) {
+                    sender.error("该全息不存在.")
+                    return@execute
+                }
+                hologramData.location = sender.location.add(0.0, 1.0, 0.0)
+                hologramData.init()
+                Hologram.export()
+                sender.info("正在移动全息.")
+            }
+        }
+    }
+
+    @CommandBody
+    val tp = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                val hologramData = Hologram.getHologram(argument)
+                if (hologramData == null) {
+                    sender.error("该全息不存在.")
+                    return@execute
+                }
+                sender.teleport(hologramData.location)
+                sender.info("已传送至全息.")
+            }
+        }
+    }
+
+    @CommandBody
+    val near = subCommand {
+        execute<Player> { sender, _, _ ->
+            sender.info("附近全息:")
+            Hologram.holograms.forEach {
+                if (it.location.world?.name == sender.world.name && it.location.distance(sender.location) < 50) {
+                    sender.info("§8 - §f${it.id} §7(${Coerce.format(it.location.distance(sender.location))}m)")
+                }
+            }
+        }
+    }
+
+    @CommandBody
+    val import = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            Hologram.data.load(File(getDataFolder(), "module/hologram.yml"))
+            Hologram.import()
+            sender.info("操作成功.")
+        }
+    }
+
+    @CommandBody
+    val export = subCommand {
+        execute<CommandSender> { sender, _, _ ->
             Hologram.export()
+            sender.info("操作成功.")
         }
-    }
-
-    @SubCommand(priority = 0.2, description = "修改全息", type = CommandType.PLAYER)
-    val edit = object : BaseSubCommand() {
-
-        override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("序号") { Hologram.holograms.map { it.id }})
-        }
-
-        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            val hologramData = Hologram.getHologram(args[0])
-            if (hologramData == null) {
-                sender.error("该全息不存在.")
-                return
-            }
-            hologramData.openEdit(sender as Player)
-            sender.info("正在编辑全息.")
-        }
-    }
-
-    @SubCommand(priority = 0.3, description = "移动全息", type = CommandType.PLAYER)
-    val move = object : BaseSubCommand() {
-
-        override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("序号") { Hologram.holograms.map { it.id }})
-        }
-
-        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            val hologramData = Hologram.getHologram(args[0])
-            if (hologramData == null) {
-                sender.error("该全息不存在.")
-                return
-            }
-            hologramData.location = (sender as Player).location.add(0.0, 1.0, 0.0)
-            hologramData.init()
-            Hologram.export()
-            sender.info("正在移动全息.")
-        }
-    }
-
-    @SubCommand(priority = 0.4, description = "传送全息", type = CommandType.PLAYER)
-    val tp = object : BaseSubCommand() {
-
-        override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("序号") { Hologram.holograms.map { it.id }})
-        }
-
-        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            val hologramData = Hologram.getHologram(args[0])
-            if (hologramData == null) {
-                sender.error("该全息不存在.")
-                return
-            }
-            (sender as Player).teleport(hologramData.location)
-            sender.info("已传送至全息.")
-        }
-    }
-
-    @SubCommand(priority = 0.5, description = "附近全息", type = CommandType.PLAYER)
-    fun near(sender: CommandSender, args: Array<String>) {
-        sender.info("附近全息:")
-        Hologram.holograms.forEach {
-            if (it.location.world?.name == (sender as Player).world.name && it.location.distance(sender.location) < 50) {
-                sender.info("§8 - §f${it.id} §7(${Numbers.format(it.location.distance(sender.location))}m)")
-            }
-        }
-    }
-
-    @SubCommand(priority = 0.6, description = "重载全息")
-    fun import(sender: CommandSender, args: Array<String>) {
-        Hologram.data.load(File(Sandalphon.plugin.dataFolder, "module/hologram.yml"))
-        Hologram.import()
-        sender.info("操作成功.")
     }
 }

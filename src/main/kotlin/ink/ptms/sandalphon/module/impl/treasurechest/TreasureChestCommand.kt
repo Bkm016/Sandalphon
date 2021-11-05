@@ -21,7 +21,7 @@ import java.io.File
  * @since 2020-05-20 17:51
  */
 @BaseCommand(name = "treasurechest", aliases = ["tchest"], permission = "admin")
-class TreasureChestCommand : BaseMainCommand(), Helper {
+object TreasureChestCommand : BaseMainCommand(), Helper {
 
     @SubCommand(priority = 0.0, description = "新建宝藏", arguments = ["编辑内容?"], type = CommandType.PLAYER)
     fun create(sender: CommandSender, args: Array<String>) {

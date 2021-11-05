@@ -21,7 +21,7 @@ import java.io.File
  * @since 2020-05-20 17:51
  */
 @BaseCommand(name = "scriptblock", aliases = ["sb"], permission = "admin")
-class ScriptBlockCommand : BaseMainCommand(), Helper {
+object ScriptBlockCommand : BaseMainCommand(), Helper {
 
     /**
      * /sb create        新建

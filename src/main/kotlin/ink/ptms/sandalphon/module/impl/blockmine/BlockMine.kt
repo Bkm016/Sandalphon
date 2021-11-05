@@ -1,16 +1,17 @@
 package ink.ptms.sandalphon.module.impl.blockmine
 
-import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockData
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
 import ink.ptms.sandalphon.util.Utils
-import io.izzel.taboolib.module.inject.TFunction
-import io.izzel.taboolib.module.inject.TSchedule
-import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
+import taboolib.common.LifeCycle
+import taboolib.common.io.newFile
+import taboolib.common.platform.Awake
+import taboolib.common.platform.Schedule
+import taboolib.common.platform.function.getDataFolder
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -19,36 +20,39 @@ object BlockMine {
     val blocks = ArrayList<BlockData>()
     val blocksCache = HashSet<Material>()
 
-    @TSchedule(period = 20)
+    @Schedule(period = 20, async = true)
     fun e() {
         blocks.forEach { it.grow() }
     }
 
     @Suppress("UNCHECKED_CAST")
-    @TSchedule
+    @Awake(LifeCycle.ACTIVE)
     fun import() {
-        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
+        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
             return
         }
+        // 清空缓存文件
         blocks.clear()
-        Files.folder(Sandalphon.plugin.dataFolder, "module/blockmine").listFiles()?.map { file ->
+        // 加载缓存文件
+        newFile(getDataFolder(), "module/blockmine", create = false, folder = true).listFiles()?.map { file ->
             if (file.name.endsWith(".json")) {
                 blocks.add(Utils.serializer.fromJson(file.readText(StandardCharsets.UTF_8), BlockData::class.java))
             }
         }
-        cached()
+        // 加载材质缓存
+        loadBlockCache()
     }
 
-    @TFunction.Cancel
-    @TSchedule(period = 20 * 60, async = true)
+    @Awake(LifeCycle.DISABLE)
+    @Schedule(period = 20 * 60, async = true)
     fun export() {
         blocks.forEach { block ->
-            Files.file(Sandalphon.plugin.dataFolder, "module/blockmine/${block.id}.json")
-                .writeText(Utils.format(Utils.serializer.toJsonTree(block)), StandardCharsets.UTF_8)
+            // 写入文件
+            newFile(getDataFolder(), "module/blockmine/${block.id}.json").writeText(Utils.format(Utils.serializer.toJsonTree(block)), StandardCharsets.UTF_8)
         }
     }
 
-    fun cached() {
+    fun loadBlockCache() {
         blocksCache.clear()
         blocks.forEach { b ->
             b.progress.forEach { p ->
@@ -61,7 +65,7 @@ object BlockMine {
     }
 
     fun delete(id: String) {
-        Files.deepDelete(File(Sandalphon.plugin.dataFolder, "module/blockmine/$id.json"))
+        File(getDataFolder(), "module/blockmine/$id.json").delete()
     }
 
     fun find(block: Location): FindResult? {

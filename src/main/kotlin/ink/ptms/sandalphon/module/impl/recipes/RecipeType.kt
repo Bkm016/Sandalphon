@@ -1,6 +1,6 @@
 package ink.ptms.sandalphon.module.impl.recipes
 
-import io.izzel.taboolib.internal.xseries.XMaterial
+import taboolib.library.xseries.XMaterial
 
 enum class RecipeType(val id: Char, val display: String, val material: XMaterial) {
 

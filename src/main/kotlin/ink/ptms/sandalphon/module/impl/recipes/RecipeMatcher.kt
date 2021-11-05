@@ -1,13 +1,13 @@
 package ink.ptms.sandalphon.module.impl.recipes
 
-import io.izzel.taboolib.module.nms.NMS
-import io.izzel.taboolib.util.item.Items
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.RecipeChoice
+import taboolib.module.nms.getItemTag
+import taboolib.platform.util.isAir
 
 /**
  * Sandalphon
- * ink.ptms.sandalphon.module.impl.recipes.RecipeChoise
+ * ink.ptms.sandalphon.module.impl.recipes.RecipeMatcher
  *
  * @author sky
  * @since 2021/3/15 1:47 下午
@@ -15,11 +15,11 @@ import org.bukkit.inventory.RecipeChoice
 data class RecipeMatcher(
     val items: List<ItemStack>,
     val ignoreItemMeta: Boolean = false,
-    val ignoreData: Boolean = false
+    val ignoreData: Boolean = false,
 ) : RecipeChoice.ExactChoice(items) {
 
     override fun test(item: ItemStack): Boolean {
-        if (Items.isNull(item)) {
+        if (item.isAir()) {
             return false
         }
         // 忽略元数据
@@ -27,7 +27,7 @@ data class RecipeMatcher(
             return items.any { it.type == item.type }
         }
         val test = item.clone()
-        val compound = NMS.handle().loadNBT(test)
+        val compound = test.getItemTag()
         val zaphkiel = compound["zaphkiel"]
         if (zaphkiel != null) {
             // 忽略 Zaphkiel Data

@@ -17,23 +17,23 @@ interface Helper {
 
     fun Player.getTargetBlockExact(): Block? {
         return if (MinecraftVersion.majorLegacy >= 11300) {
-            this.getTargetBlockExact(10, FluidCollisionMode.NEVER)
+            getTargetBlockExact(10, FluidCollisionMode.NEVER)
         } else {
-            this.getTargetBlock(setOf(Material.AIR), 10)
+            getTargetBlock(setOf(Material.AIR), 10)
         }
     }
 
     fun CommandSender.info(value: String) {
-        this.sendMessage("§c[Sandalphon] §7${value.replace("&", "§")}")
+        sendMessage("§c[Sandalphon] §7${value.replace("&", "§")}")
         if (this is Player && Global.cd.hasNext(this.name)) {
-            this.playSound(this.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
+            playSound(this.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
         }
     }
 
     fun CommandSender.error(value: String) {
-        this.sendMessage("§c[Sandalphon] §7${value.replace("&", "§")}")
+        sendMessage("§c[Sandalphon] §7${value.replace("&", "§")}")
         if (this is Player && Global.cd.hasNext(this.name)) {
-            this.playSound(this.location, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
+            playSound(this.location, Sound.ENTITY_VILLAGER_NO, 1f, 1f)
         }
     }
 

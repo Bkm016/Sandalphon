@@ -2,148 +2,172 @@ package ink.ptms.sandalphon.module.impl.blockmine
 
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockData
-import ink.ptms.sandalphon.util.Utils
-import io.izzel.taboolib.cronus.CronusUtils
-import io.izzel.taboolib.module.command.base.*
-import io.izzel.taboolib.util.item.ItemBuilder
-import io.izzel.taboolib.util.lite.Numbers
+import ink.ptms.sandalphon.module.impl.blockmine.data.openEdit
 import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import taboolib.common.platform.command.CommandBody
+import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
+import taboolib.common5.Coerce
+import taboolib.expansion.createHelper
+import taboolib.library.xseries.XMaterial
+import taboolib.platform.util.buildItem
+import taboolib.platform.util.giveItem
 
 /**
  * @author sky
  * @since 2020-06-01 17:49
  */
-@BaseCommand(name = "blockmine", aliases = ["mine"], permission = "admin")
-class BlockCommand : BaseMainCommand(), Helper {
+@CommandHeader(name = "blockmine", aliases = ["mine"], permission = "admin")
+object BlockCommand : Helper {
 
-    @SubCommand(priority = 0.0, description = "新建开采结构", arguments = ["序号"], type = CommandType.PLAYER)
-    fun create(sender: CommandSender, args: Array<String>) {
-        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
-            sender.error("该功能依赖 Zaphkiel 插件.")
-            return
-        }
-        val blockData = BlockMine.getBlock(args[0])
-        if (blockData != null) {
-            sender.error("该开采结构已存在.")
-            return
-        }
-        sender.info("开采结构已创建.")
-        BlockMine.blocks.add(BlockData(args[0]).run {
-            this.openEdit(sender as Player)
-            this
-        })
-        BlockMine.export()
+    @CommandBody
+    val main = mainCommand {
+        createHelper()
     }
 
-    @SubCommand(priority = 0.1, description = "移除开采结构", arguments = ["序号"], type = CommandType.PLAYER)
-    val remove = object : BaseSubCommand() {
-
-        override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
-        }
-
-        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
-                sender.error("该功能依赖 Zaphkiel 插件.")
-                return
+    @CommandBody
+    val create = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+                    sender.error("该功能依赖 Zaphkiel 插件.")
+                    return@execute
+                }
+                val blockData = BlockMine.getBlock(argument)
+                if (blockData != null) {
+                    sender.error("该开采结构已存在.")
+                    return@execute
+                }
+                sender.info("开采结构已创建.")
+                BlockMine.blocks.add(BlockData(argument).also { it.openEdit(sender) })
+                BlockMine.export()
             }
-            val blockData = BlockMine.getBlock(args[0])
-            if (blockData == null) {
-                sender.error("该开采结构不存在.")
-                return
-            }
-            sender.info("开采结构已移除.")
-            BlockMine.blocks.remove(blockData)
-            BlockMine.delete(blockData.id)
-            BlockMine.export()
         }
     }
 
-    @SubCommand(priority = 0.2, description = "修改开采结构", arguments = ["序号"], type = CommandType.PLAYER)
-    val edit = object : BaseSubCommand() {
-
-        override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
-        }
-
-        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
-                sender.error("该功能依赖 Zaphkiel 插件.")
-                return
+    @CommandBody
+    val remove = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+                    sender.error("该功能依赖 Zaphkiel 插件.")
+                    return@execute
+                }
+                val blockData = BlockMine.getBlock(argument)
+                if (blockData == null) {
+                    sender.error("该开采结构不存在.")
+                    return@execute
+                }
+                sender.info("开采结构已移除.")
+                BlockMine.blocks.remove(blockData)
+                BlockMine.delete(blockData.id)
+                BlockMine.export()
             }
-            val blockData = BlockMine.getBlock(args[0])
-            if (blockData == null) {
-                sender.error("该开采结构不存在.")
-                return
-            }
-            blockData.openEdit(sender as Player)
-            sender.info("正在编辑开采结构.")
-        }
-    }
-
-    @SubCommand(priority = 0.21, description = "布置开采结构", arguments = ["序号"], type = CommandType.PLAYER)
-    val into = object : BaseSubCommand() {
-
-        override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
-        }
-
-        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
-                sender.error("该功能依赖 Zaphkiel 插件.")
-                return
-            }
-            val blockData = BlockMine.getBlock(args[0])
-            if (blockData == null) {
-                sender.error("该开采结构不存在.")
-                return
-            }
-            sender.info("使用§f场景魔杖§7左键方块创建实例, 右键方块移除实例.")
-            CronusUtils.addItem(sender as Player, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f场景魔杖").lore("§7BlockMine", "§7${blockData.id}").shiny().build())
         }
     }
 
-    @SubCommand(priority = 0.22, description = "调试开采结构", arguments = ["序号"], type = CommandType.PLAYER)
-    val debug = object : BaseSubCommand() {
-
-        override fun getArguments(): Array<Argument> {
-            return arrayOf(Argument("序号") { BlockMine.blocks.map { it.id }})
-        }
-
-        override fun onCommand(sender: CommandSender, p1: Command, p2: String, args: Array<out String>) {
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null && !Utils.asgardHook) {
-                sender.error("该功能依赖 Zaphkiel 插件.")
-                return
+    @CommandBody
+    val edit = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+                    sender.error("该功能依赖 Zaphkiel 插件.")
+                    return@execute
+                }
+                val blockData = BlockMine.getBlock(argument)
+                if (blockData == null) {
+                    sender.error("该开采结构不存在.")
+                    return@execute
+                }
+                blockData.openEdit(sender)
+                sender.info("正在编辑开采结构.")
             }
-            val blockData = BlockMine.getBlock(args[0])
-            if (blockData == null) {
-                sender.error("该开采结构不存在.")
-                return
-            }
-            sender.info("使用§f调试魔杖§7左键方块重建实例, 右键方块切换阶段.")
-            CronusUtils.addItem(sender as Player, ItemBuilder(Material.BLAZE_ROD).name("§f§f§f调试魔杖").lore("§7BlockMine", "§7${blockData.id}").shiny().build())
         }
     }
 
-    @SubCommand(priority = 0.5, description = "附近开采结构", type = CommandType.PLAYER)
-    fun near(sender: CommandSender, args: Array<String>) {
-        sender.info("附近开采结构:")
-        BlockMine.blocks.forEach {
-            it.blocks.forEach { state ->
-                if (state.location.world?.name == (sender as Player).world.name && state.location.distance(sender.location) < 50) {
-                    sender.info("§8 - §f${it.id} §7(${Numbers.format(state.location.distance(sender.location))}m)")
+    @CommandBody
+    val into = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+                    sender.error("该功能依赖 Zaphkiel 插件.")
+                    return@execute
+                }
+                val blockData = BlockMine.getBlock(argument)
+                if (blockData == null) {
+                    sender.error("该开采结构不存在.")
+                    return@execute
+                }
+                sender.info("使用§f场景魔杖§7左键方块创建实例, 右键方块移除实例.")
+                sender.giveItem(buildItem(XMaterial.BLAZE_ROD) {
+                    name = "§f§f§f场景魔杖"
+                    lore += "§7BlockMine"
+                    lore += "§7${blockData.id}"
+                    shiny()
+                })
+            }
+        }
+    }
+
+    @CommandBody
+    val debug = subCommand {
+        dynamic(commit = "id") {
+            suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
+            execute<Player> { sender, _, argument ->
+                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+                    sender.error("该功能依赖 Zaphkiel 插件.")
+                    return@execute
+                }
+                val blockData = BlockMine.getBlock(argument)
+                if (blockData == null) {
+                    sender.error("该开采结构不存在.")
+                    return@execute
+                }
+                sender.info("使用§f调试魔杖§7左键方块重建实例, 右键方块切换阶段.")
+                sender.giveItem(buildItem(XMaterial.BLAZE_ROD) {
+                    name = "§f§f§f调试魔杖"
+                    lore += "§7BlockMine"
+                    lore += "§7${blockData.id}"
+                    shiny()
+                })
+            }
+        }
+    }
+
+    @CommandBody
+    val near = subCommand {
+        execute<Player> { sender, _, _ ->
+            sender.info("附近开采结构:")
+            BlockMine.blocks.forEach {
+                it.blocks.forEach { state ->
+                    if (state.location.world?.name == sender.world.name && state.location.distance(sender.location) < 50) {
+                        sender.info("§8 - §f${it.id} §7(${Coerce.format(state.location.distance(sender.location))}m)")
+                    }
                 }
             }
         }
     }
 
-    @SubCommand(priority = 0.6, description = "重载开采结构")
-    fun import(sender: CommandSender, args: Array<String>) {
-        BlockMine.import()
-        sender.info("操作成功.")
+    @CommandBody
+    val import = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            BlockMine.import()
+            sender.info("操作成功.")
+        }
+    }
+
+    @CommandBody
+    val export = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            BlockMine.export()
+            sender.info("操作成功.")
+        }
     }
 }

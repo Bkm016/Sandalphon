@@ -2,11 +2,11 @@ package ink.ptms.sandalphon.module.impl.holographic
 
 import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
 import ink.ptms.sandalphon.util.Utils
-import io.izzel.taboolib.module.db.local.LocalFile
-import io.izzel.taboolib.module.inject.TFunction
-import io.izzel.taboolib.module.inject.TSchedule
 import org.bukkit.Bukkit
-import org.bukkit.configuration.file.FileConfiguration
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.Schedule
+import taboolib.module.configuration.createLocal
 
 /**
  * @author sky
@@ -14,21 +14,22 @@ import org.bukkit.configuration.file.FileConfiguration
  */
 object Hologram {
 
-    @LocalFile("module/hologram.yml")
-    lateinit var data: FileConfiguration
-        private set
+    val data by lazy { createLocal("module/hologram.yml") }
 
     val holograms = ArrayList<HologramData>()
 
-    @TSchedule
+    @Awake(LifeCycle.ACTIVE)
     fun import() {
         holograms.clear()
         data.getKeys(false).forEach {
-            holograms.add(HologramData(it, Utils.toLocation(data.getString("$it.location")!!), data.getStringList("$it.content"), data.getStringList("$it.condition")))
+            holograms.add(HologramData(it,
+                Utils.toLocation(data.getString("$it.location")!!),
+                data.getStringList("$it.content"),
+                data.getStringList("$it.condition")))
         }
     }
 
-    @TFunction.Cancel
+    @Awake(LifeCycle.DISABLE)
     fun export() {
         data.getKeys(false).forEach { data.set(it, null) }
         holograms.forEach { holo ->
@@ -38,13 +39,13 @@ object Hologram {
         }
     }
 
-    @TFunction.Cancel
+    @Awake(LifeCycle.DISABLE)
     fun cancel() {
         holograms.forEach { it.cancel() }
     }
 
-    @TSchedule(period = 20)
-    fun e() {
+    @Schedule(period = 20, async = true)
+    fun refresh() {
         Bukkit.getOnlinePlayers().forEach { player ->
             holograms.filter { it.location.world?.name == player.world.name }.forEach {
                 it.refresh(player)

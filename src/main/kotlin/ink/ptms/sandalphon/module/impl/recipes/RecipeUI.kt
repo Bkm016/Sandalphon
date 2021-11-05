@@ -2,112 +2,22 @@ package ink.ptms.sandalphon.module.impl.recipes
 
 import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.recipes.RecipeMatcher.Companion.toMatcher
-import io.izzel.taboolib.cronus.CronusUtils
-import io.izzel.taboolib.internal.xseries.XMaterial
-import io.izzel.taboolib.kotlin.Reflex.Companion.reflex
-import io.izzel.taboolib.kotlin.Tasks
-import io.izzel.taboolib.module.tellraw.TellrawJson
-import io.izzel.taboolib.util.Coerce
-import io.izzel.taboolib.util.Features
-import io.izzel.taboolib.util.item.ItemBuilder
-import io.izzel.taboolib.util.item.Items
-import io.izzel.taboolib.util.item.inventory.ClickEvent
-import io.izzel.taboolib.util.item.inventory.ClickType
-import io.izzel.taboolib.util.item.inventory.MenuBuilder
-import io.izzel.taboolib.util.item.inventory.linked.MenuLinked
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.*
+import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.reflect.Reflex.Companion.getProperty
+import taboolib.library.xseries.XMaterial
+import taboolib.module.chat.TellrawJson
+import taboolib.module.ui.ClickType
+import taboolib.module.ui.openMenu
+import taboolib.module.ui.type.Basic
+import taboolib.module.ui.type.Linked
+import taboolib.platform.util.buildItem
+import taboolib.platform.util.inventoryCenterSlots
 import java.util.*
 
-fun Player.openRecipes(type: RecipeType? = null) {
-    if (type == null) {
-        MenuBuilder.builder(Sandalphon.plugin)
-            .title("配方编辑器")
-            .rows(3)
-            .items("", " 1 2 3 4")
-            .also {
-                RecipeType.values().forEach { recipe ->
-                    it.put(
-                        recipe.id, ItemBuilder(recipe.material)
-                            .name("&f${recipe.display}配方")
-                            .lore("&7${Recipes.recipeMap[recipe]!!.recipes.size} 组")
-                            .colored()
-                            .build()
-                    )
-                }
-            }.click {
-                openRecipes(RecipeType.values().firstOrNull { r -> r.id == it.slot } ?: return@click)
-            }.open(this)
-    } else {
-        object : MenuLinked<Recipe>(this) {
-
-            init {
-                addButtonNextPage(51)
-                addButtonPreviousPage(47)
-                addButton(49) {
-                    openRecipe(type)
-                }
-            }
-
-            override fun getTitle(): String {
-                return "配方编辑器 (${type.display}配方)"
-            }
-
-            override fun getRows(): Int {
-                return 6
-            }
-
-            override fun getElements(): MutableList<Recipe> {
-                return Recipes.recipeMap[type]!!.recipes.values.toMutableList()
-            }
-
-            override fun getSlots(): MutableList<Int> {
-                return Items.INVENTORY_CENTER.toMutableList()
-            }
-
-            override fun onBuild(inventory: Inventory) {
-                if (hasNextPage()) {
-                    inventory.setItem(51, ItemBuilder(XMaterial.SPECTRAL_ARROW).name("&7下一页").colored().build())
-                } else {
-                    inventory.setItem(51, ItemBuilder(XMaterial.ARROW).name("&8下一页").colored().build())
-                }
-                if (hasPreviousPage()) {
-                    inventory.setItem(47, ItemBuilder(XMaterial.SPECTRAL_ARROW).name("&7上一页").colored().build())
-                } else {
-                    inventory.setItem(47, ItemBuilder(XMaterial.ARROW).name("&8上一页").colored().build())
-                }
-                inventory.setItem(49, ItemBuilder(type.material).name("&7新建配方").colored().build())
-            }
-
-            override fun onClick(event: ClickEvent, element: Recipe) {
-                if (event.clickType == ClickType.CLICK) {
-                    when {
-                        event.castClick().isLeftClick -> {
-                            player.openRecipe(type, element)
-                        }
-                        event.castClick().isRightClick -> {
-                            element.reflex<NamespacedKey>("key")?.also { key ->
-                                TellrawJson.create().append("§9§l§n$key").hoverText("Click To Copy!").clickSuggest(key.key).send(player)
-                                player.closeInventory()
-                            }
-                        }
-                        event.castClick().click == org.bukkit.event.inventory.ClickType.DROP -> {
-                            element.reflex<NamespacedKey>("key")?.also { key ->
-                                Recipes.recipeMap[type]!!.removeRecipe(key)
-                                open(page)
-                            }
-                        }
-                    }
-                }
-            }
-
-            override fun generateItem(player: Player, element: Recipe, index: Int, slot: Int): ItemStack {
-                return ItemBuilder(element.result).lore("", "&a[左键: 编辑配方] &b[右键: 复制序号] &c[Q: 删除]").colored().build()
-            }
-        }.open()
-    }
-}
+val slots = arrayOf(2 to 'A', 3 to 'B', 4 to 'C', 11 to 'D', 12 to 'E', 13 to 'F', 20 to 'G', 21 to 'H', 22 to 'I').associate { it.second to it.first }
 
 fun Player.openRecipe(type: RecipeType, recipe: Recipe? = null) {
     when (type) {
@@ -118,17 +28,74 @@ fun Player.openRecipe(type: RecipeType, recipe: Recipe? = null) {
     }
 }
 
-private val craftSlots = arrayOf(
-    2 to 'A',
-    3 to 'B',
-    4 to 'C',
-    11 to 'D',
-    12 to 'E',
-    13 to 'F',
-    20 to 'G',
-    21 to 'H',
-    22 to 'I'
-).map { it.second to it.first }.toMap()
+fun Player.openRecipes(type: RecipeType? = null) {
+    if (type == null) {
+        openMenu<Basic>("配方编辑器") {
+            rows(3)
+            map("", " 1 2 3 4")
+            RecipeType.values().forEach { recipe ->
+                set(recipe.id, buildItem(recipe.material) {
+                    name = "&f${recipe.display}配方"
+                    lore += "&7${Recipes.recipeMap[recipe]!!.recipes.size} 组"
+                    colored()
+                })
+            }
+            onClick(lock = true) {
+                openRecipes(RecipeType.values().firstOrNull { r -> r.id == it.slot } ?: return@onClick)
+            }
+        }
+    } else {
+        openMenu<Linked<Recipe>>("配方编辑器 (${type.display}配方)") {
+            rows(6)
+            slots(inventoryCenterSlots)
+            elements { Recipes.recipeMap[type]!!.recipes.values.toList() }
+            onGenerate { _, element, _, _ ->
+                buildItem(element.result) {
+                    lore += listOf("", "&a[左键: 编辑配方] &b[右键: 复制序号] &c[Q: 删除]")
+                    colored()
+                }
+            }
+            onClick { event, element ->
+                if (event.clickType == ClickType.CLICK) {
+                    when {
+                        event.clickEvent().isLeftClick -> {
+                            openRecipe(type, element)
+                        }
+                        event.clickEvent().isRightClick -> {
+                            element.getProperty<NamespacedKey>("key")?.also { key ->
+                                TellrawJson().append("§9§l§n$key").hoverText("点击复制!").suggestCommand(key.key).sendTo(adaptPlayer(this))
+                                closeInventory()
+                            }
+                        }
+                        event.clickEvent().click == org.bukkit.event.inventory.ClickType.DROP -> {
+                            element.getProperty<NamespacedKey>("key")?.also { key ->
+                                Recipes.recipeMap[type]!!.removeRecipe(key)
+                                openRecipes(type)
+                            }
+                        }
+                    }
+                }
+            }
+            set(49, buildItem(type.material) { name = "§7新建配方" }) {
+                openRecipe(type)
+            }
+            setNextPage(51) { page, hasNextPage ->
+                if (hasNextPage) {
+                    buildItem(XMaterial.SPECTRAL_ARROW) { name = "§7下一页" }
+                } else {
+                    buildItem(XMaterial.ARROW) { name = "§7下一页" }
+                }
+            }
+            setNextPage(47) { page, hasNextPage ->
+                if (hasNextPage) {
+                    buildItem(XMaterial.SPECTRAL_ARROW) { name = "§7上一页" }
+                } else {
+                    buildItem(XMaterial.ARROW) { name = "§7上一页" }
+                }
+            }
+        }
+    }
+}
 
 private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
     val recipeMap = Recipes.recipeMap[RecipeType.CRAFT_TABLE]
@@ -137,7 +104,6 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
     fun button(): ItemStack {
         return ItemBuilder(XMaterial.CRAFTING_TABLE).name("&f${if (shaped) "有序" else "无序"}配方").lore("", "&7[SHIFT + 右键配方配置变种]").colored().build()
     }
-
     val matcher = HashMap<Int, RecipeMatcher>()
     MenuBuilder.builder(Sandalphon.plugin)
         .title("配方编辑器 (${if (recipe == null) "新建" else "编辑"})")
@@ -155,13 +121,13 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                 is ShapedRecipe -> {
                     inv.setItem(15, recipe.result)
                     recipe.ingredientMap.forEach { (k, v) ->
-                        inv.setItem(craftSlots[k]!!, v)
+                        inv.setItem(slots[k]!!, v)
                     }
                 }
                 is ShapelessRecipe -> {
                     inv.setItem(15, recipe.result)
                     recipe.ingredientList.forEachIndexed { index, v ->
-                        inv.setItem(craftSlots[craftSlots.keys.toList()[index]]!!, v)
+                        inv.setItem(slots[slots.keys.toList()[index]]!!, v)
                     }
                 }
             }
@@ -180,7 +146,7 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
             if (event.clickType == ClickType.CLICK
                 && event.castClick().isShiftClick
                 && Items.nonNull(event.currentItem)
-                && craftSlots.any { slot -> slot.value == event.rawSlot }
+                && slots.any { slot -> slot.value == event.rawSlot }
             ) {
                 event.isCancelled = true
                 var ignoreItemMeta = false
@@ -255,7 +221,7 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                     recipeMap.addRecipe(ShapedRecipe(key, result!!).also { r ->
                         r.shape("ABC", "DEF", "GHI")
                         r.group = result.hashCode().toString()
-                        craftSlots.forEach { slot ->
+                        slots.forEach { slot ->
                             if (matcher.containsKey(slot.value)) {
                                 r.setIngredient(slot.key, matcher[slot.value]!!)
                             } else {
@@ -269,7 +235,7 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                 } else {
                     recipeMap.addRecipe(ShapelessRecipe(key, result!!).also { r ->
                         r.group = result.hashCode().toString()
-                        craftSlots.forEach { slot ->
+                        slots.forEach { slot ->
                             if (matcher.containsKey(slot.value)) {
                                 r.addIngredient(matcher[slot.value]!!)
                             } else {
@@ -346,11 +312,7 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                     }
                 }
             }
-            if (event.clickType == ClickType.CLICK
-                && event.castClick().isShiftClick
-                && Items.nonNull(event.currentItem)
-                && event.rawSlot == 12
-            ) {
+            if (event.clickType == ClickType.CLICK && event.castClick().isShiftClick && Items.nonNull(event.currentItem) && event.rawSlot == 12) {
                 event.isCancelled = true
                 var ignoreItemMeta = false
                 var ignoreData = false

@@ -4,11 +4,14 @@ import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.CommandBlockControl
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
+import ink.ptms.sandalphon.module.impl.blockmine.data.openEdit
 import ink.ptms.sandalphon.util.Pair
-import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
 import ink.ptms.zaphkiel.taboolib.module.nms.ItemTagData
-import org.bukkit.*
+import org.bukkit.Effect
+import org.bukkit.Location
+import org.bukkit.Material
+import org.bukkit.Particle
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
@@ -21,7 +24,6 @@ import taboolib.common.util.random
 import taboolib.module.chat.uncolored
 import taboolib.platform.util.hasLore
 import taboolib.platform.util.hasName
-import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -60,8 +62,9 @@ object BlockEvents : Helper {
             }
             result.blockState.update = true
             result.blockStructure.drop.filter { random(it.chance) }.forEach {
-                e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), (Utils.item(it.item, e.player) ?: return@forEach).run {
-                    this.amount = it.amount
+                val itemStack = ZaphkielAPI.getItemStack(it.item, e.player) ?: return@forEach
+                e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), itemStack.run {
+                    amount = it.amount
                     this
                 }).pickupDelay = 20
             }
@@ -238,7 +241,7 @@ object BlockEvents : Helper {
                 }
                 e.player.info("结构已储存.")
                 BlockMine.export()
-                BlockMine.cached()
+                BlockMine.loadBlockCache()
                 blockData.openEdit(e.player)
             }
         }

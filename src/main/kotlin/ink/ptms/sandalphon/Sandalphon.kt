@@ -4,6 +4,7 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.io.newFile
 import taboolib.common.platform.Plugin
+import taboolib.common.platform.command.command
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.disablePlugin
 import taboolib.common.platform.function.getDataFolder

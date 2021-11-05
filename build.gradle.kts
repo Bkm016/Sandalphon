@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.26"
+    id("io.izzel.taboolib") version "1.31"
     id("org.jetbrains.kotlin.jvm") version "1.5.10"
 }
 
@@ -22,7 +22,7 @@ taboolib {
     install("module-kether", "expansion-command-helper", "expansion-player-database")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.3-8"
+    version = "6.0.3-23"
 }
 
 repositories {
@@ -30,10 +30,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly("public:InternalAPI:1.0.0")
     compileOnly("public:MythicMobs:1.0.1")
-    compileOnly("ink.ptms:Zaphkiel:1.6.0")
-    compileOnly("ink.ptms:Adyeshach:1.3.10")
+    compileOnly("ink.ptms:Zaphkiel:1.7.2")
+    compileOnly("ink.ptms:Adyeshach:1.4.1")
     compileOnly("ink.ptms.core:v11701:11701:universal")
     compileOnly("ink.ptms.core:v11605:11605")
     compileOnly("ink.ptms:nms-all:1.0.0")

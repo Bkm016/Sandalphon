@@ -1,12 +1,12 @@
 package ink.ptms.sandalphon.module.impl.recipes
 
-import ink.ptms.sandalphon.Sandalphon
-import io.izzel.taboolib.kotlin.Reflex.Companion.reflex
-import io.izzel.taboolib.module.db.local.SecuredFile
-import io.izzel.taboolib.util.Files
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.Recipe
+import taboolib.common.io.newFile
+import taboolib.common.platform.function.getDataFolder
+import taboolib.common.reflect.Reflex.Companion.getProperty
+import taboolib.module.configuration.SecuredFile
 
 /**
  * Sandalphon
@@ -17,13 +17,13 @@ import org.bukkit.inventory.Recipe
  */
 class RecipeMap(val type: RecipeType) {
 
-    val file = Files.file(Sandalphon.plugin.dataFolder, "module/recipes/$type.yml")
-    val conf = SecuredFile.loadConfiguration(file)!!
+    val file by lazy { newFile(getDataFolder(), "module/recipes/$type.yml") }
+    val conf by lazy { SecuredFile.loadConfiguration(file) }
 
     val recipes = HashMap<NamespacedKey, Recipe>()
 
     fun addRecipe(recipe: Recipe, export: Boolean = true) {
-        recipes[recipe.reflex("key")!!] = recipe
+        recipes[recipe.getProperty("key")!!] = recipe
         Bukkit.addRecipe(recipe)
         if (export) {
             Recipes.export()

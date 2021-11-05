@@ -18,7 +18,7 @@ import org.bukkit.entity.Player
  * @since 2021/3/15 6:42 上午
  */
 @BaseCommand(name = "recipes", permission = "admin")
-class RecipesCommand : BaseMainCommand(), Helper {
+object RecipesCommand : BaseMainCommand(), Helper {
 
     override fun onTabComplete(sender: CommandSender, command: String, argument: String): List<String>? {
         if ((command == "discover" || command == "undiscover") && argument == "配方") {
