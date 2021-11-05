@@ -1,14 +1,17 @@
 package ink.ptms.sandalphon.module.impl.recipes
 
 import ink.ptms.sandalphon.module.Helper
-import io.izzel.taboolib.Version
-import io.izzel.taboolib.module.command.base.BaseCommand
-import io.izzel.taboolib.module.command.base.BaseMainCommand
-import io.izzel.taboolib.module.command.base.SubCommand
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
+import taboolib.common.platform.command.CommandBody
+import taboolib.common.platform.command.CommandHeader
+import taboolib.common.platform.command.mainCommand
+import taboolib.common.platform.command.subCommand
+import taboolib.common.platform.function.onlinePlayers
+import taboolib.expansion.createHelper
+import taboolib.module.nms.MinecraftVersion
 
 /**
  * Sandalphon
@@ -17,50 +20,66 @@ import org.bukkit.entity.Player
  * @author sky
  * @since 2021/3/15 6:42 上午
  */
-@BaseCommand(name = "recipes", permission = "admin")
-object RecipesCommand : BaseMainCommand(), Helper {
+@CommandHeader(name = "recipes", permission = "admin")
+object RecipesCommand : Helper {
 
-    override fun onTabComplete(sender: CommandSender, command: String, argument: String): List<String>? {
-        if ((command == "discover" || command == "undiscover") && argument == "配方") {
-            return Recipes.recipeMap.values.flatMap {
-                it.recipes.keys.map { key -> key.key }
+    @CommandBody
+    val main = mainCommand {
+        createHelper()
+    }
+
+    @CommandBody
+    val open = subCommand {
+        execute<Player> { sender, _, _ ->
+            if (MinecraftVersion.majorLegacy >= 11300) {
+                sender.openRecipes()
+            } else {
+                sender.info("Sandalphon Recipes 需要 Minecraft 1.13 或以上版本。")
             }
         }
-        return null
     }
 
-    @SubCommand(description = "打开界面", priority = 0.0)
-    fun open(player: Player, args: Array<String>) {
-        if (Version.isAfter(Version.v1_13)) {
-            player.openRecipes()
-        } else {
-            player.info("Sandalphon Recipes 需要 Minecraft 1.13 或以上版本。")
+    @CommandBody
+    val discover = subCommand {
+        dynamic {
+            suggestion<CommandSender> { _, _ -> onlinePlayers().map { it.name } }
+            dynamic {
+                suggestion<CommandSender> { _, _ -> Recipes.recipeMap.values.flatMap { it.recipes.keys.map { key -> key.key } } }
+                execute<CommandSender> { sender, context, argument ->
+                    Bukkit.getPlayerExact(context.argument(-1))!!.discoverRecipe(NamespacedKey.minecraft(argument))
+                    sender.info("操作成功.")
+                }
+            }
         }
     }
 
-    @SubCommand(description = "导入配置", priority = 1.0)
-    fun import(sender: CommandSender, args: Array<String>) {
-        Recipes.import()
-        sender.info("操作成功.")
+    @CommandBody
+    val undiscover = subCommand {
+        dynamic {
+            suggestion<CommandSender> { _, _ -> onlinePlayers().map { it.name } }
+            dynamic {
+                suggestion<CommandSender> { _, _ -> Recipes.recipeMap.values.flatMap { it.recipes.keys.map { key -> key.key } } }
+                execute<CommandSender> { sender, context, argument ->
+                    Bukkit.getPlayerExact(context.argument(-1))!!.undiscoverRecipe(NamespacedKey.minecraft(argument))
+                    sender.info("操作成功.")
+                }
+            }
+        }
     }
 
-    @SubCommand(description = "赋予配方认知", arguments = ["玩家", "配方"], priority = 2.0)
-    fun discover(sender: CommandSender, args: Array<String>) {
-        val playerExact = Bukkit.getPlayerExact(args[0])
-        if (playerExact == null) {
-            sender.error("玩家离线.")
-            return
+    @CommandBody
+    val import = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            Recipes.import()
+            sender.info("操作成功.")
         }
-        playerExact.discoverRecipe(NamespacedKey.minecraft(args[1]))
     }
 
-    @SubCommand(description = "移除配方认知", arguments = ["玩家", "配方"], priority = 3.0)
-    fun undiscover(sender: CommandSender, args: Array<String>) {
-        val playerExact = Bukkit.getPlayerExact(args[0])
-        if (playerExact == null) {
-            sender.error("玩家离线.")
-            return
+    @CommandBody
+    val export = subCommand {
+        execute<CommandSender> { sender, _, _ ->
+            Recipes.export()
+            sender.info("操作成功.")
         }
-        playerExact.undiscoverRecipe(NamespacedKey.minecraft(args[1]))
     }
 }

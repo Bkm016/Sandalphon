@@ -2,11 +2,11 @@ package ink.ptms.sandalphon.module.impl.recipes
 
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
+import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.inventory.Recipe
 import taboolib.common.io.newFile
 import taboolib.common.platform.function.getDataFolder
 import taboolib.common.reflect.Reflex.Companion.getProperty
-import taboolib.module.configuration.SecuredFile
 
 /**
  * Sandalphon
@@ -18,7 +18,12 @@ import taboolib.module.configuration.SecuredFile
 class RecipeMap(val type: RecipeType) {
 
     val file by lazy { newFile(getDataFolder(), "module/recipes/$type.yml") }
-    val conf by lazy { SecuredFile.loadConfiguration(file) }
+
+    val data by lazy {
+        val yaml = YamlConfiguration()
+        yaml.load(file)
+        yaml
+    }
 
     val recipes = HashMap<NamespacedKey, Recipe>()
 
@@ -52,11 +57,11 @@ class RecipeMap(val type: RecipeType) {
     }
 
     fun load() {
-        conf.load(file)
+        data.load(file)
     }
 
     fun save() {
-        conf.save(file)
+        data.save(file)
     }
 
     enum class Type {

@@ -3,32 +3,31 @@ package ink.ptms.sandalphon.module.impl.scriptblock
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockData
 import ink.ptms.sandalphon.module.impl.scriptblock.data.BlockType
 import ink.ptms.sandalphon.util.Utils
-import io.izzel.taboolib.module.db.local.LocalFile
-import io.izzel.taboolib.module.inject.TFunction
-import io.izzel.taboolib.module.inject.TSchedule
 import org.bukkit.block.Block
-import org.bukkit.configuration.file.FileConfiguration
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.module.configuration.createLocal
 
 object ScriptBlock {
 
-    @LocalFile("module/scriptblock.yml")
-    lateinit var data: FileConfiguration
-        private set
-
+    val data by lazy { createLocal("module/scriptblock.yml") }
     val blocks = ArrayList<BlockData>()
 
-    @TSchedule
+    @Awake(LifeCycle.ACTIVE)
     fun import() {
         blocks.clear()
         data.getKeys(false).forEach {
-            blocks.add(BlockData(Utils.toLocation(it.replace("__", ".")), BlockType.valueOf(data.getString("$it.type")!!), data.getStringList("$it.action"), data.getStringList("$it.condition")).run {
+            blocks.add(BlockData(Utils.toLocation(it.replace("__", ".")),
+                BlockType.valueOf(data.getString("$it.type")!!),
+                data.getStringList("$it.action"),
+                data.getStringList("$it.condition")).run {
                 this.link.addAll(data.getStringList("$it.link").map { link -> Utils.toLocation(link) })
                 this
             })
         }
     }
 
-    @TFunction.Cancel
+    @Awake(LifeCycle.DISABLE)
     fun export() {
         data.getKeys(false).forEach { data.set(it, null) }
         blocks.forEach { block ->

@@ -1,55 +1,53 @@
 package ink.ptms.sandalphon.module.impl.spawner
 
-import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.spawner.ai.FollowAi
 import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import ink.ptms.sandalphon.module.impl.spawner.event.EntityToSpawnEvent
 import ink.ptms.sandalphon.util.Utils
-import io.izzel.taboolib.module.ai.SimpleAiSelector
-import io.izzel.taboolib.module.db.local.LocalFile
-import io.izzel.taboolib.module.inject.TFunction
-import io.izzel.taboolib.module.inject.TSchedule
 import io.lumine.xikage.mythicmobs.MythicMobs
 import org.bukkit.Bukkit
 import org.bukkit.block.Block
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.LivingEntity
 import org.bukkit.metadata.FixedMetadataValue
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
+import taboolib.common.platform.Schedule
+import taboolib.module.ai.addGoalAi
+import taboolib.module.configuration.createLocal
+import taboolib.platform.BukkitPlugin
 
 object Spawner {
 
-    @LocalFile("module/spawner.yml")
-    lateinit var data: FileConfiguration
-        private set
-
+    val data by lazy { createLocal("module/spawner.yml") }
     val spawners = ArrayList<SpawnerData>()
 
-    @TSchedule(period = 20)
+    @Schedule(period = 20)
     fun tick() {
         spawners.forEach { it.tick() }
     }
 
-    @TSchedule
+    @Awake(LifeCycle.ACTIVE)
     fun import() {
         if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) {
             return
         }
         spawners.clear()
-        data.getKeys(false).forEach {
-            spawners.add(SpawnerData(Utils.toLocation(it.replace("__", ".")), MythicMobs.inst().mobManager.getMythicMob(data.getString("$it.mob"))).run {
-                this.time.putAll(data.getConfigurationSection("$it.time")?.getValues(false)?.map { Utils.toLocation(it.key.replace("__", ".")) to it.value as Long }?.toMap()
-                        ?: emptyMap())
-                this.copy.addAll(data.getStringList("$it.link").map { link -> Utils.toLocation(link) })
-                this.activationrange = data.getInt("$it.activationrange")
-                this.leashrange = data.getInt("$it.leashrange")
-                this.respawn = data.getInt("$it.respawn")
+        data.getKeys(false).forEach { loc ->
+            spawners.add(SpawnerData(Utils.toLocation(loc.replace("__", ".")), MythicMobs.inst().mobManager.getMythicMob(data.getString("$loc.mob"))).run {
+                this.time.putAll(data.getConfigurationSection("$loc.time")?.getValues(false)
+                    ?.map { Utils.toLocation(it.key.replace("__", ".")) to it.value as Long }?.toMap()
+                    ?: emptyMap())
+                this.copy.addAll(data.getStringList("$loc.link").map { link -> Utils.toLocation(link) })
+                this.activationrange = data.getInt("$loc.activationrange")
+                this.leashrange = data.getInt("$loc.leashrange")
+                this.respawn = data.getInt("$loc.respawn")
                 this
             })
         }
     }
 
-    @TFunction.Cancel
-    @TSchedule(period = 20 * 60, async = true)
+    @Awake(LifeCycle.DISABLE)
+    @Schedule(period = 20 * 60, async = true)
     fun export() {
         data.getKeys(false).forEach { data.set(it, null) }
         spawners.forEach { spawner ->
@@ -63,7 +61,7 @@ object Spawner {
         }
     }
 
-    @TFunction.Cancel
+    @Awake(LifeCycle.DISABLE)
     fun cancel() {
         spawners.forEach { it.cancel() }
     }
@@ -81,9 +79,9 @@ object Spawner {
         val spawnerData = spawners.firstOrNull { it.mob.internalName == mythicMob.internalName } ?: return false
         val pair = spawnerData.mobs.entries.firstOrNull { it.value.uniqueId == entity.uniqueId } ?: return false
         if (entity.location.world!!.name == pair.key.world!!.name) {
-            entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(Sandalphon.plugin, true))
+            entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(BukkitPlugin.getInstance(), true))
             entity.isInvulnerable = true
-            SimpleAiSelector.getExecutor().addGoalAi(entity, FollowAi(entity, pair.key.clone().add(0.5, 1.5, 0.5), 1.5), 1)
+            entity.addGoalAi(FollowAi(entity, pair.key.clone().add(0.5, 1.5, 0.5), 1.5), 1)
             EntityToSpawnEvent.Start(entity, spawnerData).call()
         } else {
             entity.teleport(pair.key.clone().add(0.5, 1.5, 0.5))

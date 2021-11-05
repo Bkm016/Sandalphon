@@ -16,6 +16,6 @@ abstract class NMS {
 
     companion object {
 
-        val instance by lazy { nmsProxy<NMS>() }
+        val INSTANCE by lazy { nmsProxy<NMS>() }
     }
 }

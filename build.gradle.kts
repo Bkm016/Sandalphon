@@ -13,6 +13,7 @@ taboolib {
     }
     install("common")
     install("common-5")
+    install("module-ai")
     install("module-database")
     install("module-configuration")
     install("module-chat")

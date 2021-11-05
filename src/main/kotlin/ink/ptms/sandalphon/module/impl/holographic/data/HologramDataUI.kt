@@ -34,12 +34,13 @@ fun HologramData.openEdit(player: Player) {
                 location.subtract(0.0, 0.1, 0.0)
                 it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
             }
+            init()
         }
         onClick(13) {
             player.closeInventory()
             player.giveItem(buildBook {
                 material = XMaterial.WRITABLE_BOOK.parseMaterial()!!
-                writeRaw(content.joinToString("\n"))
+                write(content.joinToString("\n"))
                 name = "§f§f§f编辑内容"
                 lore += listOf("§7Hologram", "§7$id")
             })

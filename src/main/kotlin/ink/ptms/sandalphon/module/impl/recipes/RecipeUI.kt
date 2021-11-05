@@ -1,23 +1,30 @@
 package ink.ptms.sandalphon.module.impl.recipes
 
-import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.recipes.RecipeMatcher.Companion.toMatcher
+import ink.ptms.sandalphon.util.ItemBuilder
+import org.bukkit.Material
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.inventory.*
 import taboolib.common.platform.function.adaptPlayer
+import taboolib.common.platform.function.submit
 import taboolib.common.reflect.Reflex.Companion.getProperty
+import taboolib.common5.Coerce
+import taboolib.common5.util.parseMillis
 import taboolib.library.xseries.XMaterial
 import taboolib.module.chat.TellrawJson
+import taboolib.module.nms.inputSign
 import taboolib.module.ui.ClickType
 import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.module.ui.type.Linked
 import taboolib.platform.util.buildItem
 import taboolib.platform.util.inventoryCenterSlots
+import taboolib.platform.util.isAir
+import taboolib.platform.util.isNotAir
 import java.util.*
 
-val slots = arrayOf(2 to 'A', 3 to 'B', 4 to 'C', 11 to 'D', 12 to 'E', 13 to 'F', 20 to 'G', 21 to 'H', 22 to 'I').associate { it.second to it.first }
+val craftSlots = arrayOf(2 to 'A', 3 to 'B', 4 to 'C', 11 to 'D', 12 to 'E', 13 to 'F', 20 to 'G', 21 to 'H', 22 to 'I').associate { it.second to it.first }
 
 fun Player.openRecipe(type: RecipeType, recipe: Recipe? = null) {
     when (type) {
@@ -104,51 +111,43 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
     fun button(): ItemStack {
         return ItemBuilder(XMaterial.CRAFTING_TABLE).name("&f${if (shaped) "有序" else "无序"}配方").lore("", "&7[SHIFT + 右键配方配置变种]").colored().build()
     }
+
     val matcher = HashMap<Int, RecipeMatcher>()
-    MenuBuilder.builder(Sandalphon.plugin)
-        .title("配方编辑器 (${if (recipe == null) "新建" else "编辑"})")
-        .rows(3)
-        .items(
-            "##   #@##",
-            "##   1 ##",
-            "##   #@##"
-        )
-        .put('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
-        .put('@', ItemBuilder(XMaterial.WHITE_STAINED_GLASS_PANE).name("&r").colored().build())
-        .put('1', button())
-        .build { inv ->
+    openMenu<Basic>("配方编辑器 (${if (recipe == null) "新建" else "编辑"})") {
+        rows(3)
+        map("##   #@##", "##   1 ##", "##   #@##")
+        set('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
+        set('@', ItemBuilder(XMaterial.WHITE_STAINED_GLASS_PANE).name("&r").colored().build())
+        set('1', button())
+        onBuild { _, inv ->
             when (recipe) {
                 is ShapedRecipe -> {
                     inv.setItem(15, recipe.result)
                     recipe.ingredientMap.forEach { (k, v) ->
-                        inv.setItem(slots[k]!!, v)
+                        inv.setItem(craftSlots[k]!!, v)
                     }
                 }
                 is ShapelessRecipe -> {
                     inv.setItem(15, recipe.result)
                     recipe.ingredientList.forEachIndexed { index, v ->
-                        inv.setItem(slots[slots.keys.toList()[index]]!!, v)
+                        inv.setItem(craftSlots[craftSlots.keys.toList()[index]]!!, v)
                     }
                 }
             }
         }
-        .event { event ->
-            when (event.slot) {
+        onClick(lock = true) {
+            when (it.slot) {
                 '#', '@' -> {
-                    event.isCancelled = true
+                    it.isCancelled = true
                 }
                 '1' -> {
                     shaped = !shaped
-                    event.isCancelled = true
-                    event.currentItem = button()
+                    it.isCancelled = true
+                    it.currentItem = button()
                 }
             }
-            if (event.clickType == ClickType.CLICK
-                && event.castClick().isShiftClick
-                && Items.nonNull(event.currentItem)
-                && slots.any { slot -> slot.value == event.rawSlot }
-            ) {
-                event.isCancelled = true
+            if (it.clickType == ClickType.CLICK && it.clickEvent().isShiftClick && it.currentItem.isNotAir() && craftSlots.any { slot -> slot.value == it.rawSlot }) {
+                it.isCancelled = true
                 var ignoreItemMeta = false
                 var ignoreData = false
                 fun build1(): ItemStack {
@@ -165,15 +164,14 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                         .build()
                 }
                 save = false
-                MenuBuilder.builder(Sandalphon.plugin)
-                    .title("配方编辑器 (变种)")
-                    .rows(4)
-                    .items("0", "", "", "12#######")
-                    .put('0', event.currentItem)
-                    .put('1', build1())
-                    .put('2', build2())
-                    .put('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
-                    .event { sub ->
+                openMenu<Basic>("配方编辑器 (变种)") {
+                    rows(4)
+                    map("0", "", "", "12#######")
+                    set('0', it.currentItem ?: ItemStack(Material.AIR))
+                    set('1', build1())
+                    set('2', build2())
+                    set('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
+                    onClick(lock = true) { sub ->
                         when (sub.slot) {
                             '#', '0' -> {
                                 sub.isCancelled = true
@@ -190,30 +188,32 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                             }
                         }
                     }
-                    .close {
-                        matcher[event.rawSlot] = RecipeMatcher(
-                            (0 until 27).mapNotNull { slot -> it.inventory.getItem(slot) }.filter { item -> Items.nonNull(item) },
+                    onClose { _ ->
+                        matcher[it.rawSlot] = RecipeMatcher(
+                            (0 until 27).mapNotNull { slot -> it.inventory.getItem(slot) }.filter { item -> item.isNotAir() },
                             ignoreItemMeta,
                             ignoreData
                         )
-                        Tasks.delay(1) {
-                            openInventory(event.inventory)
+                        submit(delay = 1) {
+                            openInventory(it.inventory)
                             save = true
                         }
-                    }.open(this)
+                    }
+                }
             }
-        }.close { inv ->
+        }
+        onClose {
             if (!save) {
-                return@close
+                return@onClose
             }
             val key = if (recipe == null)
                 NamespacedKey.minecraft(UUID.randomUUID().toString().replace("-", ""))
             else {
-                recipe.reflex("key")!!
+                recipe.getProperty("key")!!
             }
-            val result = inv.inventory.getItem(15)
+            val result = it.inventory.getItem(15)
             // 注销配方并保存
-            if (Items.isNull(result)) {
+            if (result.isAir()) {
                 recipeMap!!.removeRecipe(key)
             } else {
                 recipeMap!!.removeRecipe(key, false)
@@ -221,12 +221,12 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                     recipeMap.addRecipe(ShapedRecipe(key, result!!).also { r ->
                         r.shape("ABC", "DEF", "GHI")
                         r.group = result.hashCode().toString()
-                        slots.forEach { slot ->
+                        craftSlots.forEach { slot ->
                             if (matcher.containsKey(slot.value)) {
                                 r.setIngredient(slot.key, matcher[slot.value]!!)
                             } else {
-                                val item = inv.inventory.getItem(slot.value)
-                                if (Items.nonNull(item)) {
+                                val item = it.inventory.getItem(slot.value)
+                                if (item.isNotAir()) {
                                     r.setIngredient(slot.key, item!!.toMatcher())
                                 }
                             }
@@ -235,12 +235,12 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                 } else {
                     recipeMap.addRecipe(ShapelessRecipe(key, result!!).also { r ->
                         r.group = result.hashCode().toString()
-                        slots.forEach { slot ->
+                        craftSlots.forEach { slot ->
                             if (matcher.containsKey(slot.value)) {
                                 r.addIngredient(matcher[slot.value]!!)
                             } else {
-                                val item = inv.inventory.getItem(slot.value)
-                                if (Items.nonNull(item)) {
+                                val item = it.inventory.getItem(slot.value)
+                                if (item.isNotAir()) {
                                     r.addIngredient(item!!.toMatcher())
                                 }
                             }
@@ -248,10 +248,9 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                     })
                 }
             }
-            Tasks.delay(1) {
-                openRecipes(RecipeType.CRAFT_TABLE)
-            }
-        }.open(this)
+            submit(delay = 1) { openRecipes(RecipeType.CRAFT_TABLE) }
+        }
+    }
 }
 
 private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
@@ -267,24 +266,19 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
             .colored()
             .build()
     }
-    MenuBuilder.builder(Sandalphon.plugin)
-        .title("配方编辑器 (${if (recipe == null) "新建" else "编辑"})")
-        .rows(3)
-        .items(
-            "#########",
-            "@@@ 1 @@@",
-            "#########"
-        )
-        .put('1', button())
-        .put('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
-        .put('@', ItemBuilder(XMaterial.WHITE_STAINED_GLASS_PANE).name("&r").colored().build())
-        .build { inv ->
+    openMenu<Basic>("配方编辑器 (${if (recipe == null) "新建" else "编辑"})") {
+        rows(3)
+        map("#########", "@@@ 1 @@@", "#########")
+        set('1', button())
+        set('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
+        set('@', ItemBuilder(XMaterial.WHITE_STAINED_GLASS_PANE).name("&r").colored().build())
+        onBuild { _, inv ->
             if (cookingRecipe != null) {
                 inv.setItem(12, cookingRecipe!!.input)
                 inv.setItem(14, cookingRecipe!!.result)
             }
         }
-        .event { event ->
+        onClick(lock = true) { event ->
             when (event.slot) {
                 '#' -> {
                     event.isCancelled = true
@@ -292,17 +286,17 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                 '1' -> {
                     event.isCancelled = true
                     if (event.clickType == ClickType.CLICK) {
-                        if (event.castClick().isLeftClick) {
+                        if (event.clickEvent().isLeftClick) {
                             save = false
-                            Features.inputSign(player, arrayOf("", "", "在第一行写入时间")) {
-                                cookingTime = (CronusUtils.toMillis(it[0]) / 50).toInt()
+                            inputSign(arrayOf("", "", "在第一行写入时间")) {
+                                cookingTime = (it[0].parseMillis() / 50).toInt()
                                 event.inventory.setItem(13, button())
                                 openInventory(event.inventory)
                                 save = true
                             }
-                        } else if (event.castClick().isRightClick) {
+                        } else if (event.clickEvent().isRightClick) {
                             save = false
-                            Features.inputSign(player, arrayOf("", "", "在第一行写入经验")) {
+                            inputSign(arrayOf("", "", "在第一行写入经验")) {
                                 experience = Coerce.toFloat(it[0])
                                 event.inventory.setItem(13, button())
                                 openInventory(event.inventory)
@@ -312,7 +306,7 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                     }
                 }
             }
-            if (event.clickType == ClickType.CLICK && event.castClick().isShiftClick && Items.nonNull(event.currentItem) && event.rawSlot == 12) {
+            if (event.clickType == ClickType.CLICK && event.clickEvent().isShiftClick && event.currentItem.isNotAir() && event.rawSlot == 12) {
                 event.isCancelled = true
                 var ignoreItemMeta = false
                 var ignoreData = false
@@ -330,15 +324,14 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                         .build()
                 }
                 save = false
-                MenuBuilder.builder(Sandalphon.plugin)
-                    .title("配方编辑器 (变种)")
-                    .rows(4)
-                    .items("0", "", "", "12#######")
-                    .put('0', event.currentItem)
-                    .put('1', build1())
-                    .put('2', build2())
-                    .put('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
-                    .event { sub ->
+                openMenu<Basic>("配方编辑器 (变种)") {
+                    rows(4)
+                    map("0", "", "", "12#######")
+                    set('0', event.currentItem ?: ItemStack(Material.AIR))
+                    set('1', build1())
+                    set('2', build2())
+                    set('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
+                    onClick(lock = true) { sub ->
                         when (sub.slot) {
                             '#', '0' -> {
                                 sub.isCancelled = true
@@ -355,31 +348,33 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                             }
                         }
                     }
-                    .close {
+                    onClose {
                         recipeChoice = RecipeMatcher(
-                            (0 until 27).mapNotNull { slot -> it.inventory.getItem(slot) }.filter { item -> Items.nonNull(item) },
+                            (0 until 27).mapNotNull { slot -> it.inventory.getItem(slot) }.filter { item -> item.isNotAir() },
                             ignoreItemMeta,
                             ignoreData
                         )
-                        Tasks.delay(1) {
+                        submit(delay = 1) {
                             openInventory(event.inventory)
                             save = true
                         }
-                    }.open(this)
+                    }
+                }
             }
-        }.close { inv ->
+        }
+        onClose { inv ->
             if (!save) {
-                return@close
+                return@onClose
             }
             val key = if (recipe == null)
                 NamespacedKey.minecraft(UUID.randomUUID().toString().replace("-", ""))
             else {
-                recipe.reflex("key")!!
+                recipe.getProperty("key")!!
             }
             val source = inv.inventory.getItem(12)
             val result = inv.inventory.getItem(14)
             // 注销配方并保存
-            if (Items.isNull(source) || Items.isNull(result)) {
+            if (source.isAir() || result.isAir()) {
                 recipeMap!!.removeRecipe(key)
             } else {
                 recipeMap!!.removeRecipe(key, false)
@@ -393,8 +388,7 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                     recipeMap.addRecipe(cookingRecipe!!)
                 }
             }
-            Tasks.delay(1) {
-                openRecipes(type)
-            }
-        }.open(this)
+            submit(delay = 1) { openRecipes(type) }
+        }
+    }
 }

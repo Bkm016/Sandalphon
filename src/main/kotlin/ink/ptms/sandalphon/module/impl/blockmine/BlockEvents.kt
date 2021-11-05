@@ -63,10 +63,8 @@ object BlockEvents : Helper {
             result.blockState.update = true
             result.blockStructure.drop.filter { random(it.chance) }.forEach {
                 val itemStack = ZaphkielAPI.getItemStack(it.item, e.player) ?: return@forEach
-                e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), itemStack.run {
-                    amount = it.amount
-                    this
-                }).pickupDelay = 20
+                itemStack.amount = it.amount
+                e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), itemStack).pickupDelay = 20
             }
         }
     }

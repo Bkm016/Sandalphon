@@ -12,11 +12,7 @@ import taboolib.platform.util.isAir
  * @author sky
  * @since 2021/3/15 1:47 下午
  */
-data class RecipeMatcher(
-    val items: List<ItemStack>,
-    val ignoreItemMeta: Boolean = false,
-    val ignoreData: Boolean = false,
-) : RecipeChoice.ExactChoice(items) {
+data class RecipeMatcher(val items: List<ItemStack>, val ignoreItemMeta: Boolean = false, val ignoreData: Boolean = false) : RecipeChoice.ExactChoice(items) {
 
     override fun test(item: ItemStack): Boolean {
         if (item.isAir()) {

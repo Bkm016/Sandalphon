@@ -1,9 +1,9 @@
 package ink.ptms.sandalphon.module.impl.recipes
 
-import io.izzel.taboolib.module.inject.TFunction
-import io.izzel.taboolib.module.inject.TSchedule
 import org.bukkit.NamespacedKey
 import org.bukkit.inventory.*
+import taboolib.common.LifeCycle
+import taboolib.common.platform.Awake
 
 /**
  * Sandalphon
@@ -16,13 +16,18 @@ object Recipes {
 
     val recipeMap = HashMap<RecipeType, RecipeMap>()
 
+    @Awake(LifeCycle.ENABLE)
+    fun init() {
+        RecipeType.values().forEach { recipeMap[it] = RecipeMap(it) }
+    }
+
     @Suppress("UNCHECKED_CAST")
-    @TSchedule
+    @Awake(LifeCycle.ACTIVE)
     fun import() {
         cancel()
         recipeMap[RecipeType.CRAFT_TABLE]?.also { map ->
             map.load()
-            map.conf.getConfigurationSection("craft")?.also { craft ->
+            map.data.getConfigurationSection("craft")?.also { craft ->
                 craft.getKeys(false).forEach { key ->
                     val namespacedKey = NamespacedKey.minecraft(key.substring(key.indexOf(":") + 1, key.length))
                     when (craft.getString("$key.type")) {
@@ -62,7 +67,7 @@ object Recipes {
         fun importFurnace(type: RecipeType) {
             recipeMap[type]?.also { map ->
                 map.load()
-                map.conf.getConfigurationSection("furnace")?.also { furnace ->
+                map.data.getConfigurationSection("furnace")?.also { furnace ->
                     furnace.getKeys(false).forEach { key ->
                         val namespacedKey = NamespacedKey.minecraft(key.substring(key.indexOf(":") + 1, key.length))
                         val result = furnace.getItemStack("$key.result")!!
@@ -91,15 +96,15 @@ object Recipes {
         importFurnace(RecipeType.SMOKING)
     }
 
-    @TFunction.Cancel
+    @Awake(LifeCycle.DISABLE)
     fun cancel() {
         recipeMap.forEach { (_, v) -> v.clearRecipes() }
     }
 
     fun export() {
         recipeMap[RecipeType.CRAFT_TABLE]?.also { map ->
-            map.conf.set("craft", null)
-            map.conf.set("craft", map.conf.createSection("craft").also { craft ->
+            map.data.set("craft", null)
+            map.data.set("craft", map.data.createSection("craft").also { craft ->
                 map.recipes.forEach { (key, recipe) ->
                     craft.set("$key.result", recipe.result)
                     when (recipe) {
@@ -130,8 +135,8 @@ object Recipes {
         }
         fun exportFurnace(type: RecipeType) {
             recipeMap[type]?.also { map ->
-                map.conf.set("furnace", null)
-                map.conf.set("furnace", map.conf.createSection("furnace").also { furnace ->
+                map.data.set("furnace", null)
+                map.data.set("furnace", map.data.createSection("furnace").also { furnace ->
                     map.recipes.forEach { (key, recipe) ->
                         if (recipe is CookingRecipe<*>) {
                             val input = recipe.inputChoice
@@ -152,9 +157,5 @@ object Recipes {
         exportFurnace(RecipeType.FURNACE)
         exportFurnace(RecipeType.BLASTING)
         exportFurnace(RecipeType.SMOKING)
-    }
-
-    init {
-        RecipeType.values().forEach { recipeMap[it] = RecipeMap(it) }
     }
 }
