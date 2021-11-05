@@ -1,7 +1,6 @@
 package ink.ptms.sandalphon.module.impl.blockmine
 
 import ink.ptms.sandalphon.module.Helper
-import ink.ptms.sandalphon.module.impl.CommandBlockControl
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
 import ink.ptms.sandalphon.module.impl.blockmine.data.openEdit
@@ -12,6 +11,9 @@ import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.Particle
+import org.bukkit.block.Block
+import org.bukkit.block.BlockFace
+import org.bukkit.block.data.Directional
 import org.bukkit.entity.Player
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
@@ -22,6 +24,7 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.util.random
 import taboolib.module.chat.uncolored
+import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.util.hasLore
 import taboolib.platform.util.hasName
 import kotlin.math.max
@@ -233,7 +236,7 @@ object BlockEvents : Helper {
                     if (block.type == Material.AIR || block.type == Material.BEDROCK) {
                         return@build
                     }
-                    val direction = CommandBlockControl.getBlockFace(block)
+                    val direction = getBlockFace(block)
                     val structure = BlockStructure(direction, block.type, Material.AIR, block.location.subtract(mid).toVector())
                     blockProgress.structures.add(structure)
                 }
@@ -278,6 +281,30 @@ object BlockEvents : Helper {
                 y += rate
             }
             x += rate
+        }
+    }
+
+    fun getBlockFace(block: Block): BlockFace {
+        return if (MinecraftVersion.majorLegacy >= 11300) {
+            if (block.blockData is Directional) {
+                (block.blockData as Directional).facing
+            } else {
+                BlockFace.SELF
+            }
+        } else {
+            getBlockFace(block.data.toInt())
+        }
+    }
+
+    fun getBlockFace(data: Int): BlockFace {
+        return when (data) {
+            0 -> BlockFace.DOWN
+            1 -> BlockFace.UP
+            2 -> BlockFace.NORTH
+            3 -> BlockFace.SOUTH
+            4 -> BlockFace.WEST
+            5 -> BlockFace.EAST
+            else -> BlockFace.SELF
         }
     }
 }

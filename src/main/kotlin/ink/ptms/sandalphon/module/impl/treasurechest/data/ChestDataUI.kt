@@ -181,7 +181,7 @@ fun ChestData.openEdit(player: Player) {
                 16 -> {
                     player.closeInventory()
                     player.giveItem(buildBook {
-                        material = Material.WRITABLE_BOOK
+                        material = XMaterial.WRITABLE_BOOK.parseMaterial()!!
                         write(condition.joinToString("\n"))
                         name = "§f§f§f编辑条件"
                         lore += listOf("§7TreasureChest", "§7${Utils.fromLocation(block)}")

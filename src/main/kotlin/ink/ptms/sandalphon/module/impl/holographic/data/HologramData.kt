@@ -7,6 +7,7 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 import taboolib.common.platform.function.adaptPlayer
 import taboolib.common5.Coerce
+import taboolib.module.chat.colored
 import taboolib.module.kether.KetherFunction
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.printKetherErrorMessage
@@ -52,7 +53,7 @@ class HologramData(val id: String, var location: Location, val content: MutableL
         if (player.name !in holograms) {
             check(player).thenAccept {
                 if (it) {
-                    holograms[player.name] = AdyeshachAPI.createHologram(player, location, content)
+                    holograms[player.name] = AdyeshachAPI.createHologram(player, location, content.map { c -> c.toFunction(player) }.colored())
                 }
             }
         }
@@ -62,7 +63,7 @@ class HologramData(val id: String, var location: Location, val content: MutableL
         if (holograms.containsKey(player.name)) {
             check(player).thenAccept {
                 if (it) {
-                    holograms[player.name]!!.update(content.map { c -> c.toFunction(player) })
+                    holograms[player.name]!!.update(content.map { c -> c.toFunction(player) }.colored())
                 } else {
                     holograms.remove(player.name)?.delete()
                 }

@@ -3,7 +3,6 @@ package ink.ptms.sandalphon.module.impl.scriptblock.data
 import ink.ptms.sandalphon.module.impl.scriptblock.ScriptBlock
 import ink.ptms.sandalphon.util.ItemBuilder
 import ink.ptms.sandalphon.util.Utils
-import org.bukkit.Material
 import org.bukkit.entity.Player
 import taboolib.library.xseries.XMaterial
 import taboolib.module.ui.openMenu
@@ -23,17 +22,17 @@ fun BlockData.openEdit(player: Player) {
             it.isCancelled = true
             when (it.rawSlot) {
                 11 -> {
-                    blockType = if (blockType == BlockType.INTERACT) {
-                        BlockType.WALK
-                    } else {
-                        BlockType.INTERACT
+                    blockType = when (blockType) {
+                        BlockType.INTERACT -> BlockType.WALK
+                        BlockType.WALK -> BlockType.PROJECTILE
+                        else -> BlockType.INTERACT
                     }
                     openEdit(player)
                 }
                 13 -> {
                     player.closeInventory()
                     player.giveItem(buildBook {
-                        material = Material.WRITABLE_BOOK
+                        material = XMaterial.WRITABLE_BOOK.parseMaterial()!!
                         write(action.joinToString("\n"))
                         name = "§f§f§f编辑动作"
                         lore += listOf("§7ScriptBlock", "§7${Utils.fromLocation(block)}")
@@ -42,7 +41,7 @@ fun BlockData.openEdit(player: Player) {
                 15 -> {
                     player.closeInventory()
                     player.giveItem(buildBook {
-                        material = Material.WRITABLE_BOOK
+                        material = XMaterial.WRITABLE_BOOK.parseMaterial()!!
                         write(condition.joinToString("\n"))
                         name = "§f§f§f编辑条件"
                         lore += listOf("§7ScriptBlock", "§7${Utils.fromLocation(block)}")

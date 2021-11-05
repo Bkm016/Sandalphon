@@ -2,10 +2,10 @@ package ink.ptms.sandalphon.module.impl.blockmine.data
 
 import com.google.gson.annotations.Expose
 import ink.ptms.sandalphon.module.api.NMS
-import ink.ptms.sandalphon.module.impl.CommandBlockControl
 import ink.ptms.sandalphon.module.impl.blockmine.event.BlockGrowEvent
 import org.bukkit.Location
 import org.bukkit.Particle
+import org.bukkit.block.BlockFace
 import org.bukkit.block.data.Directional
 import taboolib.common.platform.function.submit
 import taboolib.common.util.random
@@ -70,7 +70,7 @@ class BlockData(@Expose val id: String) {
                     }
                 }
             } else {
-                NMS.INSTANCE.setBlockData(block, CommandBlockControl.fromBlockFace(it.direction).toByte())
+                NMS.INSTANCE.setBlockData(block, fromBlockFace(it.direction).toByte())
             }
             submit(async = true) {
                 block.world.spawnParticle(Particle.EXPLOSION_NORMAL, block.location.add(0.5, 0.5, 0.5), 5, 0.5, 0.5, 0.5, 0.0)
@@ -114,5 +114,17 @@ class BlockData(@Expose val id: String) {
     companion object {
 
         val isAfter11300 by lazy { MinecraftVersion.majorLegacy >= 11300 }
+
+        fun fromBlockFace(blockFace: BlockFace): Int {
+            return when (blockFace) {
+                BlockFace.DOWN -> 0
+                BlockFace.UP -> 1
+                BlockFace.NORTH -> 2
+                BlockFace.SOUTH -> 3
+                BlockFace.WEST -> 4
+                BlockFace.EAST -> 5
+                else -> 0
+            }
+        }
     }
 }

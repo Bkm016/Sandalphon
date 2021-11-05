@@ -70,7 +70,7 @@ fun Player.openRecipes(type: RecipeType? = null) {
                         }
                         event.clickEvent().isRightClick -> {
                             element.getProperty<NamespacedKey>("key")?.also { key ->
-                                TellrawJson().append("§9§l§n$key").hoverText("点击复制!").suggestCommand(key.key).sendTo(adaptPlayer(this))
+                                TellrawJson().append("§9§l§n$key").hoverText("点击复制!").suggestCommand(key.key).sendTo(adaptPlayer(this@openRecipes))
                                 closeInventory()
                             }
                         }
@@ -86,14 +86,14 @@ fun Player.openRecipes(type: RecipeType? = null) {
             set(49, buildItem(type.material) { name = "§7新建配方" }) {
                 openRecipe(type)
             }
-            setNextPage(51) { page, hasNextPage ->
+            setNextPage(51) { _, hasNextPage ->
                 if (hasNextPage) {
                     buildItem(XMaterial.SPECTRAL_ARROW) { name = "§7下一页" }
                 } else {
                     buildItem(XMaterial.ARROW) { name = "§7下一页" }
                 }
             }
-            setNextPage(47) { page, hasNextPage ->
+            setNextPage(47) { _, hasNextPage ->
                 if (hasNextPage) {
                     buildItem(XMaterial.SPECTRAL_ARROW) { name = "§7上一页" }
                 } else {
@@ -114,6 +114,7 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
 
     val matcher = HashMap<Int, RecipeMatcher>()
     openMenu<Basic>("配方编辑器 (${if (recipe == null) "新建" else "编辑"})") {
+        handLocked(false)
         rows(3)
         map("##   #@##", "##   1 ##", "##   #@##")
         set('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
@@ -135,7 +136,7 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                 }
             }
         }
-        onClick(lock = true) {
+        onClick {
             when (it.slot) {
                 '#', '@' -> {
                     it.isCancelled = true
@@ -165,13 +166,14 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                 }
                 save = false
                 openMenu<Basic>("配方编辑器 (变种)") {
+                    handLocked(false)
                     rows(4)
                     map("0", "", "", "12#######")
                     set('0', it.currentItem ?: ItemStack(Material.AIR))
                     set('1', build1())
                     set('2', build2())
                     set('#', ItemBuilder(XMaterial.BLACK_STAINED_GLASS_PANE).name("&r").colored().build())
-                    onClick(lock = true) { sub ->
+                    onClick { sub ->
                         when (sub.slot) {
                             '#', '0' -> {
                                 sub.isCancelled = true

@@ -8,22 +8,21 @@ import org.bukkit.craftbukkit.v1_16_R1.block.CraftBlock
 import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 import taboolib.module.nms.MinecraftVersion
+import taboolib.module.nms.sendPacket
 
 /**
  * @author sky
  * @since 2020-05-30 17:00
  */
-class NMSHandle : NMS() {
+class NMSImpl : NMS() {
 
     override fun sendBlockAction(player: Player, block: Block, a: Int, b: Int) {
         if (MinecraftVersion.majorLegacy >= 11300) {
             val position = BlockPosition(block.location.x, block.location.y, block.location.z)
-            (player as CraftPlayer).handle.playerConnection.sendPacket(PacketPlayOutBlockAction(position, Blocks.CHEST, a, b))
+            player.sendPacket(PacketPlayOutBlockAction(position, Blocks.CHEST, a, b))
         } else {
             val position = net.minecraft.server.v1_12_R1.BlockPosition(block.location.x, block.location.y, block.location.z)
-            (player as org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer).handle.playerConnection.sendPacket(
-                net.minecraft.server.v1_12_R1.PacketPlayOutBlockAction(position, net.minecraft.server.v1_12_R1.Blocks.CHEST, a, b)
-            )
+            player.sendPacket(net.minecraft.server.v1_12_R1.PacketPlayOutBlockAction(position, net.minecraft.server.v1_12_R1.Blocks.CHEST, a, b))
         }
     }
 

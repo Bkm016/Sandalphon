@@ -10,6 +10,7 @@ import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
+import taboolib.common.platform.function.submit
 import taboolib.library.xseries.XMaterial
 import taboolib.module.nms.getI18nName
 import taboolib.module.nms.inputSign
@@ -199,7 +200,7 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
         onBuild { _, inv ->
             openStructure.drop.forEachIndexed { index, drop ->
                 val item = ZaphkielAPI.getItemStack(drop.item, player) ?: return@forEachIndexed
-                inv.setItem(index, buildItem(item.type) {
+                inv.setItem(index, buildItem(XMaterial.matchXMaterial(item.type)) {
                     name = "§f${drop.item}"
                     lore += arrayOf("§7${drop.chance * 100}%", "", "§7左键编辑", "§c丢弃删除")
                 })
@@ -238,7 +239,7 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
                     player.openMenu<Basic>("编辑开采结构 $id") {
                         rows(3)
                         onClose { close ->
-                            close.inventory.filter { item -> Items.nonNull(item) }.forEach { item ->
+                            close.inventory.filter { item -> item.isNotAir() }.forEach { item ->
                                 val itemId = Utils.itemId(item)
                                 if (itemId != null) {
                                     openProgress.structures.filter { structure -> structure.origin == openStructure.origin }
@@ -248,9 +249,9 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
                                 }
                             }
                             BlockMine.export()
-                            Bukkit.getScheduler().runTaskLater(Sandalphon.plugin, Runnable {
+                            submit(delay = 1) {
                                 openEditDrop(player, openProgress, openStructure)
-                            }, 1)
+                            }
                         }
                     }
                     it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)

@@ -1,25 +1,12 @@
 # Sandalphon
-多功能模块（远征 22 服务）
+Sandalphon 是免费的，但我们不提供 jar 文件，你可以通过以下步骤自行构建插件。
 
-## 模块（全 UI 编辑）
-+ 脚本方块 (/scriptblock)
-+ 刷怪箱 (/spawner)
-+ 宝藏箱 (/treasurechest)
-+ 全息 (/hologram)
-+ 开采 (/blockmine)
-+ 配方 (/recipes)
+**Windows 平台**
+```shell
+gradlew.bat clean build
+```
 
-## 命令方块控制
-> /cbc %period% %command%
-
-### 短充能
-> /cbc %period% powered
-
-### 长充能（20 tick）
-> /cbc %period% powered:20
-
-### 短选取
-> /cbc %period% selected [cycle/repeat/random]
-
-### 长选取（20 tick）
-> /cbc %period% selected:20 [cycle/repeat/random]
+**macOS/Linux 平台**
+```shell
+./gradlew clean build
+```

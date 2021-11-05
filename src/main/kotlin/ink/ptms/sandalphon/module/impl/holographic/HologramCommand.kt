@@ -28,7 +28,7 @@ object HologramCommand : Helper {
     @CommandBody
     val create = subCommand {
         dynamic(commit = "id") {
-            suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
+            suggestion<Player>(uncheck = true) { _, _ -> Hologram.holograms.map { it.id } }
             execute<Player> { sender, _, argument ->
                 val hologramData = Hologram.getHologram(argument)
                 if (hologramData != null) {

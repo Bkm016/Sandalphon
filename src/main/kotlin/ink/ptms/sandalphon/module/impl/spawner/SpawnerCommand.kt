@@ -1,6 +1,7 @@
 package ink.ptms.sandalphon.module.impl.spawner
 
 import ink.ptms.sandalphon.module.Helper
+import ink.ptms.sandalphon.module.impl.holographic.Hologram
 import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import ink.ptms.sandalphon.module.impl.spawner.data.openEdit
 import ink.ptms.sandalphon.util.ItemBuilder
@@ -36,6 +37,7 @@ object SpawnerCommand : Helper {
     @CommandBody
     val create = subCommand {
         dynamic(commit = "mob") {
+            suggestion<Player>(uncheck = true) { _, _ -> MythicMobs.inst().mobManager.mobTypes.map { it.internalName } }
             execute<Player> { sender, _, argument ->
                 if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) {
                     sender.error("该功能依赖 MythicMobs 插件.")

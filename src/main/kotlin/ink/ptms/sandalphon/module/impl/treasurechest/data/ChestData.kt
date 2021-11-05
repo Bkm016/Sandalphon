@@ -50,21 +50,16 @@ class ChestData(val block: Location) {
     val isHighVersion by lazy { MinecraftVersion.majorLegacy >= 11300 }
 
     init {
-        val inventory = (block.block.state as Container).inventory
-        if (inventory is DoubleChestInventory) {
-            link = if (inventory.leftSide.location == block) {
-                inventory.rightSide.location!!
-            } else {
-                inventory.leftSide.location!!
+        // 判断大箱子
+        kotlin.runCatching {
+            val inventory = (block.block.state as Container).inventory
+            if (inventory is DoubleChestInventory) {
+                link = if (inventory.leftSide.location == block) {
+                    inventory.rightSide.location!!
+                } else {
+                    inventory.leftSide.location!!
+                }
             }
-        }
-    }
-
-    fun isChest(block: Block): Boolean {
-        return if (isHighVersion) {
-            block.blockData is Chest
-        } else {
-            block.state is DoubleChest
         }
     }
 

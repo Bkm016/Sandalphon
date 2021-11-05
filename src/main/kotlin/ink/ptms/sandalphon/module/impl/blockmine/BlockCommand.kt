@@ -31,7 +31,7 @@ object BlockCommand : Helper {
     @CommandBody
     val create = subCommand {
         dynamic(commit = "id") {
-            suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
+            suggestion<Player>(uncheck = true) { _, _ -> BlockMine.blocks.map { it.id } }
             execute<Player> { sender, _, argument ->
                 if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
                     sender.error("该功能依赖 Zaphkiel 插件.")
