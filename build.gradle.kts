@@ -23,7 +23,7 @@ taboolib {
     install("module-kether", "expansion-command-helper", "expansion-player-database")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.3-23"
+    version = "6.0.4-3"
 }
 
 repositories {
