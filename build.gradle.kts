@@ -15,7 +15,7 @@ taboolib {
     install("common-5")
     install("module-ai")
     install("module-database")
-    install("module-configuration")
+    install("module-configuration-legacy")
     install("module-chat")
     install("module-nms")
     install("module-nms-util")
@@ -23,7 +23,7 @@ taboolib {
     install("module-kether", "expansion-command-helper", "expansion-player-database")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.4-3"
+    version = "6.0.5-12"
 }
 
 repositories {
