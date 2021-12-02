@@ -15,5 +15,5 @@ class BlockBreakEvent(
     val blockData: BlockData,
     val blockState: BlockState,
     val blockStructure: BlockStructure,
-    val bukkitEvent: org.bukkit.event.block.BlockBreakEvent
+    val bukkitEvent: org.bukkit.event.block.BlockBreakEvent,
 ) : BukkitProxyEvent()

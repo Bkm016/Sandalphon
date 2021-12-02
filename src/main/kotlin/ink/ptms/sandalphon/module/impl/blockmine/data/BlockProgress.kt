@@ -7,6 +7,6 @@ import com.google.gson.annotations.Expose
  * @since 2020-06-01 16:10
  */
 class BlockProgress(
-        @Expose
-        val structures: MutableList<BlockStructure>
+    @Expose
+    val structures: MutableList<BlockStructure>,
 )

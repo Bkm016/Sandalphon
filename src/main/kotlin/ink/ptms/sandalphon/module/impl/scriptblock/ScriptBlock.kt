@@ -19,8 +19,8 @@ object ScriptBlock {
         data.getKeys(false).forEach {
             blocks.add(BlockData(Utils.toLocation(it.replace("__", ".")),
                 BlockType.valueOf(data.getString("$it.type")!!),
-                data.getStringList("$it.action"),
-                data.getStringList("$it.condition")).run {
+                data.getStringList("$it.action").toMutableList(),
+                data.getStringList("$it.condition").toMutableList()).run {
                 this.link.addAll(data.getStringList("$it.link").map { link -> Utils.toLocation(link) })
                 this
             })

@@ -10,8 +10,6 @@ import org.bukkit.Particle
 import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.block.Container
-import org.bukkit.block.DoubleChest
-import org.bukkit.block.data.type.Chest
 import org.bukkit.entity.Player
 import org.bukkit.inventory.DoubleChestInventory
 import org.bukkit.inventory.Inventory

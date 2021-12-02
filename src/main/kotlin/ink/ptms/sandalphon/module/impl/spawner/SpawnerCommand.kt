@@ -1,7 +1,6 @@
 package ink.ptms.sandalphon.module.impl.spawner
 
 import ink.ptms.sandalphon.module.Helper
-import ink.ptms.sandalphon.module.impl.holographic.Hologram
 import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import ink.ptms.sandalphon.module.impl.spawner.data.openEdit
 import ink.ptms.sandalphon.util.ItemBuilder
@@ -161,7 +160,7 @@ object SpawnerCommand : Helper {
     @CommandBody
     val import = subCommand {
         execute<CommandSender> { sender, _, _ ->
-            Spawner.data.load(File(getDataFolder(), "module/spawner.yml"))
+            Spawner.data.loadFromFile(File(getDataFolder(), "module/spawner.yml"))
             Spawner.import()
             sender.info("操作成功.")
         }

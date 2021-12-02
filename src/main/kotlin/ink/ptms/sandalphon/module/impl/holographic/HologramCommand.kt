@@ -129,7 +129,7 @@ object HologramCommand : Helper {
     @CommandBody
     val import = subCommand {
         execute<CommandSender> { sender, _, _ ->
-            Hologram.data.load(File(getDataFolder(), "module/hologram.yml"))
+            Hologram.data.loadFromFile(File(getDataFolder(), "module/hologram.yml"))
             Hologram.import()
             sender.info("操作成功.")
         }

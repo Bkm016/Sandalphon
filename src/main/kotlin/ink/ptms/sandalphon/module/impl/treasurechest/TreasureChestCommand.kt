@@ -158,7 +158,7 @@ object TreasureChestCommand : Helper {
     @CommandBody
     val import = subCommand {
         execute<Player> { sender, _, _ ->
-            TreasureChest.data.load(File(getDataFolder(), "module/treasurechest.yml"))
+            TreasureChest.data.loadFromFile(File(getDataFolder(), "module/treasurechest.yml"))
             TreasureChest.import()
             sender.info("操作成功.")
         }

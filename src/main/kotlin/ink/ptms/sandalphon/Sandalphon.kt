@@ -4,7 +4,6 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import taboolib.common.io.newFile
 import taboolib.common.platform.Plugin
-import taboolib.common.platform.command.command
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.disablePlugin
 import taboolib.common.platform.function.getDataFolder
@@ -12,18 +11,18 @@ import taboolib.expansion.releaseDataContainer
 import taboolib.expansion.setupDataContainer
 import taboolib.expansion.setupPlayerDatabase
 import taboolib.module.configuration.Config
-import taboolib.module.configuration.SecuredFile
+import taboolib.module.configuration.Configuration
 
 object Sandalphon : Plugin() {
 
     @Config
-    lateinit var conf: SecuredFile
+    lateinit var conf: Configuration
         private set
 
     override fun onEnable() {
         try {
             if (conf.getBoolean("Database.enable")) {
-                setupPlayerDatabase(conf.getConfigurationSection("Database"))
+                setupPlayerDatabase(conf.getConfigurationSection("Database")!!)
             } else {
                 setupPlayerDatabase(newFile(getDataFolder(), "data.db"))
             }

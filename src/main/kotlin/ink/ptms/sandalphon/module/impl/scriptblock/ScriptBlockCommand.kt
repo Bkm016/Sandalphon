@@ -138,7 +138,7 @@ object ScriptBlockCommand : Helper {
     @CommandBody
     val import = subCommand {
         execute<CommandSender> { sender, _, _ ->
-            ScriptBlock.data.load(File(getDataFolder(), "module/scriptblock.yml"))
+            ScriptBlock.data.loadFromFile(File(getDataFolder(), "module/scriptblock.yml"))
             ScriptBlock.import()
             sender.info("操作成功.")
         }

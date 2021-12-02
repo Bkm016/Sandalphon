@@ -51,7 +51,7 @@ object TreasureChest {
                 locked = data.getString("$it.locked")!!
                 global = data.getBoolean("$it.global")
                 globalTime = data.getLong("$it.global-time")
-                replace = data.getString("$it.replace").parseToMaterial()
+                replace = data.getString("$it.replace")!!.parseToMaterial()
                 condition.addAll(data.getStringList("$it.condition"))
                 this
             })

@@ -5,7 +5,6 @@ import net.minecraft.server.v1_16_R3.Blocks
 import net.minecraft.server.v1_16_R3.PacketPlayOutBlockAction
 import org.bukkit.block.Block
 import org.bukkit.craftbukkit.v1_16_R1.block.CraftBlock
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
 import taboolib.module.nms.MinecraftVersion
 import taboolib.module.nms.sendPacket

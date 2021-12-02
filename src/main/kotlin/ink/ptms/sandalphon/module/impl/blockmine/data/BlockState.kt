@@ -4,12 +4,12 @@ import com.google.gson.annotations.Expose
 import org.bukkit.Location
 
 class BlockState(
-        @Expose
-        var location: Location,
-        @Expose
-        var current: Int,
-        @Expose
-        var latest: Long,
-        @Expose
-        var update: Boolean
+    @Expose
+    var location: Location,
+    @Expose
+    var current: Int,
+    @Expose
+    var latest: Long,
+    @Expose
+    var update: Boolean,
 )

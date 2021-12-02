@@ -1,10 +1,8 @@
 package ink.ptms.sandalphon.module.impl.blockmine.data
 
-import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.blockmine.BlockMine
 import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
-import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player

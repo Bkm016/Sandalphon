@@ -10,20 +10,20 @@ import org.bukkit.util.Vector
  * @since 2020-06-01 16:11
  */
 class BlockStructure(
-        @Expose
-        var direction: BlockFace,
-        @Expose
-        var origin: Material,
-        @Expose
-        var replace: Material,
-        @Expose
-        var offset: Vector,
-        @Expose
-        var tool: String? = null,
-        @Expose
-        val drop: MutableList<BlockDrop> = ArrayList()
+    @Expose
+    var direction: BlockFace,
+    @Expose
+    var origin: Material,
+    @Expose
+    var replace: Material,
+    @Expose
+    var offset: Vector,
+    @Expose
+    var tool: String? = null,
+    @Expose
+    val drop: MutableList<BlockDrop> = ArrayList(),
 ) {
 
-        @Expose
-        val metadata = HashMap<String, String>()
+    @Expose
+    val metadata = HashMap<String, String>()
 }

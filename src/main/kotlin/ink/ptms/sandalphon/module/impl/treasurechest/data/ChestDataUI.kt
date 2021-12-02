@@ -9,7 +9,6 @@ import ink.ptms.sandalphon.util.ItemBuilder
 import ink.ptms.sandalphon.util.Utils
 import ink.ptms.zaphkiel.ZaphkielAPI
 import org.bukkit.Bukkit
-import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack

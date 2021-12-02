@@ -24,8 +24,8 @@ object Hologram {
         data.getKeys(false).forEach {
             holograms.add(HologramData(it,
                 Utils.toLocation(data.getString("$it.location")!!),
-                data.getStringList("$it.content"),
-                data.getStringList("$it.condition")))
+                data.getStringList("$it.content").toMutableList(),
+                data.getStringList("$it.condition").toMutableList()))
         }
     }
 
