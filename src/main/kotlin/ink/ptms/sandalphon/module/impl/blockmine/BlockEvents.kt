@@ -7,6 +7,7 @@ import ink.ptms.sandalphon.module.impl.blockmine.data.openEdit
 import ink.ptms.sandalphon.util.Pair
 import ink.ptms.zaphkiel.ZaphkielAPI
 import ink.ptms.zaphkiel.taboolib.module.nms.ItemTagData
+import ink.ptms.zaphkiel.taboolib.module.nms.ItemTagType
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.Material
@@ -24,6 +25,7 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.util.random
 import taboolib.module.chat.uncolored
+import taboolib.module.nms.ItemTagList
 import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.util.hasLore
 import taboolib.platform.util.hasName
@@ -49,7 +51,12 @@ object BlockEvents : Helper {
                 if (itemStream.isVanilla() || !itemStream.getZaphkielData().containsKey("blockmine")) {
                     return
                 }
-                val blockmine = itemStream.getZaphkielData()["blockmine"]!!.asList()
+                val blockmineTag = itemStream.getZaphkielData()["blockmine"]!!
+                val blockmine = if (blockmineTag.type == ItemTagType.LIST) {
+                    blockmineTag.asList()
+                } else {
+                    ItemTagList.of(blockmineTag.asString())
+                }
                 if (!blockmine.contains(ItemTagData(result.blockStructure.tool))) {
                     return
                 }

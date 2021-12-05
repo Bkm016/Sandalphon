@@ -31,11 +31,11 @@ object Hologram {
 
     @Awake(LifeCycle.DISABLE)
     fun export() {
-        data.getKeys(false).forEach { data.set(it, null) }
+        data.getKeys(false).forEach { data[it] = null }
         holograms.forEach { holo ->
-            data.set("${holo.id}.location", Utils.fromLocation(holo.location))
-            data.set("${holo.id}.content", holo.content)
-            data.set("${holo.id}.condition", holo.condition)
+            data["${holo.id}.location"] = Utils.fromLocation(holo.location)
+            data["${holo.id}.content"] = holo.content
+            data["${holo.id}.condition"] = holo.condition
         }
     }
 
@@ -54,7 +54,7 @@ object Hologram {
     }
 
     fun delete(id: String) {
-        data.set(id, null)
+        data[id] = null
     }
 
     fun getHologram(id: String): HologramData? {

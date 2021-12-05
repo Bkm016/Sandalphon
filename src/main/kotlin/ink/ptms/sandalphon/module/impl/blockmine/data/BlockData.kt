@@ -104,8 +104,8 @@ class BlockData(@Expose val id: String) {
                 clean(blockState)
                 blockState.current = if (blockState.current + 1 == progress.size) 0 else blockState.current + 1
             }
-            build(blockState)
             blockState.update = false
+            submit { build(blockState) }
         }
         blockState.latest = System.currentTimeMillis()
         return true
