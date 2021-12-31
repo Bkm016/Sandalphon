@@ -12,6 +12,7 @@ import taboolib.expansion.setupDataContainer
 import taboolib.expansion.setupPlayerDatabase
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
+import taboolib.module.kether.Kether
 
 object Sandalphon : Plugin() {
 
@@ -20,6 +21,7 @@ object Sandalphon : Plugin() {
         private set
 
     override fun onEnable() {
+        Kether.isAllowToleranceParser = true
         try {
             if (conf.getBoolean("Database.enable")) {
                 setupPlayerDatabase(conf.getConfigurationSection("Database")!!)
