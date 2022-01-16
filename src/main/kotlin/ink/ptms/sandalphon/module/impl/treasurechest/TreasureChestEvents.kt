@@ -33,9 +33,9 @@ import taboolib.platform.util.isNotAir
 object TreasureChestEvents : Helper {
 
     fun toPosition(any: Any): Vector {
-        val x = any.invokeMethod<Int>("getX")!!
-        val y = any.invokeMethod<Int>("getY")!!
-        val z = any.invokeMethod<Int>("getZ")!!
+        val x = any.invokeMethod<Number>("getX")!!.toInt()
+        val y = any.invokeMethod<Number>("getY")!!.toInt()
+        val z = any.invokeMethod<Number>("getZ")!!.toInt()
         return Vector(x, y, z)
     }
 
