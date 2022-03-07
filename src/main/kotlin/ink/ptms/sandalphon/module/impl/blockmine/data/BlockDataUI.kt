@@ -174,7 +174,9 @@ fun BlockData.openEditProgress(player: Player, openProgress: BlockProgress? = nu
                         }
                         13 -> {
                             player.inputSign(arrayOf(openStructure.tool ?: "")) { sign ->
-                                openStructure.tool = sign[0]
+                                openProgress.structures.filter { structure -> structure.origin == openStructure.origin }.forEach {
+                                    it.tool = sign[0]
+                                }
                                 openEditProgress(player, openProgress, openStructure)
                             }
                         }
