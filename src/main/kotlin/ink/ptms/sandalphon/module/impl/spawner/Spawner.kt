@@ -37,7 +37,7 @@ object Spawner {
                 this.time.putAll(data.getConfigurationSection("$loc.time")?.getValues(false)
                     ?.map { Utils.toLocation(it.key.replace("__", ".")) to it.value as Long }?.toMap()
                     ?: emptyMap())
-                this.copy.addAll(data.getStringList("$loc.link").map { link -> Utils.toLocation(link) })
+                this.copy.addAll(data.getStringList("$loc.copy").map { link -> Utils.toLocation(link) })
                 this.activationrange = data.getInt("$loc.activationrange")
                 this.leashrange = data.getInt("$loc.leashrange")
                 this.respawn = data.getInt("$loc.respawn")
