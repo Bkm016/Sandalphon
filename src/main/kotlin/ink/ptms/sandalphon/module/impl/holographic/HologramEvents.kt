@@ -1,14 +1,18 @@
 package ink.ptms.sandalphon.module.impl.holographic
 
+import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.sandalphon.module.Helper
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.meta.BookMeta
+import org.bukkit.metadata.FixedMetadataValue
 import taboolib.common.platform.event.SubscribeEvent
+import taboolib.common.platform.function.submit
 import taboolib.module.chat.uncolored
 import taboolib.module.nms.MinecraftVersion
+import taboolib.platform.BukkitPlugin
 
 /**
  * @author sky
@@ -17,13 +21,17 @@ import taboolib.module.nms.MinecraftVersion
 object HologramEvents : Helper {
 
     @SubscribeEvent
-    fun e(e: PlayerJoinEvent) {
-        Hologram.holograms.forEach { it.create(e.player) }
+    fun e(e: AdyeshachPlayerJoinEvent) {
+        submit(delay = 1) {
+            Hologram.holograms.forEach { it.create(e.player) }
+            e.player.setMetadata("joined", FixedMetadataValue(BukkitPlugin.getInstance(), true))
+        }
     }
 
     @SubscribeEvent
     fun e(e: PlayerQuitEvent) {
         Hologram.holograms.forEach { it.cancel(e.player) }
+        e.player.removeMetadata("joined", BukkitPlugin.getInstance())
     }
 
     @SubscribeEvent

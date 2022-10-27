@@ -39,7 +39,7 @@ object TreasureChestEvents : Helper {
         return Vector(x, y, z)
     }
 
-    @SubscribeEvent
+//    @SubscribeEvent
     fun e(e: PacketReceiveEvent) {
         if (e.packet.name == "PacketPlayInUseItem") {
             val a = e.packet.read<Any>("a")!!

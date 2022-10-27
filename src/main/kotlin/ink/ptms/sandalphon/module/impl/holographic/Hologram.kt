@@ -44,10 +44,10 @@ object Hologram {
         holograms.forEach { it.cancel() }
     }
 
-    @Schedule(period = 20, async = true)
+    @Schedule(period = 100, async = true)
     fun refresh() {
         Bukkit.getOnlinePlayers().forEach { player ->
-            holograms.filter { it.location.world?.name == player.world.name }.forEach {
+            holograms.filter { it.location.world?.name == player.world.name && player.hasMetadata("joined") }.forEach {
                 it.refresh(player)
             }
         }

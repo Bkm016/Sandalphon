@@ -25,7 +25,6 @@ object BlockMine {
         blocks.forEach { it.grow() }
     }
 
-    @Suppress("UNCHECKED_CAST")
     @Awake(LifeCycle.ACTIVE)
     fun import() {
         if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
