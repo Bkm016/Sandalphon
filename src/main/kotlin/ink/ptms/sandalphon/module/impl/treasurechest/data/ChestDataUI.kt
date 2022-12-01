@@ -1,13 +1,15 @@
+@file:Suppress("DuplicatedCode")
+
 package ink.ptms.sandalphon.module.impl.treasurechest.data
 
 import ink.ptms.adyeshach.api.AdyeshachAPI
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.api.NMS
 import ink.ptms.sandalphon.module.impl.treasurechest.TreasureChest
 import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestOpenEvent
 import ink.ptms.sandalphon.module.impl.treasurechest.isTreasureType
 import ink.ptms.sandalphon.util.ItemBuilder
 import ink.ptms.sandalphon.util.Utils
-import ink.ptms.zaphkiel.ZaphkielAPI
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -50,14 +52,8 @@ fun ChestData.open(player: Player) {
                 player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
                 return@thenAccept
             }
-            val itemStream = ZaphkielAPI.read(player.inventory.itemInMainHand)
-            if (itemStream.isVanilla()) {
-                AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f需要钥匙才可以打开.")
-                player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
-                return@thenAccept
-            }
-            val compound = itemStream.getZaphkielData()["treasurechest"]
-            if (compound == null || (compound.asString() != locked && compound.asString() != "all")) {
+            val keyId = Sandalphon.itemAPI!!.getData(player.inventory.itemInMainHand, "treasurechest")
+            if (keyId == null || (keyId != locked && keyId != "all")) {
                 AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f需要钥匙才可以打开.")
                 player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
                 return@thenAccept
@@ -109,13 +105,13 @@ fun ChestData.open(player: Player) {
                     tick(player, true)
                     open.remove(player.name)
                     // 关闭箱子的特效
-                    player.world.players.forEach { p -> NMS.INSTANCE.sendBlockAction(p, block.block, 1, 0) }
+                    player.world.players.forEach { p -> NMS.instance.sendBlockAction(p, block.block, 1, 0) }
                     player.world.playSound(block, Sound.BLOCK_CHEST_CLOSE, 1f, random(0.8, 1.2).toFloat())
                 }
             }
         }
         // 打开箱子的特效
-        player.world.players.forEach { NMS.INSTANCE.sendBlockAction(it, block.block, 1, 1) }
+        player.world.players.forEach { NMS.instance.sendBlockAction(it, block.block, 1, 1) }
         player.world.playSound(block, Sound.BLOCK_CHEST_OPEN, 1f, random(0.8, 1.2).toFloat())
     }
 }
@@ -209,7 +205,7 @@ fun ChestData.openEditContent(player: Player) {
         rows(if (link != null) 6 else 3)
         onBuild { _, inv ->
             this@openEditContent.items.forEachIndexed { i, p ->
-                val itemStack = ZaphkielAPI.getItemStack(p.first, player) ?: return@forEachIndexed
+                val itemStack = Sandalphon.itemAPI!!.getItem(p.first, player) ?: return@forEachIndexed
                 inv.setItem(i, itemStack.run {
                     this.amount = p.second
                     this
@@ -219,7 +215,7 @@ fun ChestData.openEditContent(player: Player) {
         onClose {
             this@openEditContent.items.clear()
             it.inventory.filter { i -> i.isNotAir() }.forEach { i ->
-                val itemId = Utils.itemId(i)
+                val itemId = Sandalphon.itemAPI!!.getId(i)
                 if (itemId != null) {
                     this@openEditContent.items.add(itemId to i.amount)
                 }

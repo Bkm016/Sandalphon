@@ -70,7 +70,7 @@ class BlockData(@Expose val id: String) {
                     }
                 }
             } else {
-                NMS.INSTANCE.setBlockData(block, fromBlockFace(it.direction).toByte())
+                NMS.instance.setBlockData(block, fromBlockFace(it.direction).toByte())
             }
             submit(async = true) {
                 block.world.spawnParticle(Particle.EXPLOSION_NORMAL, block.location.add(0.5, 0.5, 0.5), 5, 0.5, 0.5, 0.5, 0.0)

@@ -12,7 +12,6 @@ import taboolib.expansion.setupDataContainer
 import taboolib.expansion.setupPlayerDatabase
 import taboolib.module.configuration.Config
 import taboolib.module.configuration.Configuration
-import taboolib.module.kether.Kether
 
 object Sandalphon : Plugin() {
 
@@ -20,8 +19,18 @@ object Sandalphon : Plugin() {
     lateinit var conf: Configuration
         private set
 
+    var itemAPI: ItemAPI? = null
+        private set
+
+    override fun onLoad() {
+        try {
+            Class.forName("ink.ptms.zaphkiel.Zaphkiel")
+            itemAPI = ItemAPIImpl()
+        } catch (_: Throwable) {
+        }
+    }
+
     override fun onEnable() {
-        Kether.isAllowToleranceParser = true
         try {
             if (conf.getBoolean("Database.enable")) {
                 setupPlayerDatabase(conf.getConfigurationSection("Database")!!)
@@ -43,5 +52,10 @@ object Sandalphon : Plugin() {
     @SubscribeEvent
     internal fun e(e: PlayerQuitEvent) {
         e.player.releaseDataContainer()
+    }
+
+    /** 注册物品接口 */
+    fun registerItemAPI(itemAPI: ItemAPI) {
+        this.itemAPI = itemAPI
     }
 }

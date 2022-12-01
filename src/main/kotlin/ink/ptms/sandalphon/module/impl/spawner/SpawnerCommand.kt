@@ -5,7 +5,7 @@ import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import ink.ptms.sandalphon.module.impl.spawner.data.openEdit
 import ink.ptms.sandalphon.util.ItemBuilder
 import ink.ptms.sandalphon.util.Utils
-import io.lumine.xikage.mythicmobs.MythicMobs
+import ink.ptms.um.Mythic
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
@@ -35,14 +35,14 @@ object SpawnerCommand : Helper {
 
     @CommandBody
     val create = subCommand {
-        dynamic(commit = "mob") {
-            suggestion<Player>(uncheck = true) { _, _ -> MythicMobs.inst().mobManager.mobTypes.map { it.internalName } }
+        dynamic(comment = "mob") {
+            suggestion<Player>(uncheck = true) { _, _ -> Mythic.API.getMobIDList() }
             execute<Player> { sender, _, argument ->
                 if (Bukkit.getPluginManager().getPlugin("MythicMobs") == null) {
                     sender.error("该功能依赖 MythicMobs 插件.")
                     return@execute
                 }
-                val mob = MythicMobs.inst().mobManager.getMythicMob(argument)
+                val mob = Mythic.API.getMobType(argument)
                 if (mob == null) {
                     sender.error("无效的生物.")
                     return@execute
@@ -151,7 +151,7 @@ object SpawnerCommand : Helper {
                 if (it.block.world?.name == sender.world.name && it.block.distance(sender.location) < 50) {
                     it.block.block.display()
                     it.copy.forEach { link -> link.block.display() }
-                    sender.info("§8 - §f${it.mob.internalName} §7(${Coerce.format(it.block.distance(sender.location))}m)")
+                    sender.info("§8 - §f${it.mob.id} §7(${Coerce.format(it.block.distance(sender.location))}m)")
                 }
             }
         }

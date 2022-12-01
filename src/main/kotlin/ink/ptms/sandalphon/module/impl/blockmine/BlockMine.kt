@@ -1,10 +1,10 @@
 package ink.ptms.sandalphon.module.impl.blockmine
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockData
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
 import ink.ptms.sandalphon.util.Utils
-import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import taboolib.common.LifeCycle
@@ -27,7 +27,7 @@ object BlockMine {
 
     @Awake(LifeCycle.ACTIVE)
     fun import() {
-        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+        if (Sandalphon.itemAPI == null) {
             return
         }
         // 清空缓存文件

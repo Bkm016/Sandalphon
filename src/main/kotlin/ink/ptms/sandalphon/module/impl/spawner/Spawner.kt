@@ -4,7 +4,7 @@ import ink.ptms.sandalphon.module.impl.spawner.ai.FollowAi
 import ink.ptms.sandalphon.module.impl.spawner.data.SpawnerData
 import ink.ptms.sandalphon.module.impl.spawner.event.EntityToSpawnEvent
 import ink.ptms.sandalphon.util.Utils
-import io.lumine.xikage.mythicmobs.MythicMobs
+import ink.ptms.um.Mythic
 import org.bukkit.Bukkit
 import org.bukkit.block.Block
 import org.bukkit.entity.LivingEntity
@@ -12,10 +12,12 @@ import org.bukkit.metadata.FixedMetadataValue
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Schedule
+import taboolib.common5.clong
 import taboolib.module.ai.addGoalAi
 import taboolib.module.configuration.createLocal
 import taboolib.platform.BukkitPlugin
 
+@Suppress("SpellCheckingInspection")
 object Spawner {
 
     val data by lazy { createLocal("module/spawner.yml") }
@@ -33,31 +35,32 @@ object Spawner {
         }
         spawners.clear()
         data.getKeys(false).forEach { loc ->
-            spawners.add(SpawnerData(Utils.toLocation(loc.replace("__", ".")), MythicMobs.inst().mobManager.getMythicMob(data.getString("$loc.mob"))).run {
-                this.time.putAll(data.getConfigurationSection("$loc.time")?.getValues(false)
-                    ?.map { Utils.toLocation(it.key.replace("__", ".")) to it.value as Long }?.toMap()
-                    ?: emptyMap())
-                this.copy.addAll(data.getStringList("$loc.link").map { link -> Utils.toLocation(link) })
-                this.activationrange = data.getInt("$loc.activationrange")
-                this.leashrange = data.getInt("$loc.leashrange")
-                this.respawn = data.getInt("$loc.respawn")
-                this
-            })
+            val mobType = Mythic.API.getMobType(data.getString("$loc.mob").toString())
+            if (mobType != null) {
+                spawners.add(SpawnerData(Utils.toLocation(loc.replace("__", ".")), mobType).also { s ->
+                    val tv = data.getConfigurationSection("$loc.time")?.getValues(false) ?: emptyMap()
+                    s.time.putAll(tv.map { Utils.toLocation(it.key.replace("__", ".")) to it.value.clong })
+                    s.copy.addAll(data.getStringList("$loc.link").map { link -> Utils.toLocation(link) })
+                    s.activationrange = data.getInt("$loc.activationrange")
+                    s.leashrange = data.getInt("$loc.leashrange")
+                    s.respawn = data.getInt("$loc.respawn")
+                })
+            }
         }
     }
 
     @Awake(LifeCycle.DISABLE)
     @Schedule(period = 20 * 60, async = true)
     fun export() {
-        data.getKeys(false).forEach { data.set(it, null) }
+        data.getKeys(false).forEach { data[it] = null }
         spawners.forEach { spawner ->
             val location = Utils.fromLocation(spawner.block).replace(".", "__")
-            data.set("$location.time", spawner.time.map { Utils.fromLocation(it.key).replace(".", "__") to it.value }.toMap())
-            data.set("$location.copy", spawner.copy.map { Utils.fromLocation(it) })
-            data.set("$location.mob", spawner.mob.internalName)
-            data.set("$location.activationrange", spawner.activationrange)
-            data.set("$location.leashrange", spawner.leashrange)
-            data.set("$location.respawn", spawner.respawn)
+            data["$location.time"] = spawner.time.map { Utils.fromLocation(it.key).replace(".", "__") to it.value }.toMap()
+            data["$location.copy"] = spawner.copy.map { Utils.fromLocation(it) }
+            data["$location.mob"] = spawner.mob.id
+            data["$location.activationrange"] = spawner.activationrange
+            data["$location.leashrange"] = spawner.leashrange
+            data["$location.respawn"] = spawner.respawn
         }
     }
 
@@ -67,7 +70,7 @@ object Spawner {
     }
 
     fun delete(location: String) {
-        data.set(location.replace(".", "__"), null)
+        data[location.replace(".", "__")] = null
     }
 
     fun getSpawner(block: Block): SpawnerData? {
@@ -75,8 +78,8 @@ object Spawner {
     }
 
     fun toSpawn(entity: LivingEntity): Boolean {
-        val mythicMob = MythicMobs.inst().mobManager.getMythicMobInstance(entity)?.type ?: return false
-        val spawnerData = spawners.firstOrNull { it.mob.internalName == mythicMob.internalName } ?: return false
+        val mythicMob = Mythic.API.getMob(entity)?.type ?: return false
+        val spawnerData = spawners.firstOrNull { it.mob.id == mythicMob.id } ?: return false
         val pair = spawnerData.mobs.entries.firstOrNull { it.value.uniqueId == entity.uniqueId } ?: return false
         if (entity.location.world!!.name == pair.key.world!!.name) {
             entity.setMetadata("SPAWNER_BACKING", FixedMetadataValue(BukkitPlugin.getInstance(), true))

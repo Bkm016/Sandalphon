@@ -2,12 +2,10 @@ package ink.ptms.sandalphon.util
 
 import com.google.common.base.Enums
 import com.google.gson.*
-import ink.ptms.zaphkiel.ZaphkielAPI
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.BlockFace
-import org.bukkit.inventory.ItemStack
 import org.bukkit.util.NumberConversions
 import org.bukkit.util.Vector
 import taboolib.library.xseries.parseToMaterial
@@ -34,14 +32,6 @@ object Utils {
             BlockFace::class.java,
             JsonDeserializer { a, _, _ -> Enums.getIfPresent(BlockFace::class.java, a.asString).or(BlockFace.SELF) })
         .create()!!
-
-    fun itemId(itemStack: ItemStack): String? {
-        val itemStream = ZaphkielAPI.read(itemStack)
-        if (itemStream.isExtension()) {
-            return itemStream.getZaphkielName()
-        }
-        return null
-    }
 
     fun format(json: JsonElement): String {
         return GsonBuilder().setPrettyPrinting().create().toJson(json)

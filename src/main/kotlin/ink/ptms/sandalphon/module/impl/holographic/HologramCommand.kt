@@ -27,7 +27,7 @@ object HologramCommand : Helper {
 
     @CommandBody
     val create = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player>(uncheck = true) { _, _ -> Hologram.holograms.map { it.id } }
             execute<Player> { sender, _, argument ->
                 val hologramData = Hologram.getHologram(argument)
@@ -47,7 +47,7 @@ object HologramCommand : Helper {
 
     @CommandBody
     val remove = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
             execute<Player> { sender, _, argument ->
                 val hologramData = Hologram.getHologram(argument)
@@ -66,7 +66,7 @@ object HologramCommand : Helper {
 
     @CommandBody
     val edit = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
             execute<Player> { sender, _, argument ->
                 val hologramData = Hologram.getHologram(argument)
@@ -82,7 +82,7 @@ object HologramCommand : Helper {
 
     @CommandBody
     val move = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
             execute<Player> { sender, _, argument ->
                 val hologramData = Hologram.getHologram(argument)
@@ -100,7 +100,7 @@ object HologramCommand : Helper {
 
     @CommandBody
     val tp = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player> { _, _ -> Hologram.holograms.map { it.id } }
             execute<Player> { sender, _, argument ->
                 val hologramData = Hologram.getHologram(argument)

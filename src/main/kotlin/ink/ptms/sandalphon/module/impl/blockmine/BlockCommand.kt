@@ -1,9 +1,9 @@
 package ink.ptms.sandalphon.module.impl.blockmine
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockData
 import ink.ptms.sandalphon.module.impl.blockmine.data.openEdit
-import org.bukkit.Bukkit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBody
@@ -20,6 +20,7 @@ import taboolib.platform.util.giveItem
  * @author sky
  * @since 2020-06-01 17:49
  */
+@Suppress("DuplicatedCode")
 @CommandHeader(name = "blockmine", aliases = ["mine"], permission = "admin")
 object BlockCommand : Helper {
 
@@ -30,11 +31,11 @@ object BlockCommand : Helper {
 
     @CommandBody
     val create = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player>(uncheck = true) { _, _ -> BlockMine.blocks.map { it.id } }
             execute<Player> { sender, _, argument ->
-                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                    sender.error("该功能依赖 Zaphkiel 插件.")
+                if (Sandalphon.itemAPI == null) {
+                    sender.error("缺少物品库兼容.")
                     return@execute
                 }
                 val blockData = BlockMine.getBlock(argument)
@@ -51,11 +52,11 @@ object BlockCommand : Helper {
 
     @CommandBody
     val remove = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
             execute<Player> { sender, _, argument ->
-                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                    sender.error("该功能依赖 Zaphkiel 插件.")
+                if (Sandalphon.itemAPI == null) {
+                    sender.error("缺少物品库兼容.")
                     return@execute
                 }
                 val blockData = BlockMine.getBlock(argument)
@@ -73,11 +74,11 @@ object BlockCommand : Helper {
 
     @CommandBody
     val edit = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
             execute<Player> { sender, _, argument ->
-                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                    sender.error("该功能依赖 Zaphkiel 插件.")
+                if (Sandalphon.itemAPI == null) {
+                    sender.error("缺少物品库兼容.")
                     return@execute
                 }
                 val blockData = BlockMine.getBlock(argument)
@@ -93,11 +94,11 @@ object BlockCommand : Helper {
 
     @CommandBody
     val into = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
             execute<Player> { sender, _, argument ->
-                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                    sender.error("该功能依赖 Zaphkiel 插件.")
+                if (Sandalphon.itemAPI == null) {
+                    sender.error("缺少物品库兼容.")
                     return@execute
                 }
                 val blockData = BlockMine.getBlock(argument)
@@ -118,11 +119,11 @@ object BlockCommand : Helper {
 
     @CommandBody
     val debug = subCommand {
-        dynamic(commit = "id") {
+        dynamic(comment = "id") {
             suggestion<Player> { _, _ -> BlockMine.blocks.map { it.id } }
             execute<Player> { sender, _, argument ->
-                if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                    sender.error("该功能依赖 Zaphkiel 插件.")
+                if (Sandalphon.itemAPI == null) {
+                    sender.error("缺少物品库兼容.")
                     return@execute
                 }
                 val blockData = BlockMine.getBlock(argument)

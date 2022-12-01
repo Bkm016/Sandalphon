@@ -1,9 +1,9 @@
 package ink.ptms.sandalphon.module.impl.treasurechest.data
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.api.NMS
 import ink.ptms.sandalphon.module.impl.treasurechest.event.ChestGenerateEvent
 import ink.ptms.sandalphon.util.Utils
-import ink.ptms.zaphkiel.ZaphkielAPI
 import io.izzel.taboolib.util.Time
 import org.bukkit.Location
 import org.bukkit.Particle
@@ -92,13 +92,12 @@ class ChestData(val block: Location) {
             }
         }
         given.forEach { (k, v) ->
-            val item = ZaphkielAPI.getItem(k, player) ?: return@forEach
+            val item = Sandalphon.itemAPI!!.getItem(k, player) ?: return@forEach
             val event = ChestGenerateEvent(player, this, item, v)
             event.call()
             if (!event.isCancelled) {
-                val itemStack = event.item.rebuildToItemStack(player)
-                itemStack.amount = event.amount
-                inventory.setItem(content.removeAt(random(content.size)), itemStack)
+                event.item.amount = event.amount
+                inventory.setItem(content.removeAt(random(content.size)), event.item)
             }
         }
         return inventory
@@ -106,7 +105,7 @@ class ChestData(val block: Location) {
 
     fun tick() {
         if (open.isNotEmpty()) {
-            block.world!!.players.forEach { NMS.INSTANCE.sendBlockAction(it, block.block, 1, 1) }
+            block.world!!.players.forEach { NMS.instance.sendBlockAction(it, block.block, 1, 1) }
         }
         block.world!!.players.forEach { tick(it) }
     }

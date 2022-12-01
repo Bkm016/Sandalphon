@@ -1,11 +1,12 @@
 package ink.ptms.sandalphon.module.impl.treasurechest
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.api.NMS
 import ink.ptms.sandalphon.module.impl.scriptblock.ScriptBlock
 import ink.ptms.sandalphon.module.impl.treasurechest.data.ChestData
 import ink.ptms.sandalphon.module.impl.treasurechest.data.ChestInventory
 import ink.ptms.sandalphon.util.Utils
-import io.lumine.xikage.mythicmobs.MythicMobs
+import ink.ptms.um.Mythic
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Sound
@@ -32,7 +33,7 @@ object TreasureChest {
 
     @Awake(LifeCycle.ACTIVE)
     fun import() {
-        if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
+        if (Sandalphon.itemAPI == null) {
             return
         }
         if (Bukkit.getPluginManager().getPlugin("Adyeshach") == null) {
@@ -95,7 +96,7 @@ object TreasureChest {
                 chest.globalInventory = null
                 chest.globalTime = System.currentTimeMillis() + chest.update
                 player.closeInventory()
-                NMS.INSTANCE.sendBlockAction(player, chest.block.block, 1, 0)
+                NMS.instance.sendBlockAction(player, chest.block.block, 1, 0)
             }
         }
         export()
@@ -118,7 +119,7 @@ object TreasureChest {
         if (isMythicMobsHooked) {
             return loc.world!!.getNearbyEntities(loc, 16.0, 16.0, 16.0).any {
                 if (it is LivingEntity) {
-                    val mob = MythicMobs.inst().mobManager.getMythicMobInstance(it)
+                    val mob = Mythic.API.getMob(it)
                     mob != null && mob.type.config.getStringList("Purtmars.Type").contains("guardian:treasure")
                 } else {
                     false

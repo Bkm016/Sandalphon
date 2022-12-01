@@ -1,13 +1,11 @@
 package ink.ptms.sandalphon.module.impl.blockmine
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
 import ink.ptms.sandalphon.module.impl.blockmine.data.openEdit
 import ink.ptms.sandalphon.util.Pair
-import ink.ptms.zaphkiel.ZaphkielAPI
-import ink.ptms.zaphkiel.taboolib.module.nms.ItemTagData
-import ink.ptms.zaphkiel.taboolib.module.nms.ItemTagType
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.Material
@@ -25,7 +23,6 @@ import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.util.random
 import taboolib.module.chat.uncolored
-import taboolib.module.nms.ItemTagList
 import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.util.hasLore
 import taboolib.platform.util.hasName
@@ -36,6 +33,7 @@ import kotlin.math.min
  * @author sky
  * @since 2020-06-01 21:43
  */
+@Suppress("SpellCheckingInspection", "DuplicatedCode")
 object BlockEvents : Helper {
 
     val catcher = HashMap<String, Pair<Location?, Location?>>()
@@ -47,17 +45,8 @@ object BlockEvents : Helper {
             e.isCancelled = true
             // 检查破坏工具
             if (result.blockStructure.tool != null) {
-                val itemStream = ZaphkielAPI.read(e.player.inventory.itemInMainHand)
-                if (itemStream.isVanilla() || !itemStream.getZaphkielData().containsKey("blockmine")) {
-                    return
-                }
-                val blockmineTag = itemStream.getZaphkielData()["blockmine"]!!
-                val blockmine = if (blockmineTag.type == ItemTagType.LIST) {
-                    blockmineTag.asList()
-                } else {
-                    ItemTagList.of(blockmineTag.asString())
-                }
-                if (!blockmine.contains(ItemTagData(result.blockStructure.tool))) {
+                val blockmine = Sandalphon.itemAPI?.getDataList(e.player.itemInHand, "blockmine") ?: emptyList()
+                if (result.blockStructure.tool !in blockmine) {
                     return
                 }
             }
@@ -72,7 +61,7 @@ object BlockEvents : Helper {
             }
             result.blockState.update = true
             result.blockStructure.drop.filter { random(it.chance) }.forEach {
-                val itemStack = ZaphkielAPI.getItemStack(it.item, e.player) ?: return@forEach
+                val itemStack = Sandalphon.itemAPI!!.getItem(it.item, e.player) ?: return@forEach
                 itemStack.amount = it.amount
                 e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), itemStack).pickupDelay = 20
             }

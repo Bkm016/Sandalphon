@@ -1,5 +1,6 @@
 package ink.ptms.sandalphon.module.impl.treasurechest
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.treasurechest.data.ChestData
 import ink.ptms.sandalphon.module.impl.treasurechest.data.openEdit
@@ -21,6 +22,7 @@ import java.io.File
  * @author sky
  * @since 2020-05-20 17:51
  */
+@Suppress("DuplicatedCode")
 @CommandHeader(name = "treasurechest", aliases = ["tchest"], permission = "admin")
 object TreasureChestCommand : Helper {
 
@@ -36,8 +38,8 @@ object TreasureChestCommand : Helper {
                 sender.error("该功能依赖 Adyeshach 插件.")
                 return@execute
             }
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                sender.error("该功能依赖 Zaphkiel 插件.")
+            if (Sandalphon.itemAPI == null) {
+                sender.error("缺少物品库兼容.")
                 return@execute
             }
             val block = sender.getTargetBlockExact()
@@ -64,8 +66,8 @@ object TreasureChestCommand : Helper {
                 sender.error("该功能依赖 Adyeshach 插件.")
                 return@execute
             }
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                sender.error("该功能依赖 Zaphkiel 插件.")
+            if (Sandalphon.itemAPI == null) {
+                sender.error("缺少物品库兼容.")
                 return@execute
             }
             val block = sender.getTargetBlockExact()
@@ -94,8 +96,8 @@ object TreasureChestCommand : Helper {
                 sender.error("该功能依赖 Adyeshach 插件.")
                 return@execute
             }
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                sender.error("该功能依赖 Zaphkiel 插件.")
+            if (Sandalphon.itemAPI == null) {
+                sender.error("缺少物品库兼容.")
                 return@execute
             }
             val block = sender.getTargetBlockExact()
@@ -121,8 +123,8 @@ object TreasureChestCommand : Helper {
                 sender.error("该功能依赖 Adyeshach 插件.")
                 return@execute
             }
-            if (Bukkit.getPluginManager().getPlugin("Zaphkiel") == null) {
-                sender.error("该功能依赖 Zaphkiel 插件.")
+            if (Sandalphon.itemAPI == null) {
+                sender.error("缺少物品库兼容.")
                 return@execute
             }
             val block = sender.getTargetBlockExact()

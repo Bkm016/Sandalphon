@@ -98,7 +98,7 @@ object TreasureChestEvents : Helper {
                 chest.globalInventory = null
                 chest.globalTime = System.currentTimeMillis() + chest.update
                 chest.tick(e.player as Player, true)
-                e.player.world.players.forEach { p -> NMS.INSTANCE.sendBlockAction(p, chest.block.block, 1, 0) }
+                e.player.world.players.forEach { p -> NMS.instance.sendBlockAction(p, chest.block.block, 1, 0) }
                 e.player.world.playSound(chest.block, Sound.BLOCK_CHEST_CLOSE, 1f, random(0.8, 1.2).toFloat())
             }
         }

@@ -4,7 +4,6 @@ import org.bukkit.NamespacedKey
 import org.bukkit.inventory.*
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
-import taboolib.library.xseries.getItemStack
 
 /**
  * Sandalphon

@@ -5,12 +5,10 @@ import ink.ptms.sandalphon.module.impl.spawner.event.EntityReleaseEvent
 import ink.ptms.sandalphon.module.impl.spawner.event.EntitySpawnEvent
 import ink.ptms.sandalphon.module.impl.spawner.event.EntityToSpawnEvent
 import ink.ptms.sandalphon.module.impl.spawner.event.SpawnerTickEvent
-import io.lumine.xikage.mythicmobs.adapters.bukkit.BukkitAdapter
-import io.lumine.xikage.mythicmobs.mobs.MythicMob
+import ink.ptms.um.MobType
 import org.bukkit.Location
 import org.bukkit.block.Block
 import org.bukkit.entity.LivingEntity
-import org.bukkit.entity.Mob
 import org.bukkit.metadata.FixedMetadataValue
 import taboolib.module.ai.addGoalAi
 import taboolib.module.ai.removeGoalAi
@@ -20,7 +18,7 @@ import taboolib.platform.BukkitPlugin
  * @author sky
  * @since 2020-05-27 16:03
  */
-class SpawnerData(val block: Location, var mob: MythicMob) {
+class SpawnerData(val block: Location, var mob: MobType) {
 
     val mobs = HashMap<Location, LivingEntity>()
     val time = HashMap<Location, Long>()
@@ -69,7 +67,7 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                             entity.removeGoalAi("FollowAi")
                             EntityToSpawnEvent.Stop(entity, this).call()
                         } else {
-                            if (entity is Mob && entity.target != null) {
+                            if (entity is org.bukkit.entity.Mob && entity.target != null) {
                                 entity.target = null
                             }
                             if (entity.isLeashed) {
@@ -94,8 +92,8 @@ class SpawnerData(val block: Location, var mob: MythicMob) {
                 if (time < System.currentTimeMillis()) {
                     val event = EntitySpawnEvent.Pre(this, pos.clone(), time > 0)
                     if (event.call()) {
-                        val activeMob = mob.spawn(BukkitAdapter.adapt(event.location), 1.0)
-                        mobs[loc] = activeMob.entity.bukkitEntity as LivingEntity
+                        val activeMob = mob.spawn(event.location, 1.0)
+                        mobs[loc] = activeMob.entity as LivingEntity
                         EntitySpawnEvent.Post(mobs[loc]!!, this, event.location, time > 0).call()
                     }
                 }

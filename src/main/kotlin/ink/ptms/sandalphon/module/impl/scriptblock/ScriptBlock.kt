@@ -29,18 +29,18 @@ object ScriptBlock {
 
     @Awake(LifeCycle.DISABLE)
     fun export() {
-        data.getKeys(false).forEach { data.set(it, null) }
+        data.getKeys(false).forEach { data[it] = null }
         blocks.forEach { block ->
             val location = Utils.fromLocation(block.block).replace(".", "__")
-            data.set("$location.link", block.link.map { Utils.fromLocation(it) })
-            data.set("$location.type", block.blockType.name)
-            data.set("$location.action", block.action)
-            data.set("$location.condition", block.condition)
+            data["$location.link"] = block.link.map { Utils.fromLocation(it) }
+            data["$location.type"] = block.blockType.name
+            data["$location.action"] = block.action
+            data["$location.condition"] = block.condition
         }
     }
 
     fun delete(location: String) {
-        data.set(location.replace(".", "__"), null)
+        data[location.replace(".", "__")] = null
     }
 
     fun getBlock(block: Block): BlockData? {

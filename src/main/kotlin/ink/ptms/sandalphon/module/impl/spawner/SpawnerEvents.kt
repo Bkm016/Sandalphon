@@ -2,20 +2,19 @@ package ink.ptms.sandalphon.module.impl.spawner
 
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.util.Utils
-import io.lumine.xikage.mythicmobs.MythicMobs
-import io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent
+import ink.ptms.um.Mythic
+import ink.ptms.um.event.MobDeathEvent
+import ink.ptms.um.event.MythicReloadEvent
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.entity.EntityTargetEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.EquipmentSlot
-import org.bukkit.metadata.FixedMetadataValue
-import taboolib.common.platform.event.OptionalEvent
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.module.chat.uncolored
-import taboolib.platform.BukkitPlugin
 import taboolib.platform.util.hasLore
 import taboolib.platform.util.hasName
+import taboolib.platform.util.setMeta
 
 /**
  * @author sky
@@ -30,19 +29,18 @@ object SpawnerEvents : Helper {
         }
     }
 
-    @SubscribeEvent(bind = "io.lumine.xikage.mythicmobs.api.bukkit.events.MythicReloadedEvent")
-    fun onMythicReloaded(e: OptionalEvent) {
-        Spawner.spawners.forEach { it.mob = MythicMobs.inst().mobManager.getMythicMob(it.mob.internalName) }
+    @SubscribeEvent
+    fun onMythicReloaded(e: MythicReloadEvent) {
+        Spawner.spawners.forEach { it.mob = Mythic.API.getMobType(it.mob.id) ?: return@forEach }
     }
 
-    @SubscribeEvent(bind = "io.lumine.xikage.mythicmobs.api.bukkit.events.MythicMobDeathEvent")
-    fun onMythicMobDeath(e: OptionalEvent) {
-        val event = e.get<MythicMobDeathEvent>()
+    @SubscribeEvent
+    fun onMythicMobDeath(e: MobDeathEvent) {
         Spawner.spawners.forEach { spawnerData ->
             spawnerData.mobs.forEach { (k, v) ->
-                if (v.uniqueId == event.entity.uniqueId) {
+                if (v.uniqueId == e.mob.entity.uniqueId) {
                     spawnerData.time[k] = System.currentTimeMillis() + (spawnerData.respawn * 1000L)
-                    event.entity.setMetadata("RESPAWN", FixedMetadataValue(BukkitPlugin.getInstance(), spawnerData.respawn))
+                    e.mob.entity.setMeta("RESPAWN", spawnerData.respawn)
                 }
             }
         }

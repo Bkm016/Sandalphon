@@ -4,7 +4,6 @@ import ink.ptms.adyeshach.api.event.AdyeshachPlayerJoinEvent
 import ink.ptms.sandalphon.module.Helper
 import net.md_5.bungee.api.chat.TextComponent
 import org.bukkit.event.player.PlayerEditBookEvent
-import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.meta.BookMeta
 import org.bukkit.metadata.FixedMetadataValue

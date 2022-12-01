@@ -1,8 +1,7 @@
 package ink.ptms.sandalphon.module.impl.blockmine.data
 
+import ink.ptms.sandalphon.Sandalphon
 import ink.ptms.sandalphon.module.impl.blockmine.BlockMine
-import ink.ptms.sandalphon.util.Utils
-import ink.ptms.zaphkiel.ZaphkielAPI
 import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.entity.Player
@@ -199,7 +198,7 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
         rows(3)
         onBuild { _, inv ->
             openStructure.drop.forEachIndexed { index, drop ->
-                val item = ZaphkielAPI.getItemStack(drop.item, player) ?: return@forEachIndexed
+                val item = Sandalphon.itemAPI!!.getItem(drop.item, player) ?: return@forEachIndexed
                 inv.setItem(index, buildItem(XMaterial.matchXMaterial(item.type)) {
                     name = "§f${drop.item}"
                     lore += arrayOf("§7${drop.chance * 100}%", "", "§7左键编辑", "§c丢弃删除")
@@ -240,7 +239,7 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
                         rows(3)
                         onClose { close ->
                             close.inventory.filter { item -> item.isNotAir() }.forEach { item ->
-                                val itemId = Utils.itemId(item)
+                                val itemId = Sandalphon.itemAPI!!.getId(item)
                                 if (itemId != null) {
                                     openProgress.structures.filter { structure -> structure.origin == openStructure.origin }
                                         .forEach { structure ->
