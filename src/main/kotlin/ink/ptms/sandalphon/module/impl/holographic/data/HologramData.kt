@@ -14,6 +14,7 @@ import taboolib.module.kether.printKetherErrorMessage
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 
+@Suppress("DuplicatedCode")
 class HologramData(val id: String, var location: Location, val content: MutableList<String> = ArrayList(), var condition: MutableList<String> = ArrayList()) {
 
     val holograms: MutableMap<String, Hologram<*>> = ConcurrentHashMap()

@@ -1,4 +1,4 @@
-@file:Suppress("DuplicatedCode")
+@file:Suppress("DuplicatedCode", "SpellCheckingInspection")
 
 package ink.ptms.sandalphon.module.impl.treasurechest.data
 
@@ -21,6 +21,7 @@ import taboolib.common5.Coerce
 import taboolib.common5.util.parseMillis
 import taboolib.expansion.getDataContainer
 import taboolib.library.xseries.XMaterial
+import taboolib.module.chat.colored
 import taboolib.module.nms.getName
 import taboolib.module.nms.inputSign
 import taboolib.module.ui.openMenu
@@ -36,25 +37,25 @@ fun ChestData.open(player: Player) {
         return
     }
     if (TreasureChest.isGuardianNearly(block)) {
-        AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f这个箱子正在被监视.")
+        AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "§c§l:(", "§f这个箱子正在被监视.")
         player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
         return
     }
     check(player).thenAccept { cond ->
         if (!cond) {
-            AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f你无法打开这个箱子.")
+            AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "§c§l:(", "§f你无法打开这个箱子.")
             player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
             return@thenAccept
         }
         if (locked != "null") {
             if (player.inventory.itemInMainHand.isAir()) {
-                AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f需要钥匙才可以打开.")
+                AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "§c§l:(", "§f需要钥匙才可以打开.")
                 player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
                 return@thenAccept
             }
             val keyId = Sandalphon.itemAPI!!.getData(player.inventory.itemInMainHand, "treasurechest")
             if (keyId == null || (keyId != locked && keyId != "all")) {
-                AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f需要钥匙才可以打开.")
+                AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "§c§l:(", "§f需要钥匙才可以打开.")
                 player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
                 return@thenAccept
             }
@@ -62,7 +63,7 @@ fun ChestData.open(player: Player) {
         if (global) {
             if (globalTime > System.currentTimeMillis() || (update == -1L && globalTime > 0)) {
                 if (replace.isTreasureType()) {
-                    AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f这个箱子什么都没有.")
+                    AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "§c§l:(", "§f这个箱子什么都没有.")
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
                 }
                 return@thenAccept
@@ -79,7 +80,7 @@ fun ChestData.open(player: Player) {
             val time = Coerce.toLong(data["Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}"])
             if (time > System.currentTimeMillis() || (update == -1L && time > 0)) {
                 if (replace.isTreasureType()) {
-                    AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "&c&l:(", "&f这个箱子什么都没有.")
+                    AdyeshachAPI.createHolographic(player, block.clone().add(0.5, 1.0, 0.5), "§c§l:(", "§f这个箱子什么都没有.")
                     player.playSound(block, Sound.BLOCK_CHEST_LOCKED, 1f, random(1.5, 2.0).toFloat())
                 }
                 return@thenAccept
@@ -101,7 +102,7 @@ fun ChestData.open(player: Player) {
                         }
                     }
                     it.inventory.clear()
-                    data["treasurechest.${Utils.fromLocation(block).replace(".", "__")}"] = System.currentTimeMillis() + update
+                    data["Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}"] = System.currentTimeMillis() + update
                     tick(player, true)
                     open.remove(player.name)
                     // 关闭箱子的特效
@@ -191,6 +192,7 @@ fun ChestData.openEdit(player: Player) {
                     } else {
                         player.getDataContainer()["Sandalphon.treasurechest.${Utils.fromLocation(block).replace(".", "__")}"] = "0"
                     }
+                    player.sendMessage("§c[Sandalphon] §7冷却已刷新.")
                 }
             }
         }

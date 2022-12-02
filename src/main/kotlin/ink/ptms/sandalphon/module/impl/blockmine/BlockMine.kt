@@ -20,7 +20,7 @@ object BlockMine {
     val blocks = ArrayList<BlockData>()
     val blocksCache = HashSet<Material>()
 
-    @Schedule(period = 20, async = true)
+    @Schedule(period = 20)
     fun e() {
         blocks.forEach { it.grow() }
     }

@@ -115,7 +115,7 @@ fun BlockData.openEditProgress(player: Player, openProgress: BlockProgress? = nu
                 onBuild { _, inv ->
                     openProgress.structures.forEach { structure -> structureMap[structure.origin] = structure }
                     structureMap.forEach { (k, v) ->
-                        inv.addItem(buildItem(XMaterial.matchXMaterial(k)) {
+                        inv.addItem(buildItem(k) {
                             lore += "§7替换: ${ItemStack(v.replace).getI18nName(player)}"
                             lore += "§7工具: ${v.tool ?: "无"}"
                             lore += "§7掉落: ${v.drop.size} 项"
@@ -129,6 +129,7 @@ fun BlockData.openEditProgress(player: Player, openProgress: BlockProgress? = nu
                             openEditProgress(player)
                             it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                         }
+
                         it.rawSlot in 0..26 && it.currentItem.isNotAir() -> {
                             val structure = structureMap[it.currentItem!!.type]
                             if (structure != null) {
@@ -173,8 +174,8 @@ fun BlockData.openEditProgress(player: Player, openProgress: BlockProgress? = nu
                         }
                         13 -> {
                             player.inputSign(arrayOf(openStructure.tool ?: "")) { sign ->
-                                openProgress.structures.filter { structure -> structure.origin == openStructure.origin }.forEach {
-                                    it.tool = sign[0]
+                                openProgress.structures.filter { structure -> structure.origin == openStructure.origin }.forEach { bs ->
+                                    bs.tool = sign[0]
                                 }
                                 openEditProgress(player, openProgress, openStructure)
                             }
@@ -199,7 +200,7 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
         onBuild { _, inv ->
             openStructure.drop.forEachIndexed { index, drop ->
                 val item = Sandalphon.itemAPI!!.getItem(drop.item, player) ?: return@forEachIndexed
-                inv.setItem(index, buildItem(XMaterial.matchXMaterial(item.type)) {
+                inv.setItem(index, buildItem(item.type) {
                     name = "§f${drop.item}"
                     lore += arrayOf("§7${drop.chance * 100}%", "", "§7左键编辑", "§c丢弃删除")
                 })
@@ -226,9 +227,11 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
                             }
                         }
                         it.clickEvent().isRightClick -> {
-                            openProgress.structures.filter { structure -> structure.origin == openStructure.origin }.forEach { structure ->
-                                structure.drop.removeAt(it.rawSlot)
-                            }
+                            openProgress.structures
+                                .filter { structure -> structure.origin == openStructure.origin }
+                                .forEach { structure ->
+                                    structure.drop.removeAt(it.rawSlot)
+                                }
                             openEditDrop(player, openProgress, openStructure)
                         }
                     }
@@ -241,7 +244,8 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
                             close.inventory.filter { item -> item.isNotAir() }.forEach { item ->
                                 val itemId = Sandalphon.itemAPI!!.getId(item)
                                 if (itemId != null) {
-                                    openProgress.structures.filter { structure -> structure.origin == openStructure.origin }
+                                    openProgress.structures
+                                        .filter { structure -> structure.origin == openStructure.origin }
                                         .forEach { structure ->
                                             structure.drop.add(BlockDrop(itemId, item.amount, 0.0))
                                         }

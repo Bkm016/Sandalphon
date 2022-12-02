@@ -17,6 +17,7 @@ import taboolib.platform.BukkitPlugin
  * @author sky
  * @since 2020-05-21 13:33
  */
+@Suppress("DuplicatedCode")
 object HologramEvents : Helper {
 
     @SubscribeEvent
@@ -67,7 +68,7 @@ object HologramEvents : Helper {
                     TextComponent(it).toPlainText().replace("§0", "").split("\n")
                 }
                 if (lines[0].uncolored() != "clear") {
-                    hologramData.content.addAll(lines)
+                    hologramData.condition.addAll(lines)
                 }
                 hologramData.init()
                 // sb 1.12

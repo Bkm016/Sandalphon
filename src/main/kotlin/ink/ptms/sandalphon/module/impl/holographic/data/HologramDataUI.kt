@@ -1,6 +1,6 @@
-package ink.ptms.sandalphon.module.impl.holographic
+package ink.ptms.sandalphon.module.impl.holographic.data
 
-import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
+import ink.ptms.sandalphon.module.impl.holographic.Hologram
 import org.bukkit.Sound
 import org.bukkit.entity.Player
 import taboolib.library.xseries.XMaterial
@@ -42,6 +42,15 @@ fun HologramData.openEdit(player: Player) {
                 material = XMaterial.WRITABLE_BOOK.parseMaterial()!!
                 write(content.joinToString("\n"))
                 name = "§f§f§f编辑内容"
+                lore += listOf("§7Hologram", "§7$id")
+            })
+        }
+        onClick(15) {
+            player.closeInventory()
+            player.giveItem(buildBook {
+                material = XMaterial.WRITABLE_BOOK.parseMaterial()!!
+                write(content.joinToString("\n"))
+                name = "§f§f§f编辑条件"
                 lore += listOf("§7Hologram", "§7$id")
             })
         }

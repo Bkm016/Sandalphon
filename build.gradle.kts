@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.izzel.taboolib") version "1.50"
+    id("io.izzel.taboolib") version "1.51"
     id("org.jetbrains.kotlin.jvm") version "1.5.31"
 }
 
@@ -23,7 +23,7 @@ taboolib {
     install("module-kether", "expansion-command-helper", "expansion-player-database")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.10-22"
+    version = "6.0.10-26"
     relocate("ink.ptms.um", "ink.ptms.chemdah.um")
     options("keep-kotlin-module")
 }

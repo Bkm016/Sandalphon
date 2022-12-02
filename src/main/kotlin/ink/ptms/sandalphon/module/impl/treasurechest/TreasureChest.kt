@@ -46,10 +46,10 @@ object TreasureChest {
                 if (data.contains("$it.link")) {
                     link = Utils.toLocation(data.getString("$it.link")!!.replace("__", "."))
                 }
-                title = data.getString("$it.title")!!
+                title = data.getString("$it.title").toString()
                 random = data.getInt("$it.random.min") to data.getInt("$it.random.max")
                 update = data.getLong("$it.update")
-                locked = data.getString("$it.locked")!!
+                locked = data.getString("$it.locked").toString()
                 global = data.getBoolean("$it.global")
                 globalTime = data.getLong("$it.global-time")
                 replace = data.getString("$it.replace")!!.parseToMaterial()
@@ -61,22 +61,22 @@ object TreasureChest {
 
     @Schedule(period = 20 * 60, async = true)
     fun export() {
-        data.getKeys(false).forEach { data.set(it, null) }
+        data.getKeys(false).forEach { data[it] = null }
         chests.forEach { chest ->
             val location = Utils.fromLocation(chest.block).replace(".", "__")
             if (chest.link != null) {
-                data.set("$location.link", Utils.fromLocation(chest.link!!).replace(".", "__"))
+                data["$location.link"] = Utils.fromLocation(chest.link!!).replace(".", "__")
             }
-            data.set("$location.item", chest.items.map { "${it.first} ${it.second}" })
-            data.set("$location.title", chest.title)
-            data.set("$location.random.min", chest.random.first)
-            data.set("$location.random.max", chest.random.second)
-            data.set("$location.update", chest.update)
-            data.set("$location.locked", chest.locked)
-            data.set("$location.global", chest.global)
-            data.set("$location.global-time", chest.globalTime)
-            data.set("$location.replace", chest.replace.name)
-            data.set("$location.condition", chest.condition)
+            data["$location.item"] = chest.items.map { "${it.first} ${it.second}" }
+            data["$location.title"] = chest.title
+            data["$location.random.min"] = chest.random.first
+            data["$location.random.max"] = chest.random.second
+            data["$location.update"] = chest.update
+            data["$location.locked"] = chest.locked
+            data["$location.global"] = chest.global
+            data["$location.global-time"] = chest.globalTime
+            data["$location.replace"] = chest.replace.name
+            data["$location.condition"] = chest.condition
         }
     }
 
@@ -108,7 +108,7 @@ object TreasureChest {
     }
 
     fun delete(location: String) {
-        ScriptBlock.data.set(location.replace(".", "__"), null)
+        ScriptBlock.data[location.replace(".", "__")] = null
     }
 
     fun getChest(block: Block): ChestData? {

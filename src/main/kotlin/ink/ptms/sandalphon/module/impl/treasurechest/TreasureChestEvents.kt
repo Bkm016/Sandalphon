@@ -32,42 +32,30 @@ import taboolib.platform.util.isNotAir
  */
 object TreasureChestEvents : Helper {
 
-    fun toPosition(any: Any): Vector {
-        val x = any.invokeMethod<Number>("getX")!!.toInt()
-        val y = any.invokeMethod<Number>("getY")!!.toInt()
-        val z = any.invokeMethod<Number>("getZ")!!.toInt()
-        return Vector(x, y, z)
-    }
-
-//    @SubscribeEvent
+    @SubscribeEvent
     fun e(e: PacketReceiveEvent) {
         if (e.packet.name == "PacketPlayInUseItem") {
-            val a = e.packet.read<Any>("a")!!
-            if (a.javaClass.simpleName == "BlockPosition") {
-                val pos = toPosition(a)
-                val loc = Location(e.player.world, pos.x, pos.y, pos.z)
-                val chest = TreasureChest.getChest(loc.block) ?: return
-                if (e.packet.read<Any>("c").toString() == "MAIN_HAND") {
-                    submit {
-                        if (e.player.isSneaking && e.player.isOp && e.player.inventory.itemInMainHand.type.isAir) {
-                            chest.openEdit(e.player)
-                        } else {
-                            chest.open(e.player)
-                        }
-                    }
-                }
+            val pos = if (MinecraftVersion.isUniversal) {
+                e.packet.read<Any>("a/blockPos")!!
+            } else if (MinecraftVersion.majorLegacy >= 11400) {
+                e.packet.read<Any>("a/c")!!
             } else {
-                val pos = toPosition(a.getProperty<Any>("c")!!)
-                val loc = Location(e.player.world, pos.x, pos.y, pos.z)
-                val chest = TreasureChest.getChest(loc.block) ?: return
-                if (e.packet.read<Any>("b").toString() == "MAIN_HAND") {
-                    submit {
-                        if (e.player.isSneaking && e.player.isOp && e.player.inventory.itemInMainHand.type.isAir) {
-                            chest.openEdit(e.player)
-                        } else {
-                            chest.open(e.player)
-                        }
-                    }
+                e.packet.read<Any>("a")!!
+            }
+            // 1.18 Supported
+            val vec = if (MinecraftVersion.major >= 10) {
+                Vector(pos.getProperty<Number>("x")!!.toInt(), pos.getProperty<Number>("y")!!.toInt(), pos.getProperty<Number>("z")!!.toInt())
+            } else {
+                // 在老版本中字段名称为 a, b, c
+                Vector(pos.invokeMethod<Number>("getX")!!.toInt(), pos.invokeMethod<Number>("getY")!!.toInt(), pos.invokeMethod<Number>("getZ")!!.toInt())
+            }
+            val loc = Location(e.player.world, vec.x, vec.y, vec.z)
+            val chest = TreasureChest.getChest(loc.block) ?: return
+            submit {
+                if (e.player.isSneaking && e.player.isOp && e.player.inventory.itemInMainHand.type.isAir) {
+                    chest.openEdit(e.player)
+                } else {
+                    chest.open(e.player)
                 }
             }
             e.isCancelled = true

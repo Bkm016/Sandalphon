@@ -38,6 +38,11 @@ object BlockEvents : Helper {
 
     val catcher = HashMap<String, Pair<Location?, Location?>>()
 
+    /**
+     * meta:
+     *   blockmine:
+     *   - xxx
+     */
     @SubscribeEvent(priority = EventPriority.LOW, ignoreCancelled = true)
     fun player(e: BlockBreakEvent) {
         val result = BlockMine.find(e.block.location)

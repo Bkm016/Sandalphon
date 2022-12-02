@@ -10,6 +10,7 @@ import taboolib.module.ui.openMenu
 import taboolib.module.ui.type.Basic
 import taboolib.platform.util.buildItem
 
+@Suppress("DuplicatedCode")
 fun SpawnerData.openEdit(player: Player) {
     fun build1() = buildItem(XMaterial.OBSERVER) {
         name = "§f激活范围 (${activationrange})"

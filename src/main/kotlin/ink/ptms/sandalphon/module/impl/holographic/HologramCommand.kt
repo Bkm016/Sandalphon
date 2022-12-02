@@ -2,6 +2,7 @@ package ink.ptms.sandalphon.module.impl.holographic
 
 import ink.ptms.sandalphon.module.Helper
 import ink.ptms.sandalphon.module.impl.holographic.data.HologramData
+import ink.ptms.sandalphon.module.impl.holographic.data.openEdit
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import taboolib.common.platform.command.CommandBody
