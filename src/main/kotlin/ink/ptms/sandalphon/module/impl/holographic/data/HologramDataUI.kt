@@ -54,7 +54,7 @@ fun HologramData.openEdit(player: Player) {
                 lore += listOf("§7Hologram", "§7$id")
             })
         }
-        onClose {
+        onClose(once = false) {
             Hologram.export()
             init()
         }

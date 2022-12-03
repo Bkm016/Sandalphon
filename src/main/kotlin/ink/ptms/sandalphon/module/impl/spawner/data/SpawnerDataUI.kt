@@ -68,7 +68,7 @@ fun SpawnerData.openEdit(player: Player) {
                 }
             }
         }
-        onClose {
+        onClose(once = false) {
             Spawner.export()
         }
     }

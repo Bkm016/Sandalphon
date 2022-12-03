@@ -49,7 +49,7 @@ fun BlockData.openEdit(player: Player) {
                 }
             }
         }
-        onClose {
+        onClose(once = false) {
             ScriptBlock.export()
         }
     }

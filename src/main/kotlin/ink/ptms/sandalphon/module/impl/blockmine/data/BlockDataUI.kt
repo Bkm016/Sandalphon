@@ -49,7 +49,7 @@ fun BlockData.openEdit(player: Player) {
                 }
             }
         }
-        onClose {
+        onClose(once = false) {
             BlockMine.export()
         }
     }
@@ -103,7 +103,7 @@ fun BlockData.openEditProgress(player: Player, openProgress: BlockProgress? = nu
                         it.clicker.playSound(it.clicker.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 2f)
                     }
                 }
-                onClose {
+                onClose(once = false) {
                     BlockMine.export()
                 }
             }
@@ -186,7 +186,7 @@ fun BlockData.openEditProgress(player: Player, openProgress: BlockProgress? = nu
                         }
                     }
                 }
-                onClose {
+                onClose(once = false) {
                     BlockMine.export()
                 }
             }
@@ -240,7 +240,7 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
                 it.rawSlot == openStructure.drop.size -> {
                     player.openMenu<Basic>("编辑开采结构 $id") {
                         rows(3)
-                        onClose { close ->
+                        onClose(once = false) { close ->
                             close.inventory.filter { item -> item.isNotAir() }.forEach { item ->
                                 val itemId = Sandalphon.itemAPI!!.getId(item)
                                 if (itemId != null) {
@@ -261,7 +261,7 @@ fun BlockData.openEditDrop(player: Player, openProgress: BlockProgress, openStru
                 }
             }
         }
-        onClose {
+        onClose(once = false) {
             BlockMine.export()
         }
     }

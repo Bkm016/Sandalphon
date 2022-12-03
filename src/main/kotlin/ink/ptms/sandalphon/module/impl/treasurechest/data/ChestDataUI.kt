@@ -94,7 +94,7 @@ fun ChestData.open(player: Player) {
                     update(player, inv)
                     open.add(player.name)
                 }
-                onClose {
+                onClose(once = false) {
                     it.inventory.filter { item -> item.isNotAir() }.forEachIndexed { index, item ->
                         submit(delay = index.toLong()) {
                             player.giveItem(item)
@@ -196,7 +196,7 @@ fun ChestData.openEdit(player: Player) {
                 }
             }
         }
-        onClose {
+        onClose(once = false) {
             TreasureChest.export()
         }
     }
@@ -214,7 +214,7 @@ fun ChestData.openEditContent(player: Player) {
                 })
             }
         }
-        onClose {
+        onClose(once = false) {
             this@openEditContent.items.clear()
             it.inventory.filter { i -> i.isNotAir() }.forEach { i ->
                 val itemId = Sandalphon.itemAPI!!.getId(i)

@@ -190,7 +190,7 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                             }
                         }
                     }
-                    onClose { _ ->
+                    onClose(once = false) { _ ->
                         matcher[it.rawSlot] = RecipeMatcher(
                             (0 until 27).mapNotNull { slot -> it.inventory.getItem(slot) }.filter { item -> item.isNotAir() },
                             ignoreItemMeta,
@@ -204,7 +204,7 @@ private fun Player.openRecipeCraftTable(recipe: Recipe? = null) {
                 }
             }
         }
-        onClose {
+        onClose(once = false) {
             if (!save) {
                 return@onClose
             }
@@ -280,7 +280,7 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                 inv.setItem(14, cookingRecipe!!.result)
             }
         }
-        onClick(lock = true) { event ->
+        onClick { event ->
             when (event.slot) {
                 '#' -> {
                     event.isCancelled = true
@@ -350,7 +350,7 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                             }
                         }
                     }
-                    onClose {
+                    onClose(once = false) {
                         recipeChoice = RecipeMatcher(
                             (0 until 27).mapNotNull { slot -> it.inventory.getItem(slot) }.filter { item -> item.isNotAir() },
                             ignoreItemMeta,
@@ -364,8 +364,10 @@ private fun Player.openRecipeFurnace(type: RecipeType, recipe: Recipe? = null) {
                 }
             }
         }
-        onClose { inv ->
+        onClose(once = false) { inv ->
+            println("页面关闭")
             if (!save) {
+                println("不保存")
                 return@onClose
             }
             val key = if (recipe == null)
