@@ -26,6 +26,7 @@ import taboolib.module.chat.uncolored
 import taboolib.module.nms.MinecraftVersion
 import taboolib.platform.util.hasLore
 import taboolib.platform.util.hasName
+import taboolib.platform.util.isAir
 import kotlin.math.max
 import kotlin.math.min
 
@@ -49,7 +50,10 @@ object BlockEvents : Helper {
         if (e.block.type == result?.blockStructure?.origin) {
             e.isCancelled = true
             // 检查破坏工具
-            if (result.blockStructure.tool != null) {
+            if (result.blockStructure.tool != null && result.blockStructure.tool != "null") {
+                if (e.player.itemInHand.isAir) {
+                    return
+                }
                 val blockmine = Sandalphon.itemAPI?.getDataList(e.player.itemInHand, "blockmine") ?: emptyList()
                 if (result.blockStructure.tool !in blockmine) {
                     return
