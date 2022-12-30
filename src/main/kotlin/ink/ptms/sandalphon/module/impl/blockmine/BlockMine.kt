@@ -12,6 +12,8 @@ import taboolib.common.io.newFile
 import taboolib.common.platform.Awake
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.getDataFolder
+import taboolib.common.platform.function.info
+import taboolib.common.platform.function.warning
 import java.io.File
 import java.nio.charset.StandardCharsets
 
@@ -28,6 +30,7 @@ object BlockMine {
     @Awake(LifeCycle.ACTIVE)
     fun import() {
         if (Sandalphon.itemAPI == null) {
+            warning("缺少物品仓库 API, 开采功能关闭。")
             return
         }
         // 清空缓存文件
@@ -40,6 +43,7 @@ object BlockMine {
         }
         // 加载材质缓存
         loadBlockCache()
+        info("加载 ${blocks.size} 种开采类型。")
     }
 
     @Awake(LifeCycle.DISABLE)
