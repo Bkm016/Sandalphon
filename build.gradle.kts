@@ -23,7 +23,7 @@ taboolib {
     install("module-kether", "expansion-command-helper", "expansion-player-database")
     install("platform-bukkit")
     classifier = null
-    version = "6.0.10-27"
+    version = "6.0.10-71"
     relocate("ink.ptms.um", "ink.ptms.chemdah.um")
     options("keep-kotlin-module")
 }
