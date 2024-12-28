@@ -17,7 +17,7 @@ class NMSImpl : NMS() {
 
     override fun sendBlockAction(player: Player, block: Block, a: Int, b: Int) {
         if (MinecraftVersion.majorLegacy >= 11300) {
-            val position = BlockPosition(block.location.x, block.location.y, block.location.z)
+            val position = BlockPosition(block.location.blockX, block.location.blockY, block.location.blockZ)
             player.sendPacket(PacketPlayOutBlockAction(position, Blocks.CHEST, a, b))
         } else {
             val position = net.minecraft.server.v1_12_R1.BlockPosition(block.location.x, block.location.y, block.location.z)

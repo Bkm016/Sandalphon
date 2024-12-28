@@ -29,6 +29,8 @@ dependencies {
     taboo("ink.ptms:um:1.0.0-beta-23")
     compileOnly("ink.ptms:Zaphkiel:2.0.14")
     compileOnly("ink.ptms.adyeshach:api:2.0.24")
+    compileOnly("ink.ptms.core:v12004:12004:universal")
+    compileOnly("ink.ptms.core:v12004:12004:mapped")
     compileOnly("ink.ptms.core:v11701:11701-minimize:universal")
     compileOnly("ink.ptms.core:v11600:11600-minimize")
     compileOnly("ink.ptms.core:v11200:11200")
