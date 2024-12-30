@@ -24,7 +24,7 @@ import taboolib.platform.util.isNotAir
 
 object TreasureChest {
 
-    val data by lazy { createLocal("module/treasurechest.yml") }
+    val data by lazy { createLocal("module/treasurechest.json") }
     val chests = ArrayList<ChestData>()
 
     val isMythicMobsHooked by lazy {
