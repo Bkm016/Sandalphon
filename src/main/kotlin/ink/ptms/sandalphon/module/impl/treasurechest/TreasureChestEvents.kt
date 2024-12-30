@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerEditBookEvent
 import org.bukkit.inventory.meta.BookMeta
+import taboolib.common.platform.Ghost
 import taboolib.common.platform.event.EventPriority
 import taboolib.common.platform.event.SubscribeEvent
 import taboolib.common.platform.function.submit
@@ -30,6 +31,7 @@ import taboolib.platform.util.isNotAir
  * @author sky
  * @since 2020-05-29 22:00
  */
+@Ghost
 object TreasureChestEvents : Helper {
 
     @SubscribeEvent

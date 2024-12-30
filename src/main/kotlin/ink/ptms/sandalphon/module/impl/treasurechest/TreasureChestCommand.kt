@@ -9,6 +9,7 @@ import ink.ptms.sandalphon.util.Utils
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import taboolib.common.platform.Ghost
 import taboolib.common.platform.command.CommandBody
 import taboolib.common.platform.command.CommandHeader
 import taboolib.common.platform.command.mainCommand
@@ -22,6 +23,7 @@ import java.io.File
  * @author sky
  * @since 2020-05-20 17:51
  */
+@Ghost
 @Suppress("DuplicatedCode")
 @CommandHeader(name = "treasurechest", aliases = ["tchest"], permission = "admin")
 object TreasureChestCommand : Helper {

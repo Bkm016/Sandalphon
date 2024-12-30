@@ -15,6 +15,7 @@ import org.bukkit.entity.LivingEntity
 import org.bukkit.util.NumberConversions
 import taboolib.common.LifeCycle
 import taboolib.common.platform.Awake
+import taboolib.common.platform.Ghost
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.parseToMaterial
@@ -23,6 +24,7 @@ import taboolib.module.configuration.createLocal
 import taboolib.platform.util.giveItem
 import taboolib.platform.util.isNotAir
 
+@Ghost
 object TreasureChest {
 
     val data by lazy { createLocal("module/treasurechest.json" ,type = Type.JSON) }
