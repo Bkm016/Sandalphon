@@ -18,13 +18,14 @@ import taboolib.common.platform.Awake
 import taboolib.common.platform.Schedule
 import taboolib.common.platform.function.submit
 import taboolib.library.xseries.parseToMaterial
+import taboolib.module.configuration.Type
 import taboolib.module.configuration.createLocal
 import taboolib.platform.util.giveItem
 import taboolib.platform.util.isNotAir
 
 object TreasureChest {
 
-    val data by lazy { createLocal("module/treasurechest.json") }
+    val data by lazy { createLocal("module/treasurechest.json" ,type = Type.JSON) }
     val chests = ArrayList<ChestData>()
 
     val isMythicMobsHooked by lazy {
