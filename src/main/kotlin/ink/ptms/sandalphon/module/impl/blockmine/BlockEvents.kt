@@ -44,7 +44,7 @@ object BlockEvents : Helper {
      *   blockmine:
      *   - xxx
      */
-    @SubscribeEvent(priority = EventPriority.LOW, ignoreCancelled = true)
+    @SubscribeEvent(priority = EventPriority.LOWEST, ignoreCancelled = true)
     fun player(e: BlockBreakEvent) {
         val result = BlockMine.find(e.block.location)
         if (e.block.type == result?.blockStructure?.origin) {
