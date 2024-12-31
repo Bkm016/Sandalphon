@@ -6,6 +6,7 @@ import ink.ptms.sandalphon.module.impl.blockmine.data.BlockState
 import ink.ptms.sandalphon.module.impl.blockmine.data.BlockStructure
 import ink.ptms.sandalphon.module.impl.blockmine.data.openEdit
 import ink.ptms.sandalphon.util.Pair
+import me.skymc.nothing.feature_2023.Zodiac
 import org.bukkit.Effect
 import org.bukkit.Location
 import org.bukkit.Material
@@ -73,6 +74,9 @@ object BlockEvents : Helper {
                 val itemStack = Sandalphon.itemAPI!!.getItem(it.item, e.player) ?: return@forEach
                 itemStack.amount = it.amount
                 e.block.world.dropItem(e.block.location.add(0.5, 0.5, 0.5), itemStack).pickupDelay = 20
+            }
+            if (random(0.01)) {
+                Zodiac.RAT.give(e.player)
             }
         }
     }
