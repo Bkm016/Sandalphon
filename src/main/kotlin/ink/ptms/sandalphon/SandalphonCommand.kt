@@ -1,6 +1,5 @@
 package ink.ptms.sandalphon
 
-import ink.ptms.sandalphon.module.impl.blockmine.BlockCommand
 import ink.ptms.sandalphon.module.impl.holographic.HologramCommand
 import ink.ptms.sandalphon.module.impl.recipes.RecipesCommand
 import ink.ptms.sandalphon.module.impl.scriptblock.ScriptBlockCommand
@@ -18,9 +17,6 @@ object SandalphonCommand {
     val main = mainCommand {
         createHelper()
     }
-
-    @CommandBody
-    val blockmine = BlockCommand
 
     @CommandBody
     val hologram = HologramCommand
