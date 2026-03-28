@@ -13,16 +13,13 @@ import org.bukkit.block.Container
 import org.bukkit.entity.Player
 import org.bukkit.inventory.DoubleChestInventory
 import org.bukkit.inventory.Inventory
-import taboolib.common.platform.ProxyParticle
 import taboolib.common.platform.function.adaptCommandSender
-import taboolib.common.platform.function.adaptPlayer
 import taboolib.common.util.random
 import taboolib.common5.Coerce
 import taboolib.expansion.getDataContainer
 import taboolib.module.kether.KetherShell
 import taboolib.module.kether.printKetherErrorMessage
 import taboolib.module.nms.MinecraftVersion
-import taboolib.platform.util.toProxyLocation
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -142,12 +139,7 @@ class ChestData(val block: Location) {
                 if (particle) {
                     player.playSound(block, Sound.BLOCK_WOOD_BREAK, 1f, random(0.8, 1.2).toFloat())
                     // 播放粒子效果
-                    ProxyParticle.CRIT.sendTo(
-                        player = adaptPlayer(player),
-                        location = block.clone().add(0.5, 0.5, 0.5).toProxyLocation(),
-                        speed = 0.5,
-                        count = 50
-                    )
+                    player.spawnParticle(Particle.CRIT, block.clone().add(0.5, 0.5, 0.5), 50, 0.0, 0.0, 0.0, 0.5)
                 }
                 if (isHighVersion) {
                     player.sendBlockChange(block, replace.createBlockData())

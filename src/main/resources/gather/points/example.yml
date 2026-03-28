@@ -1,0 +1,41 @@
+example:
+  id: "铁矿石"
+  gather-type: RIGHT
+  gather-time: 40
+  tool: ""
+  tool-check: NONE
+  grow:
+    time: 60
+    chance: 1.0
+  hologram:
+    enable: true
+    offset: [0.0, 0.0, 0.0]
+    lines:
+      - "&a[&f铁矿石&a]"
+      - "&7右键采集"
+  npc:
+    enable: false
+    type: VILLAGER
+    name: "&e矿工"
+    look-at-player: true
+  stages:
+    - blocks:
+        - material: IRON_ORE
+          replace: COBBLESTONE
+          offset: [0, 0, 0]
+          direction: NORTH
+      drops:
+        - item: "铁矿碎片"
+          amount: 1
+          chance: 0.8
+          display-name: ""
+          on-pickup-actions: []
+        - item: "PAPER"
+          amount: 1
+          chance: 1.0
+          display-name: "&a采矿经验卷轴"
+          on-pickup-actions:
+            - "tell color *&a+10 采矿经验"
+            - "actionbar color *&e采矿经验 +10"
+      kether-actions:
+        - "tell color *&a你成功采集了铁矿石！"
